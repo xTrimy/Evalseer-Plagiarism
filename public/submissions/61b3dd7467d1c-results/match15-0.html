@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+ <TITLE>Sub5</TITLE>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <script type="text/javascript">
+  <!--
+   function ZweiFrames(URL1,F1,URL2,F2)
+   {
+    parent.frames[F1].location.href=URL1;
+    parent.frames[F2].location.href=URL2;
+   }
+  //-->
+  </script>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<HR>
+<H3><CENTER>Revision 2 - On time\the_prime_number_checker.cpp</CENTER></H3><HR>
+<DIV data-submission="sub1">
+<PRE>
+// the prime number checker.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include &lt;iostream&gt;
+using namespace std;
+/**
+*Name:Abdel-Rahman Rabee ,220190685
+<A NAME="0"></A>*date:19-12-2019
+*introduction to cs -assignment - the prime number checker
+*/
+<FONT color="#0000ff"><A HREF="javascript:ZweiFrames('match15-1.html#0',3,'match15-top.html#0',1)"><IMG SRC="forward.gif" ALT="other" BORDER="0" ALIGN="right"></A><B>int main() {
+	int x, y;
+	bool isprime = true;
+	cout &lt;&lt; &quot;entre the intger&quot; &lt;&lt; endl;
+	cin &gt;&gt; x;
+	for (y = 2; y &lt;= x / 2; ++y)
+	{
+		if (x % y == 0)
+		{
+			isprime = false;
+			break;
+		}
+	}
+	if (isprime)
+		cout &lt;&lt; &quot;this is is a prime  number &quot;;
+	else 
+		cout &lt;&lt; &quot;this is not a prime number &quot;;
+	return 0;
+}</B></FONT>
+
+
+
+
+
+
+</PRE>
+</DIV>
+</BODY>
+</HTML>
