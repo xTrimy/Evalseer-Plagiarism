@@ -4,7 +4,12 @@ content: [
     "./resources/**/*.js",
     "./resources/**/*.vue",
   ],  theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'primary': '#762a08',
+        'text': '#ea4901',
+      },
+    },
   },
   plugins: [],
 }
