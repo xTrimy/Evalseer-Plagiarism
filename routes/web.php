@@ -22,4 +22,16 @@ Route::get('/registration', function () {
     return view('registration');
 });
 
+Route::get('/course', function () {
+    return view('course');
+});
+
+Route::get('/assignments', function () {
+    return view('assignments');
+});
+
+Route::get('/submission', function () {
+    return view('submission');
+});
+
 Route::post('/', [SubmitController::class,"submit"]);
