@@ -6,6 +6,7 @@ use App\Models\Assignments;
 use App\Models\Questions;
 use App\Models\QuestionTestCases;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class QuestionController extends Controller
 {

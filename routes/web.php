@@ -31,7 +31,7 @@ Route::get('/course', function () {
 Route::get('/assignments', function () {
     return view('assignments');
 });
-
+Route::get('/assignment/{id}', [AssignmentController::class, "view"]);
 Route::get('/submission', function () {
     return view('submission');
 });

@@ -19,4 +19,14 @@ class Assignments extends Model
         "course_id",
         "pdf",
     ];
+
+    public $casts = [
+        'start_time'=>"datetime",
+        'end_time'=>"datetime",
+        'late_time'=>"datetime",
+    ];
+
+    public function questions(){
+        return $this->hasMany(Questions::class,'assignment_id');
+    }
 }

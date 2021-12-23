@@ -50,5 +50,16 @@ class AssignmentController extends Controller
         $assignment->save();
         return redirect()->route('add_question',$assignment->id);
     }
+
+    public function view($id){
+        $assignment = Assignments::with('questions.test_cases')->find($id);
+        return view('submission',["assignment"=>$assignment]);
+    }
+
+    public function submit_assignment(Request $request){
+        $request->validate([
+            "submission.*"=>"required|array",
+        ]);
+    }
     
 }
