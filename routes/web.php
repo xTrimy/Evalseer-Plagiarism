@@ -34,4 +34,8 @@ Route::get('/submission', function () {
     return view('submission');
 });
 
+Route::get('/my-courses', function () {
+    return view('my-courses');
+});
+
 Route::post('/', [SubmitController::class,"submit"]);
