@@ -16,7 +16,7 @@ class CreateQuestionsTable extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('assignment_d')->nullable()->constrained('assignments')->onUpdate('set null')->onDelete('set null');
+            $table->foreignId('assignment_id')->nullable()->constrained('assignments')->onUpdate('set null')->onDelete('set null');
             $table->text('description');
             $table->integer('grade');
             $table->timestamps();

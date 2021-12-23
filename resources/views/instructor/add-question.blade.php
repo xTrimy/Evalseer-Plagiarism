@@ -74,22 +74,40 @@ Add Question to {{ $assignment->name }}
                 />
               </label>
               <h2 class="font-bold text-xl mt-8">Test Cases</h2>
-              <div id="test_cases">
+              <div class="form-group">
+                <label>Test Cases Number</label>
+                <input type="number" name="features" id="count" class="form-control" placeholder="Number of Test Cases">
+                <input type="button" name="addd" class="px-4 py-2 rounded bg-green-500 text-white" onclick="addField()" placeholder="" value="Add">
+              </div>
+              <div id="test_cases" class="hidden">
                 <label class="block text-sm">
                   <span class="text-gray-700 dark:text-gray-400">
-                  Inputs
+                  Input
                   </span>
                   <input
-                  type="number"
+                  type="text"
                   name="input[]"
-                      required
+                    class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                    placeholder="5"
+                  />
+                </label>
+                <label class="block text-sm">
+                  <span class="text-gray-700 dark:text-gray-400">
+                  Output
+                  </span>
+                  <input
+                  type="text"
+                  name="output[]"
                     class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                     placeholder="5"
                   />
                 </label>
               </div>
+              <div id="container">
+                
+              </div>
               <button type="submit" class="table items-center mt-4 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
-              Next
+              Add
               <span class="ml-2" aria-hidden="true">
                   <i class='las la-arrow-right'></i>
               </span>
@@ -98,7 +116,20 @@ Add Question to {{ $assignment->name }}
 
           </div>
         </main>
-        <script>
-          
+        <script type='text/javascript'>
+            function addField()
+            {
+                var number = document.getElementById("count").value;
+                var container = document.getElementById("container");
+                while (container.hasChildNodes()) {
+                    container.removeChild(container.lastChild);
+                }
+                for (i=0;i<number;i++){
+                    var test_cases = document.getElementById('test_cases').cloneNode(true);
+                    container.appendChild(test_cases);
+                    test_cases.classList.remove('hidden');
+                    container.appendChild(document.createElement("br"));
+                }
+            }
         </script>
 @endsection

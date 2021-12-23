@@ -48,7 +48,7 @@ Route::prefix('/dashboard')->group(function(){
     });
     Route::prefix('/qestions/{id}')->group(function ($id) {
         Route::get('/add', [QuestionController::class, "add"])->name('add_question');
-        Route::post('/add', [AssignmentController::class, "store"]);
+        Route::post('/add', [QuestionController::class, "store"]);
     });
 
 });
