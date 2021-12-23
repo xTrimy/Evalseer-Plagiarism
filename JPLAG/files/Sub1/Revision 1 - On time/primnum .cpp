@@ -4,9 +4,7 @@ int main()
 {
   int z, y;
   bool isPrime = true;
-  do{
-
-
+  do
   cout << "Enter an integer number: ";
   cin >> z;
   for(y= 2; y <= z / 2; ++y)

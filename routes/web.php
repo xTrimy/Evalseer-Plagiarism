@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AssignmentController;
+use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SubmitController;
 use Illuminate\Support\Facades\Route;
 
@@ -39,3 +41,18 @@ Route::get('/my-courses', function () {
 });
 
 Route::post('/', [SubmitController::class,"submit"]);
+
+Route::prefix('/dashboard')->group(function(){
+    Route::get('/', function(){
+        return view('instructor.index');
+    });
+    Route::prefix('/assignments')->group(function () {
+        Route::get('/add', [AssignmentController::class, "add"]);
+        Route::post('/add', [AssignmentController::class, "store"]);
+    });
+    Route::prefix('/qestions/{id}')->group(function ($id) {
+        Route::get('/add', [QuestionController::class, "add"])->name('add_question');
+        Route::post('/add', [AssignmentController::class, "store"]);
+    });
+
+});
