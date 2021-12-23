@@ -15,9 +15,9 @@
                 <div class="text-text text-2xl my-16 border-l-2 border-primary w-40 text-center py-7 font-bold">
                     Sign in
                 </div>
-                <div class="text-2xl my-16 w-40 text-center py-7 font-bold">
+                <a href="registration"><div class="text-2xl my-16 w-40 text-center py-7 font-bold">
                     Sign Up
-                </div>
+                </div></a>
             </div>
         </div>
         <div class="bg-primary flex items-center px-28">
@@ -32,7 +32,6 @@
                     <div>
                         <img src="{{ asset('png/google.png') }}" class=" mr-1" width="30" alt="">
                     </div>
-                    
                     <p class="w-full text-center">Sign In With Google</p> 
                 </div>
                 <hr class=" my-5">

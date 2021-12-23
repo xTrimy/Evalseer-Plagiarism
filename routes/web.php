@@ -3,6 +3,7 @@
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SubmitController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,7 +41,13 @@ Route::get('/my-courses', function () {
     return view('my-courses');
 });
 
+Route::get('/signup', function () {
+    return view('signup');
+});
+
 Route::post('/', [SubmitController::class,"submit"]);
+
+Route::post('/signup/createUser', [UserController::class, 'createUser'])->name('createUser');
 
 Route::prefix('/dashboard')->group(function(){
     Route::get('/', function(){
