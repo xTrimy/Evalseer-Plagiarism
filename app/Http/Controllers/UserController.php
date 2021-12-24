@@ -29,7 +29,7 @@ class UserController extends Controller
 
         event(new Registered($user));
 
-        return view('registration');
+        return redirect()->route('home');
     }
 
     public function login(Request $request)
@@ -41,4 +41,22 @@ class UserController extends Controller
         }
         return back()->withInput()->with('status', 'Invalid login details!');
     }
+
+    //User Views START
+    public function dashboard_users($users=null,$title="User"){
+        $users = $users ?? User::paginate(15);
+        return view('admin.users',['data_name'=>$title,'users'=>$users]);
+    }
+
+    public function dashboard_view_students(){
+        $users = User::role('student')->paginate(15);
+        return $this->dashboard_users($users,"Student");
+    }
+
+    public function dashboard_view_instructors(){
+        $users = User::role('instructor')->paginate(15);
+        return $this->dashboard_users($users, "Instructor");
+    }
+    //User Views END
+
 }

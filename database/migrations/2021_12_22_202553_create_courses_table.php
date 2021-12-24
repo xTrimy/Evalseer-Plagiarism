@@ -18,6 +18,12 @@ class CreateCoursesTable extends Migration
             $table->string('name');
             $table->string('course_id');
             $table->integer('credit_hours');
+            $table->integer('grade');
+            $table->integer('grade_to_pass');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->boolean('active');
+            $table->string('access_code');
             $table->timestamps();
         });
     }

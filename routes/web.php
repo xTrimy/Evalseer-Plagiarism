@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AssignmentController;
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SubmitController;
 use App\Http\Controllers\UserController;
@@ -17,49 +18,77 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('home');
+//Must be guest routes
+Route::middleware('guest')->group(function(){
+    Route::get('/login', function () {
+        return view('login');
+    })->name('login');
+    Route::get('/signup', function () {
+        return view('signup');
+    })->name('signup');
+    Route::post('/signup/createUser', [UserController::class, 'createUser'])->name('createUser');
 });
 
-Route::get('/registration', function () {
-    return view('registration');
-});
+//Must be authenticated routes
+Route::middleware('auth')->group(function (){
 
-Route::get('/course', function () {
-    return view('course');
-});
-
-Route::get('/assignments', function () {
-    return view('assignments');
-});
-Route::get('/assignment/{id}', [AssignmentController::class, "view"]);
-Route::get('/submission', function () {
-    return view('submission');
-});
-
-Route::get('/my-courses', function () {
-    return view('my-courses');
-});
-
-Route::get('/signup', function () {
-    return view('signup');
-});
-
-Route::post('/', [SubmitController::class,"submit"]);
-
-Route::post('/signup/createUser', [UserController::class, 'createUser'])->name('createUser');
-
-Route::prefix('/dashboard')->group(function(){
-    Route::get('/', function(){
-        return view('instructor.index');
+    // Student routes
+    Route::get('/', [CourseController::class, 'view_courses'])->name('home');
+    Route::get('/home', function () {
+        return redirect()->route('home');
     });
-    Route::prefix('/assignments')->group(function () {
-        Route::get('/add', [AssignmentController::class, "add"]);
-        Route::post('/add', [AssignmentController::class, "store"]);
-    });
-    Route::prefix('/qestions/{id}')->group(function ($id) {
-        Route::get('/add', [QuestionController::class, "add"])->name('add_question');
-        Route::post('/add', [QuestionController::class, "store"]);
+    Route::get('/my-courses', function () {
+        return redirect()->route('home');
+    })->name('my-courses');
+
+
+    Route::prefix('/course/{id}')->as('course.')->group(function ($id) {
+        Route::get('/', [CourseController::class, 'index'])->name('course');
+        Route::get('/assignments', [CourseController::class, 'assignments'])->name('assignments');
     });
 
+    Route::get('/assignment/{id}', [AssignmentController::class, "view"])->name('assignment');
+
+    Route::get('/submission', function () {
+        return view('submission');
+    });
+
+    Route::prefix('/dashboard')->as('dashboard.')->group(function () {
+        
+        // Instructor routes
+        Route::get('/', function () {
+            return view('instructor.index');
+        });
+        Route::prefix('/assignments')->group(function () {
+            Route::get('/add', [AssignmentController::class, "add"]);
+            Route::post('/add', [AssignmentController::class, "store"]);
+        });
+        Route::prefix('/qestions/{id}')->group(function ($id) {
+            Route::get('/add', [QuestionController::class, "add"])->name('add_question');
+            Route::post('/add', [QuestionController::class, "store"]);
+        });
+
+
+        // Admin routes
+        Route::prefix('/courses')->as('courses.')->group(function () {
+            Route::get('/', [CourseController::class, "dashboard_view"])->name('view');
+            Route::get('/add', [CourseController::class, "add"])->name('add');
+            Route::post('/add', [CourseController::class, "store"]);
+        });
+
+        Route::prefix('/users')->as('users.')->group(function () {
+            Route:: get('/', [UserController::class, "dashboard_users"])->name('view');
+            Route::prefix('/students')->as('students.')->group(function () {
+                Route:: get('/', [UserController::class, "dashboard_view_students"])->name('view');
+            });
+            Route::prefix('/instructors')->as('instructors.')->group(function () {
+                Route::get('/', [UserController::class, "dashboard_view_instructors"])->name('view');
+            });
+        });
+    });
+
 });
+
+
+
+

@@ -1,32 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Registration</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
-</head>
-<body>
-    <div class="flex">
-        <div class="flex h-screen items-center">
-            <div class="m-auto">
-                <div class="text-2xl my-16 w-40 text-center py-7 font-bold">
-                    Sign in
-                </div>
-                <div class="text-text text-2xl my-16 border-l-2 border-primary w-40 text-center py-7 font-bold">
-                    Sign Up
-                </div>
-            </div>
-        </div>
-        <div class="bg-primary flex items-center px-28">
-            <div>
-                <img src="{{ asset('png/logo.png') }}" width="180" alt="logo">
-            </div>
-        </div>
+@extends('layout.registration')
+@section('title')
+Signup
+@endsection
+@section('content')
         <div class="w-full p-10">
-            <div class="w-2/4 h-8 m-auto mt-4">
+            @if($errors->any())
+                {!! implode('', $errors->all('<div class="text-red-500">:message</div>')) !!}
+            @endif
+            <div class="xl:w-2/4 h-8 m-auto mt-4">
                 <form action="{{ route('createUser') }}" method="POST">
                     @csrf
                     <h1 class=" text-3xl font-bold mb-4">Sign Up</h1>
@@ -45,6 +26,4 @@
                 </form>
             </div>
         </div>
-    </div>
-</body>
-</html>
+@endsection

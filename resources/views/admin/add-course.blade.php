@@ -1,9 +1,9 @@
 @extends('layout.dashboard.app')
 @section('page')
-add-assignment
+add-course
 @endsection
 @section('title')
-Add Assignment
+Add Course
 @endsection
 @section('content')
 
@@ -12,7 +12,7 @@ Add Assignment
             <h2
               class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
             >
-              Add Assignment
+              Add Course
             </h2>
             
             @if(Session::has('success'))
@@ -36,7 +36,7 @@ Add Assignment
               <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
                 <i class="las la-font text-xl"></i>
-                Assignment Title
+                Course Title
                 </span>
                 <input
                 value="{{ old('name') }}"
@@ -47,132 +47,93 @@ Add Assignment
                   placeholder="Title"
                 />
               </label>
-              <label class="block text-sm mt-2">
+              <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
-                <i class="las la-align-left text-xl"></i>
-                Description (optional)
+                <i class="las la-font text-xl"></i>
+                Course Code
                 </span>
-                <textarea
-                    name="description"
+                <input
+                value="{{ old('course_code') }}"
+                type="text"
+                name="course_code"
+                    required
                   class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder="Assignment Description"
-                >{{ old('description') }}</textarea>
+                  placeholder="Course Code"
+                />
               </label>
-              <label class="block text-sm mt-2">
+              <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
                 <i class="las la-clock text-xl"></i>
-                Start Time
+                Credit Hours
                 </span>
                 <input
-                value="{{ old('start_time') }}"
-                    type="datetime-local"
-                    name="start_time"
+                value="{{ old('credit_hours') }}"
+                type="number"
+                name="credit_hours"
                     required
                   class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder=""
+                  placeholder="Credit Hours"
                 />
               </label>
-              <label class="block text-sm mt-2">
+              
+              <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
-                <i class="las la-clock text-xl"></i>
-                End Time
-                </span>
-                <input
-                id="end_time"
-                value="{{ old('end_time') }}"
-                    type="datetime-local"
-                    name="end_time"
-                    required
-                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder=""
-                />
-              </label>
-              <label class="block text-sm mt-2">
-                <span class="text-gray-700 dark:text-gray-400">
-                <i class="las la-clock text-xl"></i>
-                Late Submission Time
-                </span>
-                <input
-                id="late_time"
-                value="{{ old('late_time') }}"
-                    type="datetime-local"
-                    name="late_time"
-                    required
-                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder=""
-                />
-              </label>
-              <label class="block text-sm mt-2">
-                <span class="text-gray-700 dark:text-gray-400">
-                <i class="las la-sort-amount-up text-xl"></i>
-                Maximum Submissions
-                </span>
-                <input
-                value="{{ old('max') }}"
-                    type="number"
-                    name="max"
-                    required
-                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder="3"
-                />
-              </label>
-              <label class="block text-sm mt-2">
-                <span class="text-gray-700 dark:text-gray-400">
-                <i class="las la-highlighter text-xl"></i>
-                Total Grade
+                <i class="las la-marker text-xl"></i>
+                Grade
                 </span>
                 <input
                 value="{{ old('grade') }}"
-                    type="number"
-                    name="grade"
+                type="number"
+                name="grade"
                     required
                   class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder="10"
+                  placeholder="Grade"
                 />
               </label>
-              <label class="block text-sm mt-2">
+              <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
-                <i class="las la-file-pdf text-xl"></i>
-                PDF Instructions (optional)
+                <i class="las la-graduation text-xl"></i>
+                Minimum Grade To Pass
                 </span>
                 <input
-                    accept=".pdf"
-                    type="file"
-                    name="pdf"
+                value="{{ old('grade_to_pass') }}"
+                type="number"
+                name="grade_to_pass"
+                    required
                   class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="Minimum Grade To Pass"
                 />
               </label>
-              <label class="block text-sm mt-2">
+              <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
-                <i class="las la-book text-xl"></i>
-                Assign To Course
+                <i class="las la-clock text-xl"></i>
+                Course Start Date
                 </span>
-                <select 
-                required
-                  id="course"
+                <input
+                value="{{ old('start_date') }}"
+                type="date"
+                name="start_date"
+                    required
                   class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  name="course_id">
-                  <option value="" disabled selected>Select a course to assign</option>
-                  @foreach ($courses as $course)
-                  <option value="{{ $course->id }}" >{{ $course->name }}</option>
-                  @endforeach
-                </select>
+                  placeholder="Course Start Date"
+                />
               </label>
-              <label class="block text-sm mt-2">
+              <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
-                <i class="las la-bookmark text-xl"></i>
-                Assign To Group
+                <i class="las la-clock text-xl"></i>
+                Course End Date
                 </span>
-                <select 
-                required
-                id="groups"
+                <input
+                value="{{ old('end_date') }}"
+                type="date"
+                name="end_date"
+                    required
                   class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                 name="group_id">
-                  <option value="" disabled selected>Select a course first</option>
-                </select>
+                  placeholder="Course End Date"
+                />
               </label>
               <button type="submit" class="table items-center mt-4 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange">
-              Next
+              Add
               <span class="ml-2" aria-hidden="true">
                   <i class='las la-arrow-right'></i>
               </span>

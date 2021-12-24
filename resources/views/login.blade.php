@@ -1,32 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Registration</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
-</head>
-<body>
-    <div class="flex">
-        <div class="flex h-screen items-center">
-            <div class="m-auto">
-                <div class="text-text text-2xl my-16 border-l-2 border-primary w-40 text-center py-7 font-bold">
-                    Sign in
-                </div>
-                <a href="registration"><div class="text-2xl my-16 w-40 text-center py-7 font-bold">
-                    Sign Up
-                </div></a>
-            </div>
-        </div>
-        <div class="bg-primary flex items-center px-28">
-            <div>
-                <img src="{{ asset('png/logo.png') }}" width="180" alt="logo">
-            </div>
-        </div>
+@extends('layout.registration')
+@section('title')
+Login
+@endsection
+@section('content')
         <div class="w-full p-10">
-            <div class="w-2/4 h-8 m-auto mt-20">
+            @if($errors->any())
+                {!! implode('', $errors->all('<div class="text-red-500">:message</div>')) !!}
+            @endif
+            <div class="xl:w-2/4 w-full h-8 m-auto mt-20">
                 <h1 class=" text-3xl font-bold mb-4">Sign In</h1>
                 <div class="w-full shadow py-5 text-center font-bold text-xl mb-5 cursor-pointer flex px-4">
                     <div>
@@ -43,6 +24,4 @@
                 <p class="text-center"><a href="#" class="text-center text-text font-bold text-xl">Forgot Password?</a></p>
             </div>
         </div>
-    </div>
-</body>
-</html>
+@endsection

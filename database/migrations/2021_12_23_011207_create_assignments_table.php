@@ -15,6 +15,7 @@ class CreateAssignmentsTable extends Migration
     {
         Schema::create('assignments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null')->onUpdate('set null');
             $table->string('name');
             $table->foreignId('group_id')->nullable()->constrained()->onDelete('set null')->onUpdate('set null');
             $table->integer('submissions');

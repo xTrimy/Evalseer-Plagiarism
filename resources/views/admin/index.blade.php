@@ -1,4 +1,4 @@
-@extends('layout.dashboard.app')
+@extends('layout.instructor.app')
 
 @section('content')
 Test

@@ -21,4 +21,12 @@ class Course extends Model
     public function groups(){
         return $this->hasMany(Groups::class);
     }
+    public function assignments()
+    {
+        return $this->hasMany(Assignments::class);
+    }
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
 }
