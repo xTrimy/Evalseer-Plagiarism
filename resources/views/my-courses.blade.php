@@ -92,7 +92,7 @@
                                 {{ $course->course_id }}:{{ $course->name }}
                             </div>
                             <div class="w-full text-center">
-                                <a href="{{ route('course',$course->id) }}">
+                                <a href="{{ route('course.view',$course->id) }}">
                                     <div  class=" bg-text text-white px-10 py-3 rounded-lg font-medium text-sm cursor-pointer mb-6">
                                         ENTER THE COURSE
                                     </div>

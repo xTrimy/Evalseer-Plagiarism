@@ -13,4 +13,12 @@ class Groups extends Model
     public function course(){
         return $this->belongsTo(Course::class);
     }
+    public function assignments()
+    {
+        return $this->hasMany(Assignments::class,'group_id');
+    }
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
 }

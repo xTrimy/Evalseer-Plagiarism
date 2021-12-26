@@ -19,6 +19,13 @@ class CreateAssignmentsTable extends Migration
             $table->string('name');
             $table->foreignId('group_id')->nullable()->constrained()->onDelete('set null')->onUpdate('set null');
             $table->integer('submissions');
+            $table->string('description');
+            $table->dateTime('start_time');
+            $table->dateTime('end_time');
+            $table->dateTime('late_time');
+            $table->integer('grade');
+            $table->foreignId('course_id')->nullable()->constrained('courses')->onDelete('set null')->onUpdate('set null');
+            $table->string('pdf')->nullable();
             $table->timestamps();
         });
     }

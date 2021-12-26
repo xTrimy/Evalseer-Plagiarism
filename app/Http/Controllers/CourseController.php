@@ -26,7 +26,12 @@ class CourseController extends Controller
 
     public function assignments($id)
     {
-        $course = Course::with('assignments')->find($id);
+        // $course = Course::with(['groups.assignments' => function ($query) {
+        //     return $query->whereIn('id', Auth::user()->groups->pluck('id'))->orWhere('id', null);
+        // }])->find($id);
+        $course = Course::with(['assignments.questions.submissions'=>function($query){
+            return $query->where('user_id',Auth::user()->id);
+        }])->find($id);
         return view('assignments', ['course' => $course]);
     }
 
@@ -74,4 +79,21 @@ class CourseController extends Controller
         return view('admin.courses',['courses'=>$courses]);
     }
 
+    public function enroll_user(){
+        $students = User::role('student')->get();
+        $courses = Course::all();
+        return view('admin.enroll-student',['students'=>$students,'courses'=>$courses]);
+    }
+    public function enroll_user_store(Request $request){
+        $request->validate(
+            [
+                'user_id'=>'required|exists:users,id',
+                'course_id'=>'required|exists:courses,id'
+            ]
+        );
+        $user = User::findOrFail($request->user_id);
+        $user->courses()->attach($request->course_id);
+
+        return redirect()->back()->with('success','Student Enrolled To Course!');
+    }
 }

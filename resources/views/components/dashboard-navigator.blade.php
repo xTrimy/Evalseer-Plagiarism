@@ -40,7 +40,7 @@
           </ul>
           <ul>
             <li class="relative px-6 py-3">
-              @if($page == 'add')
+              @if($page == 'students')
               <span
                 class="absolute inset-y-0 left-0 w-1 bg-orange-600 rounded-tr-lg rounded-br-lg"
                 aria-hidden="true"
@@ -48,10 +48,25 @@
               @endif
               <a
                 class="inline-flex items-center w-full text-sm font-semibold text-gray-500 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-400"
-                href="#"
+                href="{{ route('dashboard.users.students.view') }}"
               >
                 <i class="las la-users text-xl"></i>
                 <span class="ml-4">Students</span>
+              </a>
+            </li>
+            <li class="relative px-6 py-3">
+              @if($page == 'instructors')
+              <span
+                class="absolute inset-y-0 left-0 w-1 bg-orange-600 rounded-tr-lg rounded-br-lg"
+                aria-hidden="true"
+              ></span>
+              @endif
+              <a
+                class="inline-flex items-center w-full text-sm font-semibold text-gray-500 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-400"
+                href="{{ route('dashboard.users.instructors.view') }}"
+              >
+                <i class="las la-users text-xl"></i>
+                <span class="ml-4">Instructors</span>
               </a>
             </li>
             <li class="relative px-6 py-3">

@@ -48,7 +48,7 @@ class AssignmentController extends Controller
             $assignment->pdf = $fileNameToStore;
         }
         $assignment->save();
-        return redirect()->route('add_question',$assignment->id);
+        return redirect()->route('dashboard.add_question',$assignment->id);
     }
 
     public function view($id){

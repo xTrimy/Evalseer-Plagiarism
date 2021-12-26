@@ -16,4 +16,9 @@ class Questions extends Model
     {
         return $this->hasMany(QuestionTestCases::class,'question_id');
     }
+
+    public function submissions()
+    {
+        return $this->hasMany(Submission::class, 'question_id');
+    }
 }

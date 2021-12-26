@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
     <script src="https://kit.fontawesome.com/b1361fb5d5.js" crossorigin="anonymous"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
 </head>
 <body>
     <div class="flex w-full px-8 py-5">
