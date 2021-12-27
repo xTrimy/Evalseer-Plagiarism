@@ -51,7 +51,6 @@ class QuestionController extends Controller
             'submission'=>'file|required'
         ]);
         $question = Questions::with(['assignment','submissions', 'test_cases'])->find($request->question_id);
-        // dd($question);
         $submission = new Submission();
         $extension = $request->file('submission')->getClientOriginalExtension();
         $fileNameToStore = $request->name . '-' . time() . '.' . $extension;
