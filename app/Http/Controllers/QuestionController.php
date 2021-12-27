@@ -55,7 +55,7 @@ class QuestionController extends Controller
         $extension = $request->file('submission')->getClientOriginalExtension();
         $fileNameToStore = $request->name . '-' . time() . '.' . $extension;
         $submission_number = count($question->submissions)+1;
-        $user_name = Auth::user()->name . ' - ' . str_replace('\\','-',str_replace("/", "-", Auth::user()->university_id));
+        $user_name = Auth::user()->name ;
         $assignment_submission_path = "/assignment_submissions/{$question->assignment->name}/{$question->name}/$user_name/$submission_number";
         $request->submission->move(public_path($assignment_submission_path), $fileNameToStore);
         $submission->submitted_code = $assignment_submission_path.'/'. $fileNameToStore;
