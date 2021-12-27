@@ -7,7 +7,7 @@
                 {!! implode('', $errors->all('<div class="text-red-500">:message</div>')) !!}
             @endif
     <div class="flex w-full">
-            <div class="w-3/4 p-8 bg-gray-200 m-auto rounded-3xl ">
+            <div class="w-3/4 p-8 bg-gray-200 m-auto rounded-3xl shadow-md">
             <div class="flex-1 flex py-2 px-8 bg-gray-200 rounded-3xl mr-10 items-center mb-8">
                 <table class="w-full">
                     <tr class="mb-6">
@@ -60,24 +60,65 @@
     @foreach ($assignment->questions as $question)
     <div class="w-3/4 mx-auto">
         <div class="w-full py-8 text-left">
-            <div class="bg-gray-200 rounded-lg p-8">
+            <div class="bg-gray-200 rounded-lg p-8 shadow-md">
             @if(Session::has('question_'.$question->id))
-            <div class="w-full py-4 px-8 text-green-700 bg-green-300">
-                {{ Session::get('question_'.$question->id) }}
+            <div class="w-full py-4 px-8 text-green-700 bg-green-300 mb-4 rounded-md shadow flex">
+                <div class="flex-1">
+                    {{ Session::get('question_'.$question->id) }}
+                </div>
+                {{-- <div class="cursor-pointer border-l border-gray-100 px-4 flex place-items-center">
+                    <p class="text-white text-xl text-center"><i class="fas fa-times"></i></p>
+                </div> --}}
             </div>
             @endif
-            <h1 class="text-gray-800 text-2xl p-2 bg-gray-300 font-bold">Question: {{ $question->name }}</h1>
-            <p class="text-gray-800 text-lg p-2 bg-gray-300 ">Description: {{ $question->description }}</p>
-            <p class="text-gray-800 text-lg p-2 bg-gray-300 ">Status: 
-                @if(count($question->submissions)>0)
-                <i class="las la-check text-xl text-green-500"></i> Submitted at {{ $question->submissions->last()->created_at->format('l, d F, H:i A') }}
-                @else
-                <i class="las la-times text-xl text-red-500"></i> Not Submitted
+            <div class=" bg-white w-full shadow rounded-md px-4">
+                <h1 class="text-gray-800 text-2xl p-2 font-bold">Question: {{ $question->name }}</h1>
+                <p class="text-gray-800 text-lg p-2  ">Description: {{ $question->description }}</p>
+                <p class="text-gray-800 text-lg p-2  ">Status: 
+                    @if(count($question->submissions)>0)
+                    <i class="las la-check text-xl text-green-500"></i> Submitted at {{ $question->submissions->last()->created_at->format('l, d F, H:i A') }}
+                    @else
+                    <i class="las la-times text-xl text-red-500"></i> Not Submitted
 
-                @endif
-            </p>
+                    @endif
+                </p>
+            </div>
+            
             @if(count($question->submissions)>0)
-            <p>{{ $question->submissions->last()->logic_feedback }} </p>
+            <div class="flex mt-5">
+                <div class="flex bg-white flex-row shadow-md border border-gray-100 rounded-lg overflow-hidden md:w-5/12 mx-2">
+                    <div class="flex w-3 bg-gradient-to-t from-green-500 to-green-400"></div>
+                    <div class="flex-1 p-3">
+                      <h1 class="md:text-xl text-gray-600">Number of Test Cases Passed</h1>
+                      <p class="text-gray-400 text-xs md:text-sm font-light">{{ $question->submissions->last()->logic_feedback }}</p>
+                    </div>
+                    <div class="border-l border-gray-100 px-8 flex place-items-center">
+                      <p class="text-gray-400 text-xs"><i class="fas fa-check"></i></p>
+                    </div>
+                </div>
+                <div class="flex bg-white flex-row shadow-md border border-gray-100 rounded-lg overflow-hidden md:w-5/12 mx-2">
+                    <div class="flex w-3 bg-gradient-to-t from-green-500 to-green-400"></div>
+                    <div class="flex-1 p-3">
+                      <h1 class="md:text-xl text-gray-600">Grade</h1>
+                      <p class="text-gray-400 text-xs md:text-sm font-light">7/10</p>
+                    </div>
+                    <div class="border-l border-gray-100 px-8 flex place-items-center">
+                      <p class="text-gray-400 text-xs"><i class="fas fa-percent"></i></p>
+                    </div>
+                </div>
+                <div class="flex bg-white flex-row shadow-md border border-gray-100 rounded-lg overflow-hidden md:w-5/12 mx-2">
+                    <div class="flex w-3 bg-gradient-to-t from-green-500 to-green-400"></div>
+                    <div class="flex-1 p-3">
+                      <h1 class="md:text-xl text-gray-600">Execution Time</h1>
+                      <p class="text-gray-400 text-xs md:text-sm font-light">{{ $question->submissions->last()->execution_time }} Sec.</p>
+                    </div>
+                    <div class="border-l border-gray-100 px-8 flex place-items-center">
+                      <p class="text-gray-400 text-xs"><i class="far fa-clock"></i></p>
+                    </div>
+                </div>
+            </div>
+
+            
                 <pre class="p-8" id="question_{{ $question->id }}"><code>{!!  file_get_contents(public_path($question->submissions->last()->submitted_code)) !!}</code></pre>
             
             @endif
@@ -90,6 +131,7 @@
                             Add Submission for {{ $question->name }}
                             <input type="file" class="hidden" name="submission" >
                         </label>
+
                     </div>
                     <div class="w-full text-center block py-4 ">
                         <input type="submit" class=" bg-green-700 hover:bg-green-600 py-4 text-white px-10 rounded-lg font-bold text-sm cursor-pointer"name="submission[]" >
