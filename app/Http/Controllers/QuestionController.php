@@ -61,14 +61,11 @@ class QuestionController extends Controller
         $submission->submitted_code = $assignment_submission_path.'/'. $fileNameToStore;
         $submission->question_id = $question->id;
         $cpp_executable = env('CPP_EXE_PATH');
-        $start_time = microtime(true);
         shell_exec("$cpp_executable \"" . public_path($submission->submitted_code) . "\" -o \"" . public_path($assignment_submission_path) . "/output\"");
-        $end_time = microtime(true);
-        $execution_time = ($end_time - $start_time);
-        $execution_time = number_format((float)$execution_time, 4, '.', '');
-        $submission->execution_time = $execution_time;
         $number_of_test_cases_passed=0;
+        $total_excectution_times = 0;
         foreach ($question->test_cases as $test_case){
+            $start_time = microtime(true);
             $test_case_file = public_path($assignment_submission_path . "/test_case_".$test_case->id);
             file_put_contents($test_case_file, $test_case->inputs);
             $output = shell_exec("\"". public_path($assignment_submission_path) . "/output\" < \"". $test_case_file."\"");
@@ -76,7 +73,13 @@ class QuestionController extends Controller
                 $number_of_test_cases_passed +=1;
             }
             $submission->meta .= "\n".$output;
+            $end_time = microtime(true);
+            $execution_time = ($end_time - $start_time);
+            $execution_time = number_format((float)$execution_time, 4, '.', '');
+            $total_excectution_times+= $execution_time;
         }
+        
+        $submission->execution_time = $total_excectution_times/count($question->test_cases);
         $number_of_test_cases = count($question->test_cases);
         $submission->logic_feedback = "Number of Test Cases Passed: $number_of_test_cases_passed/$number_of_test_cases";
         $submission->save();
