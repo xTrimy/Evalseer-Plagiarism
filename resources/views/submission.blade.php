@@ -58,6 +58,9 @@
         
     </div>
     @foreach ($assignment->questions as $question)
+    @php
+        $submission = $question->submissions->last() ?? null;
+    @endphp
     <div class="w-3/4 mx-auto">
         <div class="w-full py-8 text-left">
             <div class="bg-gray-200 rounded-lg p-8 shadow-md">
@@ -107,10 +110,22 @@
                     </div>
                 </div>
                 <div class="flex bg-white flex-row shadow-md border border-gray-100 rounded-lg overflow-hidden md:w-5/12 mx-2">
-                    <div class="flex w-3 bg-gradient-to-t from-green-500 to-green-400"></div>
+                    <div class="flex w-3 bg-gradient-to-t 
+                    @if ($submission->compile_feedback)
+                        from-red-500 to-red-600
+                    @else
+                        from-green-500 to-green-400
+                    @endif
+                    "></div>
                     <div class="flex-1 p-3">
                       <h1 class="md:text-xl text-gray-600">Execution Time</h1>
-                      <p class="text-gray-400 text-xs md:text-sm font-light">{{ $question->submissions->last()->execution_time }} Sec.</p>
+                      <p class="text-gray-400 text-xs md:text-sm font-light">
+                    @if ($submission->compile_feedback)
+                          Error Compiling
+                    @else
+                          {{ $question->submissions->last()->execution_time }} Sec.
+                    @endif
+                        </p>
                     </div>
                     <div class="border-l border-gray-100 px-8 flex place-items-center">
                       <p class="text-gray-400 text-xs"><i class="far fa-clock"></i></p>
@@ -127,11 +142,21 @@
                 @csrf
                 <input type="hidden" name="question_id" value="{{ $question->id }}">
                     <div class="w-full text-center block py-4">
-                        <label class=" bg-text text-white px-10 py-4 rounded-lg font-bold text-sm cursor-pointer">
+                        <div class=" justify-center items-center">
+                            <label class="table mx-auto bg-text text-white px-10 py-4 rounded-lg font-bold text-sm cursor-pointer">
                             Add Submission for {{ $question->name }}
-                            <input type="file" class="hidden" name="submission" >
+                            <input accept=".cpp" id="mmm" type="file" class="hidden" name="submission" >
                         </label>
-
+                            <div id="x" class="text-gray-500 "></div>
+                        </div>
+                        
+                        <script>
+                            var file_input = document.getElementById('mmm');
+                            file_input.addEventListener('change',function(){
+                                var value = file_input.value.split('\\')[2];
+                                document.getElementById('x').innerHTML = value;
+                            })
+                        </script>
                     </div>
                     <div class="w-full text-center block py-4 ">
                         <input type="submit" class=" bg-green-700 hover:bg-green-600 py-4 text-white px-10 rounded-lg font-bold text-sm cursor-pointer"name="submission[]" >

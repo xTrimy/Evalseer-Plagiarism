@@ -61,7 +61,10 @@ class QuestionController extends Controller
         $submission->submitted_code = $assignment_submission_path.'/'. $fileNameToStore;
         $submission->question_id = $question->id;
         $cpp_executable = env('CPP_EXE_PATH');
-        shell_exec("$cpp_executable \"" . public_path($submission->submitted_code) . "\" -o \"" . public_path($assignment_submission_path) . "/output\"");
+        $output_1 = shell_exec("$cpp_executable \"" . public_path($submission->submitted_code) . "\" -o \"" . public_path($assignment_submission_path) . "/output\" 2>&1");
+        if($output_1 != null || strlen($output_1)>0){
+            $submission->compile_feedback = $output_1;
+        }
         $number_of_test_cases_passed=0;
         $total_excectution_times = 0;
         foreach ($question->test_cases as $test_case){
