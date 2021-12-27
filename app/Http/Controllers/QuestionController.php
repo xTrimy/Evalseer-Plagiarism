@@ -61,7 +61,12 @@ class QuestionController extends Controller
         $submission->submitted_code = $assignment_submission_path.'/'. $fileNameToStore;
         $submission->question_id = $question->id;
         $cpp_executable = env('CPP_EXE_PATH');
+        $start_time = microtime(true);
         shell_exec("$cpp_executable \"" . public_path($submission->submitted_code) . "\" -o \"" . public_path($assignment_submission_path) . "/output\"");
+        $end_time = microtime(true);
+        $execution_time = ($end_time - $start_time);
+        $execution_time = number_format((float)$execution_time, 4, '.', '');
+        $submission->execution_time = $execution_time;
         $number_of_test_cases_passed=0;
         foreach ($question->test_cases as $test_case){
             $test_case_file = public_path($assignment_submission_path . "/test_case_".$test_case->id);
