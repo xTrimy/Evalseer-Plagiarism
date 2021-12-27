@@ -119,7 +119,7 @@
             </div>
 
             
-                <pre class="p-8" id="question_{{ $question->id }}"><code>{!!  file_get_contents(public_path($question->submissions->last()->submitted_code)) !!}</code></pre>
+                <pre class="p-8" id="question_{{ $question->id }}"><code>{{  file_get_contents(public_path($question->submissions->last()->submitted_code)) }}</code></pre>
             
             @endif
             @if(count($question->submissions)<$assignment->submissions)
