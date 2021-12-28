@@ -130,7 +130,11 @@ class QuestionController extends Controller
             $execution_time = number_format((float)$execution_time, 4, '.', '');
             $total_excectution_times+= $execution_time;
         }
-        $submission->execution_time = $total_excectution_times/count($question->test_cases);
+        if(count($question->test_cases)>0){
+            $submission->execution_time = $total_excectution_times / count($question->test_cases);
+        }else{
+            $submission->execution_time = NULL;
+        }
         $number_of_test_cases = count($question->test_cases);
 
         $submission->logic_feedback = "Number of Test Cases Passed: $number_of_test_cases_passed/$number_of_test_cases";
