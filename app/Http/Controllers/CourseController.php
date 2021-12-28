@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -29,8 +30,8 @@ class CourseController extends Controller
         // $course = Course::with(['groups.assignments' => function ($query) {
         //     return $query->whereIn('id', Auth::user()->groups->pluck('id'))->orWhere('id', null);
         // }])->find($id);
-        $course = Course::with(['assignments.questions.submissions'=>function($query){
-            return $query->where('user_id',Auth::user()->id);
+        $course = Course::with(['assignments.questions.submissions'=>function(HasMany $query){
+            return $query->where('user_id','=',Auth::user()->id);
         }])->find($id);
         return view('assignments', ['course' => $course]);
     }

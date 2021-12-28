@@ -29,7 +29,7 @@
                         </td>
                         <td>
                             <table class="mt-6 space-y-4 w-full">
-                                <tr class="mb-8 bg-gray-300 ">
+                                {{-- <tr class="mb-8 bg-gray-300 ">
                                     <td class="font-bold text-xl pr-12 py-4 px-3">Submission status</td>
                                     <td class="text-xl">No attempt</td>
                                 </tr>
@@ -37,18 +37,18 @@
                                 <tr class="bg-gray-300">
                                     <td class="font-bold text-xl pr-12  py-4 px-3">Grade</td>
                                     <td class="text-xl">Not graded</td>
-                                </tr>
+                                </tr> --}}
                                 <tr class=" h-4"></tr>
                                 <tr class="bg-gray-300">
                                     <td class="font-bold text-xl pr-12  py-4 px-3">Time remaining</td>
                                     {{-- <td class="text-xl text-red-800">Assignment is overdue by: 53 days 18 hours</td> --}}
                                     <td class="text-xl ">{{ $assignment->end_time->diffForHumans() }}</td>
                                 </tr>
-                                <tr class=" h-4"></tr>
+                                {{-- <tr class=" h-4"></tr>
                                 <tr class="bg-gray-300">
                                     <td class="font-bold text-xl pr-12  py-4 px-3">Last modified</td>
                                     <td class="text-xl">-</td>
-                                </tr>
+                                </tr> --}}
                             </table>
                         </td>
                     </tr>
@@ -163,16 +163,16 @@
                         <div class=" justify-center items-center">
                             <label class="table mx-auto bg-text text-white px-10 py-4 rounded-lg font-bold text-sm cursor-pointer">
                             Add Submission for {{ $question->name }}
-                            <input accept=".cpp" id="mmm" type="file" class="hidden" name="submission" >
+                            <input accept=".cpp" id="question_file_{{ $question->id }}" type="file" class="hidden" name="submission" >
                         </label>
-                            <div id="x" class="text-gray-500 "></div>
+                            <div id="question_filename_{{ $question->id }}" class="text-gray-500 "></div>
                         </div>
                         
                         <script>
-                            var file_input = document.getElementById('mmm');
+                            var file_input = document.getElementById('question_file_{{ $question->id }}');
                             file_input.addEventListener('change',function(){
                                 var value = file_input.value.split('\\')[2];
-                                document.getElementById('x').innerHTML = value;
+                                document.getElementById('question_filename_{{ $question->id }}').innerHTML = value;
                             })
                         </script>
                     </div>

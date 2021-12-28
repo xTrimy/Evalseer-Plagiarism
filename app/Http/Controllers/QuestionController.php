@@ -151,6 +151,7 @@ class QuestionController extends Controller
             }
         }
       
+        $submission->user_id = Auth::user()->id;
         $submission->total_grade = $total_grade;
         $submission->save();
         
