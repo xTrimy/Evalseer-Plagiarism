@@ -102,6 +102,7 @@ Route::get('/generate_password_for_users',function(){
     foreach($users as $user){
         if(strlen($user->password) <60){
             $user->password = bcrypt($user->password);
+            $user->save();
         }
     }
 });
