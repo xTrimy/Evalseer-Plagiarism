@@ -24,6 +24,16 @@ Add Question to {{ $assignment->name }}
               </div>
             </div>
             @endif
+             @if(Session::has('error'))
+            <div
+              class="flex items-center justify-between px-4 p-2 mb-8 text-sm font-semibold text-red-600 bg-red-100 rounded-lg focus:outline-none focus:shadow-outline-orange"
+            >
+              <div class="flex items-center">
+                <i class="fas fa-times mr-2"></i>
+                <span>{{ Session::get('error') }}</span>
+              </div>
+            </div>
+            @endif
             <!-- General elements -->
             <form method="POST" enctype="multipart/form-data"
               class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800"
@@ -62,7 +72,7 @@ Add Question to {{ $assignment->name }}
               <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
                 <i class="las la-highlighter text-xl"></i>
-                Grade
+                Total Grade
                 </span>
                 <input
                 value="{{ old('grade') }}"
@@ -73,6 +83,25 @@ Add Question to {{ $assignment->name }}
                   placeholder="5"
                 />
               </label>
+              <h1 class="text-xl text-black font-bold mt-4">
+                Grading Criteria %
+              </h1>
+              @foreach ($grading_criterias as $grading_criteria)
+              <label class="block text-sm">
+                <span class="text-gray-700 dark:text-gray-400">
+                {{ ucwords(str_replace('_', ' ', $grading_criteria)); }}
+                </span>
+                <input
+                value="{{ old($grading_criteria) }}"
+                type="number"
+                name="{{ $grading_criteria }}"
+                  required
+                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  value="0"
+                  placeholder="30"
+                />
+              </label>                
+              @endforeach
               <h2 class="font-bold text-xl mt-8">Test Cases</h2>
               <div class="form-group">
                 <label>Test Cases Number</label>

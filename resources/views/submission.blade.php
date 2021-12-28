@@ -75,14 +75,15 @@
             </div>
             @endif
             <div class=" bg-white w-full shadow rounded-md px-4">
-                <h1 class="text-gray-800 text-2xl p-2 font-bold">Question: {{ $question->name }}</h1>
-                <p class="text-gray-800 text-lg p-2  ">Description: {{ $question->description }}</p>
-                <p class="text-gray-800 text-lg p-2  ">Status: 
+                <h1 class="text-gray-800 text-2xl p-2 font-bold">
+                   Question: {{ $question->name }}</h1>
+                <p class="text-gray-800 text-lg p-2  "><i class="las la-align-left"></i> Description: {{ $question->description }}</p>
+                <p class="text-gray-800 text-lg p-2  "><i class="las la-file"></i> Remaining Submissions: {{ $assignment->submissions-count($question->submissions) }}</p>
+                <p class="text-gray-800 text-lg p-2  ">
                     @if(count($question->submissions)>0)
-                    <i class="las la-check text-xl text-green-500"></i> Submitted at {{ $question->submissions->last()->created_at->format('l, d F, H:i A') }}
+                    <i class="las la-check text-xl text-green-500"></i> Status:  Submitted at {{ $question->submissions->last()->created_at->format('l, d F, H:i A') }}
                     @else
-                    <i class="las la-times text-xl text-red-500"></i> Not Submitted
-
+                    <i class="las la-times text-xl text-red-500"></i> Status:  Not Submitted
                     @endif
                 </p>
             </div>
@@ -100,10 +101,16 @@
                     </div>
                 </div>
                 <div class="flex bg-white flex-row shadow-md border border-gray-100 rounded-lg overflow-hidden md:w-5/12 mx-2">
-                    <div class="flex w-3 bg-gradient-to-t from-green-500 to-green-400"></div>
+                    <div class="flex w-3 bg-gradient-to-t 
+                    @if( $question->submissions->last()->total_grade/$question->grade >= 0.5 )
+                    from-green-500 to-green-400
+                    @else
+                    from-red-500 to-red-400
+                    @endif
+                    "></div>
                     <div class="flex-1 p-3">
                       <h1 class="md:text-xl text-gray-600">Grade</h1>
-                      <p class="text-gray-400 text-xs md:text-sm font-light">7/10</p>
+                      <p class="text-gray-400 text-xs md:text-sm font-light">{{ $question->submissions->last()->total_grade }}/{{ $question->grade }}</p>
                     </div>
                     <div class="border-l border-gray-100 px-8 flex place-items-center">
                       <p class="text-gray-400 text-xs"><i class="fas fa-percent"></i></p>
@@ -123,7 +130,7 @@
                     @if ($submission->compile_feedback)
                           Error Compiling
                     @else
-                          {{ $question->submissions->last()->execution_time }} Sec.
+                          {{ round($question->submissions->last()->execution_time,5) }} Sec.
                     @endif
                         </p>
                     </div>
@@ -136,7 +143,6 @@
             
                 <pre class="p-8" id="question_{{ $question->id }}"><code>{{  file_get_contents(public_path($question->submissions->last()->submitted_code)) }}</code></pre>
             
-            @endif
             @if ($submission->compile_feedback)
                 <div class=" bg-white w-full shadow rounded-md px-4 py-4">
                     <div class="text-center text-2xl font-bold mb-3">
@@ -147,7 +153,9 @@
             @else
                     
             @endif
-            @if(count($question->submissions)<$assignment->submissions)
+            @endif
+
+            @if(count($question->submissions)<$assignment->submissions && $submission_allowed)
             <form method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="question_id" value="{{ $question->id }}">

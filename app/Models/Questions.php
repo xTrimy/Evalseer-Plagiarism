@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Questions extends Model
 {
     use HasFactory;
-
+    
     public function assignment(){
         return $this->belongsTo(Assignments::class);
     }
@@ -20,5 +20,10 @@ class Questions extends Model
     public function submissions()
     {
         return $this->hasMany(Submission::class, 'question_id');
+    }
+
+    public function grading_criteria()
+    {
+        return $this->hasMany(GradingCriteria::class, 'question_id');
     }
 }

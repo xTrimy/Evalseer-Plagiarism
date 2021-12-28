@@ -28,13 +28,15 @@
 
     <div class="flex w-full">
         <div class="flex w-full px-32 py-8 bg-gray-900">
-            <p class="text-white font-bold cursor-pointer mr-6">HOME</p>
-            <p class="text-white font-bold cursor-pointer mr-6">EDUCATION</p>
+            <a href="{{ route('home') }}">
+                <p class="text-white font-bold cursor-pointer mr-6">HOME</p>
+            </a>
+            {{-- <p class="text-white font-bold cursor-pointer mr-6">EDUCATION</p>
             <p class="text-white font-bold cursor-pointer mr-6">CATALOG</p>
             <p class="text-white font-bold cursor-pointer mr-6">OPPORTUNITIES</p>
             <p class="text-white font-bold cursor-pointer mr-6">COURSES</p>
             <p class="text-white font-bold cursor-pointer mr-6">ACHIEVMENTS</p>
-            <p class="text-white font-bold cursor-pointer mr-6">HOW IT WORKS</p>
+            <p class="text-white font-bold cursor-pointer mr-6">HOW IT WORKS</p> --}}
         </div>
         <div class="flex w-96 py-8 bg-text text-center justify-center">
             <p class="text-white font-bold text-center cursor-pointer">LOGOUT</p>
@@ -43,12 +45,12 @@
     <div class="w-full bg-text py-1"></div>
     <div class="flex w-full">
         <div class="flex w-full px-32 py-2 bg-gray-900">
-            <p class="text-white font-bold cursor-pointer mr-6">CS101: FUNDAMENTALS OF COMPUTER PROGRAMMING</p>
+            <p class="text-white font-bold cursor-pointer mr-6">Title</p>
         </div>
     </div>
     <div class="flex w-full">
         <div class="flex w-full px-32 py-4 bg-white">
-            <p class="text-gray-900 font-bold cursor-pointer">Home > My Courses > <p class="text-text font-bold">CS101: Fundamentals of computer programming</p></p>
+            <p class="text-gray-900 font-bold cursor-pointer">Home > My Courses > <p class="text-text font-bold">Title</p></p>
         </div>
     </div>
     <div class="flex w-full mb-8">
