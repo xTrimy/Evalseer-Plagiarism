@@ -135,15 +135,18 @@ class QuestionController extends Controller
 
         $submission->logic_feedback = "Number of Test Cases Passed: $number_of_test_cases_passed/$number_of_test_cases";
 
-        
-        //Give grade for Test Cases Passed:
-        //Test_Cases_Grade = Passed_Test_Cases/Total_Test_Cases * Grading_Percentage_for_Test_Cases
-        //Test_Cases_Grade_Total = Test_Cases_Grade/100 * Total_Grade
-        $total_test_cases_grade = ($number_of_test_cases_passed/ $number_of_test_cases)* $question->grading_criteria->last()->not_hidden_test_cases_weight;
-        $total_test_cases_grade_total = $total_test_cases_grade/100 * $question->grade;
-        $submission->not_hidden_logic_grade = $total_test_cases_grade_total;
-        $total_grade += $submission->not_hidden_logic_grade;
-        
+        if ($question->grading_criteria) {
+            if ($question->grading_criteria->last()->not_hidden_test_cases_weight) {
+                //Give grade for Test Cases Passed:
+                //Test_Cases_Grade = Passed_Test_Cases/Total_Test_Cases * Grading_Percentage_for_Test_Cases
+                //Test_Cases_Grade_Total = Test_Cases_Grade/100 * Total_Grade
+                $total_test_cases_grade = ($number_of_test_cases_passed / $number_of_test_cases) * $question->grading_criteria->last()->not_hidden_test_cases_weight;
+                $total_test_cases_grade_total = $total_test_cases_grade / 100 * $question->grade;
+                $submission->not_hidden_logic_grade = $total_test_cases_grade_total;
+                $total_grade += $submission->not_hidden_logic_grade;
+            }
+        }
+      
         $submission->total_grade = $total_grade;
         $submission->save();
         
