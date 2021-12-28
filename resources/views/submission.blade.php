@@ -22,7 +22,7 @@
                                 <p class="text-left font-bold text-xl">Opened: <span class="text-left font-normal">{{ $assignment->start_time->format('l, d F, H:i A') }}</span> </p>
                                 <p class="w-full text-left font-bold text-xl">Due: <span class="text-left font-normal">{{ $assignment->end_time->format('l, d F, H:i A') }}</span></p>
                             </div>
-                        </td>
+                        </td> 
                     </tr>
                     <tr>
                         <td>
@@ -136,6 +136,16 @@
             
                 <pre class="p-8" id="question_{{ $question->id }}"><code>{{  file_get_contents(public_path($question->submissions->last()->submitted_code)) }}</code></pre>
             
+            @endif
+            @if ($submission->compile_feedback)
+                <div class=" bg-white w-full shadow rounded-md px-4 py-4">
+                    <div class="text-center text-2xl font-bold mb-3">
+                        Syntax Errors <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <pre class=" bg-gray-200 my-5 px-3 py-4 rounded shadow">{{ $question->submissions->last()->compile_feedback }}</pre>
+                </div>
+            @else
+                    
             @endif
             @if(count($question->submissions)<$assignment->submissions)
             <form method="POST" enctype="multipart/form-data">

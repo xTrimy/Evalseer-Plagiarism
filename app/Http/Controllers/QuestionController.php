@@ -62,7 +62,25 @@ class QuestionController extends Controller
         $submission->question_id = $question->id;
         $cpp_executable = env('CPP_EXE_PATH');
         $output_1 = shell_exec("$cpp_executable \"" . public_path($submission->submitted_code) . "\" -o \"" . public_path($assignment_submission_path) . "/output\" 2>&1");
-        if($output_1 != null || strlen($output_1)>0){
+        
+        if($output_1 != null || strlen($output_1)>0) {
+            $final_feedback = "";
+            $key = "error";
+
+            // while($output_1 != "") {
+            //     $pos = strpos($output_1,$key);
+            //     $pos = $pos - 5;
+            //     $output_1 = substr_replace($output_1,'',0,$pos);
+            //     $output_1 = str_replace("^", "", $output_1);
+
+            //     $final_feedback += $output_1;
+
+                
+            // }
+
+            $output_1 = str_replace(public_path($submission->submitted_code),'',$output_1);
+
+
             $submission->compile_feedback = $output_1;
         }
         $number_of_test_cases_passed=0;
@@ -72,8 +90,8 @@ class QuestionController extends Controller
             $test_case_file = public_path($assignment_submission_path . "/test_case_".$test_case->id);
             file_put_contents($test_case_file, $test_case->inputs);
             $output = shell_exec("\"". public_path($assignment_submission_path) . "/output\" < \"". $test_case_file."\"");
-            if($output == $test_case->output){
-                $number_of_test_cases_passed +=1;
+            if($output == $test_case->output) {
+                $number_of_test_cases_passed +=1; 
             }
             $submission->meta .= "\n".$output;
             $end_time = microtime(true);
