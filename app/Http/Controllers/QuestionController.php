@@ -103,7 +103,7 @@ class QuestionController extends Controller
         //If no compiler error (The output file won't exist unless no errors found)
         if(file_exists($_SERVER['DOCUMENT_ROOT']. $assignment_submission_path. "/output.exe")){
             // Give grade for compiling if the criteria exists
-            if($question->grading_criteria){
+            if($question->grading_criteria->last()){
                 if($question->grading_criteria->last()->compiling_weight){
                     //Grade = Grading_percentage/100 * Total_Grade
                     $submission->compiling_grade += $question->grading_criteria->last()->compiling_weight/100 * $question->grade;
@@ -135,7 +135,7 @@ class QuestionController extends Controller
 
         $submission->logic_feedback = "Number of Test Cases Passed: $number_of_test_cases_passed/$number_of_test_cases";
 
-        if ($question->grading_criteria) {
+        if ($question->grading_criteria->last()) {
             if ($question->grading_criteria->last()->not_hidden_test_cases_weight) {
                 //Give grade for Test Cases Passed:
                 //Test_Cases_Grade = Passed_Test_Cases/Total_Test_Cases * Grading_Percentage_for_Test_Cases
