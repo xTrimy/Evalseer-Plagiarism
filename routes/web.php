@@ -108,3 +108,14 @@ Route::get('/generate_password_for_users',function(){
 });
 
 
+Route::get('/assign_all_users_to_computer_science_course', function () {
+    $users = User::all();
+    foreach ($users as $user) {
+        if($user->hasRole('student'))
+            continue;
+        $user->assignRole('student');
+        $user->courses()->attach(1);
+    }
+});
+
+
