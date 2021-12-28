@@ -171,7 +171,7 @@
                         <script>
                             var file_input = document.getElementById('question_file_{{ $question->id }}');
                             file_input.addEventListener('change',function(){
-                                var value = file_input.value.split('\\')[2];
+                                var value = file_input.value;
                                 document.getElementById('question_filename_{{ $question->id }}').innerHTML = value;
                             })
                         </script>
