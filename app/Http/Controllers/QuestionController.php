@@ -139,7 +139,7 @@ class QuestionController extends Controller
 
         $submission->logic_feedback = "Number of Test Cases Passed: $number_of_test_cases_passed/$number_of_test_cases";
 
-        if ($question->grading_criteria->last()) {
+        if ($question->grading_criteria->last() && $number_of_test_cases>0) {
             if ($question->grading_criteria->last()->not_hidden_test_cases_weight) {
                 //Give grade for Test Cases Passed:
                 //Test_Cases_Grade = Passed_Test_Cases/Total_Test_Cases * Grading_Percentage_for_Test_Cases
