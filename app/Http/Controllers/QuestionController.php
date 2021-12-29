@@ -101,7 +101,7 @@ class QuestionController extends Controller
         }
 
         //If no compiler error (The output file won't exist unless no errors found)
-        if(file_exists($_SERVER['DOCUMENT_ROOT']. $assignment_submission_path. "/output.exe")){
+        if(file_exists(public_path(). $assignment_submission_path. "/output.exe")){
             // Give grade for compiling if the criteria exists
             if($question->grading_criteria->last()){
                 if($question->grading_criteria->last()->compiling_weight){
