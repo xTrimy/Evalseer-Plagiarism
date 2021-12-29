@@ -21,8 +21,8 @@ Login
                     <p class="w-full text-center">Sign In With Google</p> 
                 </div> --}}
                 <hr class=" my-5">
-                <h1 class=" text-2xl font-bold mb-4">Email Address or Username</h1>
-                <input type="text" name="email" placeholder="Enter Your Email or Username" class=" w-full bg-gray-100 py-6 text-black outline-none px-8 rounded-md mb-6">
+                <h1 class=" text-2xl font-bold mb-4">Email Address </h1>
+                <input type="email" name="email" placeholder="Enter Your Email" class=" w-full bg-gray-100 py-6 text-black outline-none px-8 rounded-md mb-6">
                 <h1 class=" text-2xl font-bold mb-4">Password</h1>
                 <input type="password" name="password" placeholder="Enter Your Password" class=" w-full bg-gray-100 py-6 text-black outline-none px-8 rounded-md mb-16">
                 <input type="submit" class="w-full bg-text py-6 outline-none px-8 rounded-md mb-6 text-white font-bold text-xl cursor-pointer" value="Sign In">
