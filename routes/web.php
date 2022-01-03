@@ -89,6 +89,12 @@ Route::middleware('auth')->group(function (){
             Route::prefix('/instructors')->as('instructors.')->group(function () {
                 Route::get('/', [UserController::class, "dashboard_view_instructors"])->name('view');
             });
+            Route::prefix('/instructors')->as('instructors.')->group(function () {
+                Route::get('/view-assignments', [UserController::class, "dashboard_view_assignments"])->name('view_assignments');
+            });
+            Route::prefix('/instructors')->as('instructors.')->group(function ($assignment_id) {
+                Route::get('/view-assignments-questions/{assignment_id}', [UserController::class, "view_assignment_questions"])->name('view_assignment_questions');
+            });
             Route::get('/add', [UserController::class, "add"])->name('add');
             Route::post('/add', [UserController::class, "store"]);
         });
