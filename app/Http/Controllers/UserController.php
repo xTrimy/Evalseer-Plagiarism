@@ -82,6 +82,17 @@ class UserController extends Controller
                         ->get();
         return view('admin.view-assignments-questions',['users'=>$users,'questions'=>$questions]);
     }
+
+    public function view_question_submission($question_id) {
+        // dd($assignment_id);
+        $users = User::role('instructor')->paginate(15);
+
+        $questions = DB::table('questions')
+                        ->where('assignment_id',$question_id)
+                        ->select('questions.*')
+                        ->get();
+        return view('admin.view-question-submissions',['users'=>$users,'questions'=>$questions]);
+    }
     //User Views END
 
     //User Add START

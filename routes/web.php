@@ -95,6 +95,9 @@ Route::middleware('auth')->group(function (){
             Route::prefix('/instructors')->as('instructors.')->group(function ($assignment_id) {
                 Route::get('/view-assignments-questions/{assignment_id}', [UserController::class, "view_assignment_questions"])->name('view_assignment_questions');
             });
+            Route::prefix('/instructors')->as('instructors.')->group(function ($question_id) {
+                Route::get('/view-question-submission/{question_id}', [UserController::class, "view_question_submission"])->name('view_question_submission');
+            });
             Route::get('/add', [UserController::class, "add"])->name('add');
             Route::post('/add', [UserController::class, "store"]);
         });

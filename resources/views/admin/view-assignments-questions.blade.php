@@ -104,7 +104,7 @@ users
                               aria-label="Delete"
                             >
                             <a
-                            href="#"
+                            href="{{ route('dashboard.users.instructors.view_question_submission',['question_id'=>$question->id]) }}"
                               class="flex items-center justify-between w-full px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange"
                             >
                               View Submissions
