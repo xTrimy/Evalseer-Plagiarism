@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Events\Registered;
 use App\Models\User;
 use App\Models\Assignments;
+use App\Models\Submission;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 
@@ -87,11 +88,12 @@ class UserController extends Controller
         // dd($assignment_id);
         $users = User::role('instructor')->paginate(15);
 
-        $questions = DB::table('questions')
-                        ->where('assignment_id',$question_id)
-                        ->select('questions.*')
+        $submissions = DB::table('submissions')
+                        ->where('submissions.question_id', $question_id)
+                        ->leftJoin('users', 'submissions.user_id', '=', 'users.id')
+                        ->distinct('user_id')
                         ->get();
-        return view('admin.view-question-submissions',['users'=>$users,'questions'=>$questions]);
+        return view('admin.view-question-submissions',['users'=>$users,'submissions'=>$submissions]);
     }
     //User Views END
 

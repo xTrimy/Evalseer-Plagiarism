@@ -24,10 +24,12 @@ users
                 >
                   Assignments
                 </h2>
-                <a href="#">
-                    <button class="py-2 px-8 text-white rounded-lg bg-orange-600 hover:bg-orange-500 active:bg-orange-400 text-lg ring-0 transition-all active:ring-4 ring-orange-200 dark:ring-orange-800">
-                        <i class="las la-plus text-2xl"></i> Add Assignment
-                    </button>
+                <a
+                href="{{ route('dashboard.users.instructors.run_plag',['zipPath'=>'1','type'=>'1']) }}"
+                    class="flex items-center justify-between px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange"
+                >
+                    Run Plagiarism
+                    <i class="ml-2 fas fa-play text-xl"></i>
                 </a>
             </div>
             
@@ -38,47 +40,43 @@ users
                     <tr
                       class="text-xs text-center font-semibold tracking-wide text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
                     >
-                      <th class="px-4 py-3">Name</th>
-                      <th class="px-4 py-3">Group ID</th>
-                      <th class="px-4 py-3">Total Submissions</th>
-                      <th class="px-4 py-3">Start Date</th>
-                      <th class="px-4 py-3">End Date</th>
+                      <th class="px-4 py-3">Student Name</th>
+                      <th class="px-4 py-3">Submission</th>
+                      <th class="px-4 py-3">Logic Feedback</th>
+                      <th class="px-4 py-3">Execution Time</th>
+                      <th class="px-4 py-3">Plagiarism</th>
                       <th class="px-4 py-3">Grade</th>
-                      <th class="px-4 py-3">Course</th>
                       <th class="px-4 py-3">Actions</th>
                     </tr>
                   </thead>
                   <tbody
                     class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800"
                   >
-                  @foreach ($assignments as $assignment)
+                  @foreach ($submissions as $submission)
                       <tr class="text-gray-700 dark:text-gray-400 text-center">
                       <td class="px-4 py-3">
                         <div class="flex items-center text-sm">
                           <!-- Avatar with inset shadow -->
                           </div>
                           <div>
-                            <p class="font-semibold">{{ $assignment->name }}</p>
+                            <p class="font-semibold">{{ $submission->name }}</p>
                           </div>
                         </div>
                       </td>
-                      <td class="px-4 py-3 text-sm font-bold" >
-                        {{ $assignment->group_id ?? 'All Groups' }}
+                      <td class="px-4 py-3 text-sm " >
+                        <a target="_blank" href="{{ $submission->submitted_code }}">View Submission</a>
                       </td>
                       <td class="px-4 py-3 text-center" >
-                        {{ $assignment->submissions ?? 'None' }}
+                        {{ $submission->logic_feedback ?? 'None' }}
                       </td>
                       <td class="px-4 py-3 " >
-                        {{ $assignment->start_time }}
+                        {{ $submission->execution_time.' Sec' ?? 'Error Compiling' }}
                       </td>
                       <td class="px-4 py-3">
-                        {{ $assignment->end_time }}
+                        {{-- {{ $submission->plagiarism }} --}}
                       </td>
                       <td class="px-4 py-3">
-                        {{ $assignment->grade }}
-                      </td>
-                      <td class="px-4 py-3">
-                        {{ $assignment->course_id }}
+                        {{ $submission->total_grade }}
                       </td>
                       <td class="px-4 py-3">
                         <div class="flex items-center space-x-4 text-sm justify-center">
@@ -114,7 +112,7 @@ users
                               ></path>
                             </svg>
                           </button>
-                          <a href="{{ route('dashboard.users.instructors.view_assignment_questions',['assignment_id'=>$assignment->id]) }}" style="display: block;">
+                          <a href="" style="display: block;">
                             <button
                               class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
                               aria-label="Delete"
