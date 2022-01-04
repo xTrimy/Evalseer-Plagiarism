@@ -9,6 +9,7 @@ use App\Models\QuestionTestCases;
 use App\Models\Submission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use stdClass;
 
 class QuestionController extends Controller
 {
@@ -93,16 +94,31 @@ class QuestionController extends Controller
         //Compiling Submitted file
         $cpp_executable = env('CPP_EXE_PATH');
         $output_1 = shell_exec("$cpp_executable \"" . public_path($submission->submitted_code) . "\" -o \"" . public_path($assignment_submission_path) . "/output\" 2>&1");
-        
+       
+        $compiler_feedback = false;
         //Saving compiler error if exists
         if($output_1 != null || strlen($output_1)>0) {
             $output_1 = str_replace(public_path($submission->submitted_code),'',$output_1);
-            $submission->compile_feedback = $output_1;
+            $compiler_feedback = [];
+            $compiler_feedback["compiler_feedback"] = $output_1;
+            $evalseer_feedback = shell_exec(env('SYNTAX_CORRECTION_PY')." \"". public_path($submission->submitted_code) . "\" 2>&1");
+            $evalseer_feedback = json_decode($evalseer_feedback,true);
+            foreach($evalseer_feedback as $key => $value){
+                $compiler_feedback[$key] =$value;
+            }
+            if($compiler_feedback["status"] == "success"){
+                $corrected_code_path = public_path($assignment_submission_path)."/fixed.cpp";
+                $file = fopen($corrected_code_path,'w');
+                fwrite($file,$compiler_feedback["solution"]);
+                fclose($file);
+                $output_1 = shell_exec("$cpp_executable \"" . $corrected_code_path . "\" -o \"" . public_path($assignment_submission_path) . "/output\" 2>&1");
+            }
+            $submission->compile_feedback = json_encode($compiler_feedback);
+            
         }
 
         //If no compiler error (The output file won't exist unless no errors found)
-        if(file_exists(public_path(). $assignment_submission_path. "/output")
-        || file_exists(public_path() . $assignment_submission_path . "/output.exe")){
+        if($compiler_feedback == false || empty($compiler_feedback)){
             // Give grade for compiling if the criteria exists
             if($question->grading_criteria->last()){
                 if($question->grading_criteria->last()->compiling_weight){

@@ -144,13 +144,36 @@
                 <pre class="p-8" id="question_{{ $question->id }}"><code>{{  file_get_contents(public_path($question->submissions->last()->submitted_code)) }}</code></pre>
             
             @if ($submission->compile_feedback)
+                @php
+                    $data = json_decode($question->submissions->last()->compile_feedback);
+                @endphp
+                @if($data != null)
                 <div class=" bg-white w-full shadow rounded-md px-4 py-4">
                     <div class="text-center text-2xl font-bold mb-3">
                         Syntax Errors <i class="fas fa-exclamation-triangle"></i>
                     </div>
-                    <pre class=" bg-gray-200 my-5 px-3 py-4 rounded shadow">{{ $question->submissions->last()->compile_feedback }}</pre>
+                    <h1 class="text-xl font-bold mt-4">Compiler Feedback:</h1>
+                    <pre class=" bg-gray-200 my-5 px-3 py-4 rounded shadow">{!! nl2br(e($data->compiler_feedback)) !!}</pre>
+                    @if($data->status == "success")
+                    <h1 class="text-xl font-bold mt-4 text-green-600">Evalseer Feedback:</h1>
+                    <pre class=" bg-gray-200 my-5 px-3 py-4 rounded shadow">Missing {{ $data->token }} at line {{ $data->line }}</pre>
+                    @php
+                        $solution = htmlspecialchars($data->solution);
+                        $solution = explode("\n",$solution);
+                        foreach ($solution as $key =>$sol) {
+                            $solution[$key]="<div class='code'>$sol</div>";
+                        }
+                        $solution[$data->line-1] = "<div class='bg-green-400 text-red-500 highlight-inline'>{$solution[$data->line-1]}</div>";
+                        $solution = implode("",$solution);
+                    @endphp
+                    <pre class="fixed_output bg-gray-200 my-5 rounded shadow ">{!! $solution !!}</pre>
+                    @else
+                    <div class="bg-gray-200 my-5 px-3 py-4 rounded shadow">
+                        <h1 class="text-xl font-bold mt-4 text-red-600">Evalseer Couldn't find any possible solutions:</h1>
+                    </div>
+                    @endif
                 </div>
-            @else
+                @endif
                     
             @endif
             @endif
@@ -190,6 +213,11 @@
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             document.querySelectorAll('pre code').forEach((el) => {
+                hljs.highlightElement(el);
+            });
+        });
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('div.code').forEach((el) => {
                 hljs.highlightElement(el);
             });
         });
