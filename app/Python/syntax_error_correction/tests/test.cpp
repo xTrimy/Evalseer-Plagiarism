@@ -8,6 +8,6 @@ int main ( )
 {
     int c ;
     cin >> c ;
-    cout << multiply_f ( c ) ;
+    cout << "The output is:" << multiply_f ( c ) ;
     return 0 ;
 }

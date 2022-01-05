@@ -65,9 +65,15 @@
         <div class="w-full py-8 text-left">
             <div class="bg-gray-200 rounded-lg p-8 shadow-md">
             @if(Session::has('question_'.$question->id))
-            <div class="w-full py-4 px-8 text-green-700 bg-green-300 mb-4 rounded-md shadow flex">
+            <div id="success_submission" class="w-full py-4 px-8 text-green-700 bg-green-300 mb-4 rounded-md shadow flex">
                 <div class="flex-1">
                     {{ Session::get('question_'.$question->id) }}
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function(){
+                            var success_submission = document.getElementById("success_submission");
+                            success_submission.scrollIntoView();
+                        });
+                    </script>
                 </div>
                 {{-- <div class="cursor-pointer border-l border-gray-100 px-4 flex place-items-center">
                     <p class="text-white text-xl text-center"><i class="fas fa-times"></i></p>
@@ -139,8 +145,22 @@
                     </div>
                 </div>
             </div>
-
-            
+           @if(count($question->grading_criteria)>0)
+           {{-- Check if grading criteria is set for test cases & that the submission got 0 marks for test cases --}}
+                @if ($submission->not_hidden_logic_grade + $submission->hidden_logic_grade == 0 &&
+                 $question->grading_criteria->last()->not_hidden_test_cases_weight + $question->grading_criteria->last()->hidden_test_cases_weight > 0)
+                    <div class="flex bg-yellow-200 items-center flex-row shadow-md border px-4 py-2 my-4 rounded-lg overflow-hidden w-full mx-2">
+                        <h2 class="text-2xl mr-2"><i class="las la-lightbulb"></i> Note:</h2>
+                        <p>
+                            <div class="hidden modal_contains">
+                                <x-failed-test-cases-feedback :question="$question" :submission="$submission" />
+                            </div>
+                            All of the test cases failed 
+                            <span data-modal-title="Wrong output reason" data-modal-close-button="Got It!" class="modal_open py-2 px-8 bg-yellow-300 shadow-md mx-2 hover:bg-yellow-400 rounded-md">See why</span>
+                        </p>
+                    </div>
+                @endif
+            @endif
                 <pre class="p-8" id="question_{{ $question->id }}"><code>{{  file_get_contents(public_path($question->submissions->last()->submitted_code)) }}</code></pre>
             
             @if ($submission->compile_feedback)

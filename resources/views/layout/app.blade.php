@@ -10,7 +10,8 @@
     <script src="https://kit.fontawesome.com/b1361fb5d5.js" crossorigin="anonymous"></script>
     <script src="{{ asset('js/app.js') }}"></script>
 </head>
-<body>
+<body class="relative">
+    <x-modal/>
     <div class="flex w-full px-8 py-5">
         <div class="flex-1  text-center flex justify-center">
             <div class="w-3/4">
