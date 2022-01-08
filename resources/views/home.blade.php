@@ -35,7 +35,7 @@
         </p>
         @endif
         <h1 class="text-5xl">Try it NOW!</h1>
-        <form method="POST" class="p-8" enctype="multipart/form-data">
+        <form method="POST" action="submit" class="p-8" enctype="multipart/form-data">
             @csrf
             @if ($errors->any())
                 <div class="text-red-500">
