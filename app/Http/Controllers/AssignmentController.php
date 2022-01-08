@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Assignments;
 use App\Models\Course;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AssignmentController extends Controller
 {
@@ -52,8 +54,11 @@ class AssignmentController extends Controller
     }
 
     public function view($id){
-        $assignment = Assignments::with('questions.test_cases')->find($id);
-        return view('submission',["assignment"=>$assignment]);
+        $assignment = Assignments::with(['questions.test_cases', 'questions.submissions'=>function(HasMany $query){
+            return $query->where('user_id',Auth::user()->id);
+        }])->find($id);
+        $submission_allowed = (strtotime($assignment->start_time) <= time() && strtotime($assignment->end_time) >= time())?true:false;
+        return view('submission',["assignment"=>$assignment,'submission_allowed'=>$submission_allowed]);
     }
 
     public function submit_assignment(Request $request){

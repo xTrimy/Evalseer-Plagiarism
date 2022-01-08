@@ -29,7 +29,7 @@
                         </td>
                         <td>
                             <table class="mt-6 space-y-4 w-full">
-                                <tr class="mb-8 bg-gray-300 ">
+                                {{-- <tr class="mb-8 bg-gray-300 ">
                                     <td class="font-bold text-xl pr-12 py-4 px-3">Submission status</td>
                                     <td class="text-xl">No attempt</td>
                                 </tr>
@@ -37,18 +37,18 @@
                                 <tr class="bg-gray-300">
                                     <td class="font-bold text-xl pr-12  py-4 px-3">Grade</td>
                                     <td class="text-xl">Not graded</td>
-                                </tr>
+                                </tr> --}}
                                 <tr class=" h-4"></tr>
                                 <tr class="bg-gray-300">
                                     <td class="font-bold text-xl pr-12  py-4 px-3">Time remaining</td>
                                     {{-- <td class="text-xl text-red-800">Assignment is overdue by: 53 days 18 hours</td> --}}
                                     <td class="text-xl ">{{ $assignment->end_time->diffForHumans() }}</td>
                                 </tr>
-                                <tr class=" h-4"></tr>
+                                {{-- <tr class=" h-4"></tr>
                                 <tr class="bg-gray-300">
                                     <td class="font-bold text-xl pr-12  py-4 px-3">Last modified</td>
                                     <td class="text-xl">-</td>
-                                </tr>
+                                </tr> --}}
                             </table>
                         </td>
                     </tr>
@@ -75,14 +75,15 @@
             </div>
             @endif
             <div class=" bg-white w-full shadow rounded-md px-4">
-                <h1 class="text-gray-800 text-2xl p-2 font-bold">Question: {{ $question->name }}</h1>
-                <p class="text-gray-800 text-lg p-2  ">Description: {{ $question->description }}</p>
-                <p class="text-gray-800 text-lg p-2  ">Status: 
+                <h1 class="text-gray-800 text-2xl p-2 font-bold">
+                   Question: {{ $question->name }}</h1>
+                <p class="text-gray-800 text-lg p-2  "><i class="las la-align-left"></i> Description: {{ $question->description }}</p>
+                <p class="text-gray-800 text-lg p-2  "><i class="las la-file"></i> Remaining Submissions: {{ $assignment->submissions-count($question->submissions) }}</p>
+                <p class="text-gray-800 text-lg p-2  ">
                     @if(count($question->submissions)>0)
-                    <i class="las la-check text-xl text-green-500"></i> Submitted at {{ $question->submissions->last()->created_at->format('l, d F, H:i A') }}
+                    <i class="las la-check text-xl text-green-500"></i> Status:  Submitted at {{ $question->submissions->last()->created_at->format('l, d F, H:i A') }}
                     @else
-                    <i class="las la-times text-xl text-red-500"></i> Not Submitted
-
+                    <i class="las la-times text-xl text-red-500"></i> Status:  Not Submitted
                     @endif
                 </p>
             </div>
@@ -100,10 +101,16 @@
                     </div>
                 </div>
                 <div class="flex bg-white flex-row shadow-md border border-gray-100 rounded-lg overflow-hidden md:w-5/12 mx-2">
-                    <div class="flex w-3 bg-gradient-to-t from-green-500 to-green-400"></div>
+                    <div class="flex w-3 bg-gradient-to-t 
+                    @if( $question->submissions->last()->total_grade/$question->grade >= 0.5 )
+                    from-green-500 to-green-400
+                    @else
+                    from-red-500 to-red-400
+                    @endif
+                    "></div>
                     <div class="flex-1 p-3">
                       <h1 class="md:text-xl text-gray-600">Grade</h1>
-                      <p class="text-gray-400 text-xs md:text-sm font-light">7/10</p>
+                      <p class="text-gray-400 text-xs md:text-sm font-light">{{ $question->submissions->last()->total_grade }}/{{ $question->grade }}</p>
                     </div>
                     <div class="border-l border-gray-100 px-8 flex place-items-center">
                       <p class="text-gray-400 text-xs"><i class="fas fa-percent"></i></p>
@@ -123,7 +130,7 @@
                     @if ($submission->compile_feedback)
                           Error Compiling
                     @else
-                          {{ $question->submissions->last()->execution_time }} Sec.
+                          {{ round($question->submissions->last()->execution_time,5) }} Sec.
                     @endif
                         </p>
                     </div>
@@ -136,18 +143,42 @@
             
                 <pre class="p-8" id="question_{{ $question->id }}"><code>{{  file_get_contents(public_path($question->submissions->last()->submitted_code)) }}</code></pre>
             
-            @endif
             @if ($submission->compile_feedback)
+                @php
+                    $data = json_decode($question->submissions->last()->compile_feedback);
+                @endphp
+                @if($data != null)
                 <div class=" bg-white w-full shadow rounded-md px-4 py-4">
                     <div class="text-center text-2xl font-bold mb-3">
                         Syntax Errors <i class="fas fa-exclamation-triangle"></i>
                     </div>
-                    <pre class=" bg-gray-200 my-5 px-3 py-4 rounded shadow">{{ $question->submissions->last()->compile_feedback }}</pre>
+                    <h1 class="text-xl font-bold mt-4">Compiler Feedback:</h1>
+                    <pre class=" bg-gray-200 my-5 px-3 py-4 rounded shadow">{!! nl2br(e($data->compiler_feedback)) !!}</pre>
+                    @if($data->status == "success")
+                    <h1 class="text-xl font-bold mt-4 text-green-600">Evalseer Feedback:</h1>
+                    <pre class=" bg-gray-200 my-5 px-3 py-4 rounded shadow">Missing {{ $data->token }} at line {{ $data->line }}</pre>
+                    @php
+                        $solution = htmlspecialchars($data->solution);
+                        $solution = explode("\n",$solution);
+                        foreach ($solution as $key =>$sol) {
+                            $solution[$key]="<div class='code'>$sol</div>";
+                        }
+                        $solution[$data->line-1] = "<div class='bg-green-400 text-red-500 highlight-inline'>{$solution[$data->line-1]}</div>";
+                        $solution = implode("",$solution);
+                    @endphp
+                    <pre class="fixed_output bg-gray-200 my-5 rounded shadow ">{!! $solution !!}</pre>
+                    @else
+                    <div class="bg-gray-200 my-5 px-3 py-4 rounded shadow">
+                        <h1 class="text-xl font-bold mt-4 text-red-600">Evalseer Couldn't find any possible solutions:</h1>
+                    </div>
+                    @endif
                 </div>
-            @else
+                @endif
                     
             @endif
-            @if(count($question->submissions)<$assignment->submissions)
+            @endif
+
+            @if(count($question->submissions)<$assignment->submissions && $submission_allowed)
             <form method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="question_id" value="{{ $question->id }}">
@@ -155,16 +186,16 @@
                         <div class=" justify-center items-center">
                             <label class="table mx-auto bg-text text-white px-10 py-4 rounded-lg font-bold text-sm cursor-pointer">
                             Add Submission for {{ $question->name }}
-                            <input accept=".cpp" id="mmm" type="file" class="hidden" name="submission" >
+                            <input accept=".cpp" id="question_file_{{ $question->id }}" type="file" class="hidden" name="submission" >
                         </label>
-                            <div id="x" class="text-gray-500 "></div>
+                            <div id="question_filename_{{ $question->id }}" class="text-gray-500 "></div>
                         </div>
                         
                         <script>
-                            var file_input = document.getElementById('mmm');
+                            var file_input = document.getElementById('question_file_{{ $question->id }}');
                             file_input.addEventListener('change',function(){
-                                var value = file_input.value.split('\\')[2];
-                                document.getElementById('x').innerHTML = value;
+                                var value = "File selected";
+                                document.getElementById('question_filename_{{ $question->id }}').innerHTML = value;
                             })
                         </script>
                     </div>
@@ -182,6 +213,11 @@
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             document.querySelectorAll('pre code').forEach((el) => {
+                hljs.highlightElement(el);
+            });
+        });
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('div.code').forEach((el) => {
                 hljs.highlightElement(el);
             });
         });

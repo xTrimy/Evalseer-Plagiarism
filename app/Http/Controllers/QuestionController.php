@@ -3,17 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\Assignments;
+use App\Models\GradingCriteria;
 use App\Models\Questions;
 use App\Models\QuestionTestCases;
 use App\Models\Submission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use stdClass;
 
 class QuestionController extends Controller
 {
+    private $grading_criterias = [
+        'compiling',
+        'styling',
+        // 'logic',
+        'not_hidden_test_cases',
+        // 'hidden_test_cases',
+        // 'features',
+    ];
     public function add($id){
+
         $assignment = Assignments::find($id);
-        return view('instructor.add-question',["assignment"=>$assignment]);
+        return view('instructor.add-question',["assignment"=>$assignment,'grading_criterias'=>$this->grading_criterias]);
     }
     public function store(Request $request){
         $request->validate([
@@ -24,7 +35,13 @@ class QuestionController extends Controller
             'input' => "nullable|array",
             'output' => "nullable|array",
         ]);
-
+        $total_grading_criteria=0;
+        foreach($this->grading_criterias as $grading_criteria){
+            $total_grading_criteria += $request[$grading_criteria];
+        }
+        if($total_grading_criteria != 100){
+            return redirect()->back()->with('error','Total grading criteria percentage must be "100%"')->withInput();
+        }
         $question = new Questions();
         $question->name = $request->name;
         $question->assignment_id = $request->assignment_id;
@@ -42,6 +59,14 @@ class QuestionController extends Controller
             }
             $i++;
         }
+        if(count($this->grading_criterias)>0){
+            $grading_criteria_record = new GradingCriteria();
+            foreach ($this->grading_criterias as $grading_criteria) {
+                $grading_criteria_record["${grading_criteria}_weight"] = $request["${grading_criteria}"];
+            }
+            $grading_criteria_record->question_id = $question->id;
+            $grading_criteria_record->save();
+        }
         return redirect()->back()->with('success',"Question added successfully");
     }
 
@@ -50,8 +75,13 @@ class QuestionController extends Controller
             'question_id'=>'required|exists:questions,id',
             'submission'=>'file|required'
         ]);
-        $question = Questions::with(['assignment','submissions', 'test_cases'])->find($request->question_id);
+        
+        $total_grade = 0;
+
+        $question = Questions::with(['assignment','submissions', 'test_cases', 'grading_criteria'])->find($request->question_id);
         $submission = new Submission();
+
+        //Saving Submission
         $extension = $request->file('submission')->getClientOriginalExtension();
         $fileNameToStore = $request->name . '-' . time() . '.' . $extension;
         $submission_number = count($question->submissions)+1;
@@ -60,32 +90,50 @@ class QuestionController extends Controller
         $request->submission->move(public_path($assignment_submission_path), $fileNameToStore);
         $submission->submitted_code = $assignment_submission_path.'/'. $fileNameToStore;
         $submission->question_id = $question->id;
+
+        //Compiling Submitted file
         $cpp_executable = env('CPP_EXE_PATH');
         $output_1 = shell_exec("$cpp_executable \"" . public_path($submission->submitted_code) . "\" -o \"" . public_path($assignment_submission_path) . "/output\" 2>&1");
-        
+       
+        $compiler_feedback = false;
+        //Saving compiler error if exists
         if($output_1 != null || strlen($output_1)>0) {
-            $final_feedback = "";
-            $key = "error";
-
-            // while($output_1 != "") {
-            //     $pos = strpos($output_1,$key);
-            //     $pos = $pos - 5;
-            //     $output_1 = substr_replace($output_1,'',0,$pos);
-            //     $output_1 = str_replace("^", "", $output_1);
-
-            //     $final_feedback += $output_1;
-
-                
-            // }
-
             $output_1 = str_replace(public_path($submission->submitted_code),'',$output_1);
-
-
-            $submission->compile_feedback = $output_1;
+            $compiler_feedback = [];
+            $compiler_feedback["compiler_feedback"] = $output_1;
+            $evalseer_feedback = shell_exec(env('SYNTAX_CORRECTION_PY')." \"". public_path($submission->submitted_code) . "\" 2>&1");
+            $evalseer_feedback = json_decode($evalseer_feedback,true);
+            foreach($evalseer_feedback as $key => $value){
+                $compiler_feedback[$key] =$value;
+            }
+            if($compiler_feedback["status"] == "success"){
+                $corrected_code_path = public_path($assignment_submission_path)."/fixed.cpp";
+                $file = fopen($corrected_code_path,'w');
+                fwrite($file,$compiler_feedback["solution"]);
+                fclose($file);
+                $output_1 = shell_exec("$cpp_executable \"" . $corrected_code_path . "\" -o \"" . public_path($assignment_submission_path) . "/output\" 2>&1");
+            }
+            $submission->compile_feedback = json_encode($compiler_feedback);
+            
         }
+
+        //If no compiler error (The output file won't exist unless no errors found)
+        if($compiler_feedback == false || empty($compiler_feedback)){
+            // Give grade for compiling if the criteria exists
+            if($question->grading_criteria->last()){
+                if($question->grading_criteria->last()->compiling_weight){
+                    //Grade = Grading_percentage/100 * Total_Grade
+                    $submission->compiling_grade += $question->grading_criteria->last()->compiling_weight/100 * $question->grade;
+                    $total_grade += $submission->compiling_grade;
+                }
+            }
+        }
+
+        //Running Test Cases
         $number_of_test_cases_passed=0;
         $total_excectution_times = 0;
         foreach ($question->test_cases as $test_case){
+            //Calculating runtime of the submitted program
             $start_time = microtime(true);
             $test_case_file = public_path($assignment_submission_path . "/test_case_".$test_case->id);
             file_put_contents($test_case_file, $test_case->inputs);
@@ -99,10 +147,29 @@ class QuestionController extends Controller
             $execution_time = number_format((float)$execution_time, 4, '.', '');
             $total_excectution_times+= $execution_time;
         }
-        
-        $submission->execution_time = $total_excectution_times/count($question->test_cases);
+        if(count($question->test_cases)>0){
+            $submission->execution_time = $total_excectution_times / count($question->test_cases);
+        }else{
+            $submission->execution_time = NULL;
+        }
         $number_of_test_cases = count($question->test_cases);
+
         $submission->logic_feedback = "Number of Test Cases Passed: $number_of_test_cases_passed/$number_of_test_cases";
+
+        if ($question->grading_criteria->last() && $number_of_test_cases>0) {
+            if ($question->grading_criteria->last()->not_hidden_test_cases_weight) {
+                //Give grade for Test Cases Passed:
+                //Test_Cases_Grade = Passed_Test_Cases/Total_Test_Cases * Grading_Percentage_for_Test_Cases
+                //Test_Cases_Grade_Total = Test_Cases_Grade/100 * Total_Grade
+                $total_test_cases_grade = ($number_of_test_cases_passed / $number_of_test_cases) * $question->grading_criteria->last()->not_hidden_test_cases_weight;
+                $total_test_cases_grade_total = $total_test_cases_grade / 100 * $question->grade;
+                $submission->not_hidden_logic_grade = $total_test_cases_grade_total;
+                $total_grade += $submission->not_hidden_logic_grade;
+            }
+        }
+      
+        $submission->user_id = Auth::user()->id;
+        $submission->total_grade = $total_grade;
         $submission->save();
         
         return redirect()->back()->with('question_'.$request->question_id,"Answer Submitted for {$question->name}");
