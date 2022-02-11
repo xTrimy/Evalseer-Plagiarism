@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Events\Registered;
 use App\Models\User;
+use App\Models\Course;
 use App\Models\Assignments;
 use App\Models\Submission;
 use Spatie\Permission\Models\Role;
@@ -83,6 +84,8 @@ class UserController extends Controller
                         ->get();
         return view('admin.view-assignments-questions',['users'=>$users,'questions'=>$questions]);
     }
+
+    
 
     public function view_question_submission($question_id) {
         // dd($assignment_id);

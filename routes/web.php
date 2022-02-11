@@ -76,15 +76,14 @@ Route::middleware('auth')->group(function (){
         Route::get('/', function () {
             return view('instructor.index');
         });
-        Route::prefix('/assignments')->group(function () {
-            Route::get('/add', [AssignmentController::class, "add"]);
+        Route::prefix('/assignments')->as('assignments.')->group(function () {
+            Route::get('/add', [AssignmentController::class, "add"])->name('add_assignment');
             Route::post('/add', [AssignmentController::class, "store"]);
         });
         Route::prefix('/qestions/{id}')->group(function ($id) {
             Route::get('/add', [QuestionController::class, "add"])->name('add_question');
             Route::post('/add', [QuestionController::class, "store"]);
         });
-
 
         // Admin routes
         Route::prefix('/courses')->as('courses.')->group(function () {
@@ -108,6 +107,11 @@ Route::middleware('auth')->group(function (){
             });
             Route::prefix('/instructors')->as('instructors.')->group(function ($assignment_id) {
                 Route::get('/view-assignments-questions/{assignment_id}', [UserController::class, "view_assignment_questions"])->name('view_assignment_questions');
+            });
+            Route::prefix('/instructors')->as('instructors.')->group(function ($assignment_id) {
+                Route::get('/edit-assignment/{assignment_id}', [AssignmentController::class, "edit_assignment"])->name('edit_assignment');
+                Route::post('/edit-assignment/{assignment_id}', [AssignmentController::class, "edit"]);
+                Route::post('/edit-assignment/{assignment_id}', [QuestionController::class, "delete"]);
             });
             Route::prefix('/instructors')->as('instructors.')->group(function ($question_id) {
                 Route::get('/view-question-submission/{question_id}', [UserController::class, "view_question_submission"])->name('view_question_submission');

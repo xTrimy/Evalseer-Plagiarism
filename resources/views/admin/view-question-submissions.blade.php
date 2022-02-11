@@ -73,10 +73,10 @@ users
                         {{ $submission->execution_time.' Sec' ?? 'Error Compiling' }}
                       </td>
                       <td class="px-4 py-3">
-                        {{-- {{ $submission->plagiarism }} --}}
+                        {{ $submission->plagiarism }}%
                       </td>
                       <td class="px-4 py-3">
-                        {{ $submission->total_grade }}
+                        {{ $submission->total_grade  }}
                       </td>
                       <td class="px-4 py-3">
                         <div class="flex items-center space-x-4 text-sm justify-center">
