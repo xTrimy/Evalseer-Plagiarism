@@ -4,7 +4,7 @@
             href="#"
           >
           <div class="w-8 h-8 inline-block mr-4">
-            <img src="{{ asset('img/logo.png') }}" class="w-full h-full object-contain" alt="">
+            <img src="{{ asset('png/logo.png') }}" class="w-full h-full object-contain" alt="">
           </div>
             Evalseer
           </a>

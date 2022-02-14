@@ -50,7 +50,7 @@ Courses
                           >
                             <img
                               class="object-cover w-full h-full rounded-full"
-                              src=""
+                              src="{{ asset('png/course.png') }}"
                               alt=""
                               loading="lazy"
                             />
