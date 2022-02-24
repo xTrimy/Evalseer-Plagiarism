@@ -5,6 +5,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SubmitController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PlagiarismController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -25,14 +26,26 @@ Route::middleware('guest')->group(function(){
         return view('login');
     })->name('login');
     Route::post('/login', [UserController::class,'login']);
+    
     Route::get('/signup', function () {
         return view('signup');
     })->name('signup');
+
+    Route::get('/jplag', function () {
+        return view('home');
+    })->name('jplag');
+
     Route::post('/signup/createUser', [UserController::class, 'createUser'])->name('createUser');
 });
 
 //Must be authenticated routes
 Route::middleware('auth')->group(function (){
+
+    Route::get('/jplag', function () {
+        return view('home');
+    })->name('jplag');
+
+    Route::post('/submit', [SubmitController::class,'submit']);
 
     // Student routes
     Route::get('/', [CourseController::class, 'view_courses'])->name('home');
@@ -57,20 +70,20 @@ Route::middleware('auth')->group(function (){
     });
 
     Route::prefix('/dashboard')->as('dashboard.')->group(function () {
-        
+
+        Route::get('/form-zip', [PlagiarismController::class, "formZip"]);
         // Instructor routes
         Route::get('/', function () {
             return view('instructor.index');
         });
-        Route::prefix('/assignments')->group(function () {
-            Route::get('/add', [AssignmentController::class, "add"]);
+        Route::prefix('/assignments')->as('assignments.')->group(function () {
+            Route::get('/add', [AssignmentController::class, "add"])->name('add_assignment');
             Route::post('/add', [AssignmentController::class, "store"]);
         });
         Route::prefix('/qestions/{id}')->group(function ($id) {
             Route::get('/add', [QuestionController::class, "add"])->name('add_question');
             Route::post('/add', [QuestionController::class, "store"]);
         });
-
 
         // Admin routes
         Route::prefix('/courses')->as('courses.')->group(function () {
@@ -88,6 +101,23 @@ Route::middleware('auth')->group(function (){
             });
             Route::prefix('/instructors')->as('instructors.')->group(function () {
                 Route::get('/', [UserController::class, "dashboard_view_instructors"])->name('view');
+            });
+            Route::prefix('/instructors')->as('instructors.')->group(function () {
+                Route::get('/view-assignments', [UserController::class, "dashboard_view_assignments"])->name('view_assignments');
+            });
+            Route::prefix('/instructors')->as('instructors.')->group(function ($assignment_id) {
+                Route::get('/view-assignments-questions/{assignment_id}', [UserController::class, "view_assignment_questions"])->name('view_assignment_questions');
+            });
+            Route::prefix('/instructors')->as('instructors.')->group(function ($assignment_id) {
+                Route::get('/edit-assignment/{assignment_id}', [AssignmentController::class, "edit_assignment"])->name('edit_assignment');
+                Route::post('/edit-assignment/{assignment_id}', [AssignmentController::class, "edit"]);
+                Route::post('/edit-assignment/{assignment_id}', [QuestionController::class, "delete"]);
+            });
+            Route::prefix('/instructors')->as('instructors.')->group(function ($question_id) {
+                Route::get('/view-question-submission/{question_id}', [UserController::class, "view_question_submission"])->name('view_question_submission');
+            });
+            Route::prefix('/instructors')->as('instructors.')->group(function () {
+                Route::get('/run-plag/{zipPath}/{type}', [PlagiarismController::class, "run_plag"])->name('run_plag');
             });
             Route::get('/add', [UserController::class, "add"])->name('add');
             Route::post('/add', [UserController::class, "store"]);

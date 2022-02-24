@@ -263,7 +263,7 @@
                 >
                   <img
                     class="object-cover w-8 h-8 rounded-full border"
-                    src="{{ asset('png/user.png') }}"
+                    src="{{ asset("avatars/") }}"
                     aria-hidden="true"
                   />
                 </button>
