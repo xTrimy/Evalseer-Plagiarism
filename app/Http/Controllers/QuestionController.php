@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Assignments;
 use App\Models\GradingCriteria;
+use App\Models\QuestionFeature;
 use App\Models\Questions;
 use App\Models\QuestionTestCases;
 use App\Models\Submission;
@@ -50,12 +51,28 @@ class QuestionController extends Controller
         $question->save();
         $i = 0;
         foreach($request->input as $input){
+            //skipping first hidden inputs
             if($i>0){
                 $question_test_case = new QuestionTestCases();
                 $question_test_case->inputs = $input;
                 $question_test_case->output = $request->output[$i];
                 $question_test_case->question_id = $question->id;
                 $question_test_case->save();
+            }
+            $i++;
+        }
+        $i=0;
+        foreach ($request->feature as $feature) {
+            //skipping first hidden inputs
+            if ($i > 0) {
+                $feature = explode(",",$feature);
+                foreach($feature as $splitted_feature){
+                    $question_feature = new QuestionFeature();
+                    $question_feature->feature = $splitted_feature;
+                    $question_feature->occurrences = $request->occurrences[$i];
+                    $question_feature->question_id = $question->id;
+                    $question_feature->save();
+                }
             }
             $i++;
         }
@@ -78,7 +95,7 @@ class QuestionController extends Controller
         
         $total_grade = 0;
 
-        $question = Questions::with(['assignment','submissions', 'test_cases', 'grading_criteria'])->find($request->question_id);
+        $question = Questions::with(['assignment','submissions', 'test_cases','features', 'grading_criteria'])->find($request->question_id);
         $submission = new Submission();
 
         //Saving Submission
@@ -147,6 +164,22 @@ class QuestionController extends Controller
             $execution_time = number_format((float)$execution_time, 4, '.', '');
             $total_excectution_times+= $execution_time;
         }
+        //Calculating feature grade
+        $count_features_passed = 0;
+        foreach ($question->features as $feature) {
+            $feature_text = $feature->feature;
+            if(strpos($feature_text,'regex:') === 0){
+                $file = (file_get_contents(public_path($submission->submitted_code)));
+                $feature_text = str_replace('regex:',"",$feature_text);
+                $count_occur = preg_match_all("/".$feature_text."/im", $file);
+                if($count_occur == $feature->occurrences){
+                    $count_features_passed++;
+                }
+            }
+        }
+ 
+
+
         if(count($question->test_cases)>0){
             $submission->execution_time = $total_excectution_times / count($question->test_cases);
         }else{
@@ -165,6 +198,13 @@ class QuestionController extends Controller
                 $total_test_cases_grade_total = $total_test_cases_grade / 100 * $question->grade;
                 $submission->not_hidden_logic_grade = $total_test_cases_grade_total;
                 $total_grade += $submission->not_hidden_logic_grade;
+            }
+            if($question->grading_criteria->last()->features_weight){
+                $number_of_features = count($question->features);
+                $feature_passed_grade = ($count_features_passed / $number_of_features)* $question->grading_criteria->last()->features_weight;
+                $total_features_grade_total = $feature_passed_grade / 100 * $question->grade;
+                $submission->features_grade = $total_features_grade_total;
+                $total_grade += $submission->features_grade;
             }
         }
       

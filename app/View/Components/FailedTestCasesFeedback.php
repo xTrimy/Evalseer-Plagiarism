@@ -33,6 +33,7 @@ class FailedTestCasesFeedback extends Component
         $submission_outputs = explode("\n",$submission_outputs);
         $test_cases = $question->test_cases;
         $output_string = false;
+        if(count($test_cases) > 0)
         if(strpos($submission_outputs[0],$test_cases[0]->output)){
             $output_string = str_replace($test_cases[0]->output,'',$submission_outputs[0]);
         }
