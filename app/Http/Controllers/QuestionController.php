@@ -150,6 +150,8 @@ class QuestionController extends Controller
         $user_name = Auth::user()->name ;
         $assignment_submission_path = "/assignment_submissions/{$question->assignment->name}/{$question->name}/$user_name/$submission_number";
         $request->submission->move(public_path($assignment_submission_path), $fileNameToStore);
+        $assignment_style_path = "//cpplint-file//";
+        // $request->submission->move(public_path($assignment_style_path), $fileNameToStore);
         $submission->submitted_code = $assignment_submission_path.'/'. $fileNameToStore;
         $submission->question_id = $question->id;
 
@@ -159,11 +161,23 @@ class QuestionController extends Controller
        
         $compiler_feedback = false;
         //Saving compiler error if exists
+
+
+        
+
+        $stylefb = shell_exec("python ". public_path('\\cpplint-file\\cpplint.py')." ".public_path('\\cpplint-file\\test.cpp'));
+        $stylefb = str_replace(public_path('\\cpplint-file'),'',$stylefb);
+        $submission->style_feedback = $stylefb;
+        $stylefb = str_replace(public_path($submission->style_feedback),'',$stylefb);
+        $submission->style_feedback = $stylefb;
         if($output_1 != null || strlen($output_1)>0) {
             $output_1 = str_replace(public_path($submission->submitted_code),'',$output_1);
             $compiler_feedback = [];
             $compiler_feedback["compiler_feedback"] = $output_1;
             $evalseer_feedback = shell_exec(env('SYNTAX_CORRECTION_PY')." \"". public_path($submission->submitted_code) . "\" 2>&1");
+
+            
+
             $evalseer_feedback = json_decode($evalseer_feedback,true);
             foreach($evalseer_feedback as $key => $value){
                 $compiler_feedback[$key] =$value;

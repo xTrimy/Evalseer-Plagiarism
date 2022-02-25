@@ -6,7 +6,7 @@ int main() {
     int factorial = 1;
 
     int a=0;
-    cin >> n;
+    cin >> n
 
     // for(int i=0;i<1000000;i++){
     //     a++;
