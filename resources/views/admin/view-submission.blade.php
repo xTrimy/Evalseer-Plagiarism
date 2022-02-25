@@ -119,7 +119,7 @@ users
                   @endforeach
                   </tbody>
                 </table>
-                <div class="w-full bg-white text-black p-4 rounded-md shadow-lg border mt-8">
+                <div class="w-full bg-white text-black p-4 rounded-md border mt-8">
                   <h1 class="my-3 font-bold">Submitted Code</h1>
                   <style>
                     pre {
@@ -170,7 +170,12 @@ users
 })();
               </script>
                 </div>
-                
+                <div class="w-full bg-white text-black p-4 rounded-md border mt-8">
+                  <h1 class="my-3 font-bold">Syntax Feedback</h1>
+                </div>
+                <div class="w-full bg-white text-black p-4 rounded-md border mt-8">
+                  <h1 class="my-3 font-bold">Style Feedback</h1>
+                </div>
               </div>
               <div
                 class="mt-4"
