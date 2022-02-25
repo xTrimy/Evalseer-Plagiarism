@@ -149,7 +149,7 @@
                       ease-in-out" data-bs-dismiss="modal" onclick="closeModal('modal{{$i}}')">Close</button>
 										<form action="/delete" method="POST" enctype="multipart/form-data">
 											<input type="hidden" name="question_id" value="{{ $question->id }}"> @csrf
-											<button type="submit" class="px-6
+											<button  class="px-6
                       py-2.5
                       bg-red-600
                       text-white

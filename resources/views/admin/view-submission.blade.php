@@ -119,7 +119,7 @@ users
                   @endforeach
                   </tbody>
                 </table>
-                <div class="w-full bg-white text-black p-4 rounded-md shadow-lg border mt-8">
+                <div class="w-full bg-white text-black p-4 rounded-md border mt-8">
                   <h1 class="my-3 font-bold">Submitted Code</h1>
                   <style>
                     pre {
@@ -157,20 +157,27 @@ users
                  <pre><code>{{  file_get_contents(public_path($submission->submitted_code)) }}</code></pre>
                  <script>
                   (function() {
-  var pre = document.getElementsByTagName('pre'),
-    pl = pre.length;
-  for (var i = 0; i < pl; i++) {
-    pre[i].innerHTML = '<span class="line-number"></span>' + pre[i].innerHTML + '<span class="cl"></span>';
-    var num = pre[i].innerHTML.split(/\n/).length;
-    for (var j = 0; j < num; j++) {
-      var line_num = pre[i].getElementsByTagName('span')[0];
-      line_num.innerHTML += '<span>' + (j + 1) + '</span>';
-    }
-  }
-})();
+                    var pre = document.getElementsByTagName('pre'),
+                      pl = pre.length;
+                    for (var i = 0; i < pl; i++) {
+                      pre[i].innerHTML = '<span class="line-number"></span>' + pre[i].innerHTML + '<span class="cl"></span>';
+                      var num = pre[i].innerHTML.split(/\n/).length;
+                      for (var j = 0; j < num; j++) {
+                        var line_num = pre[i].getElementsByTagName('span')[0];
+                        line_num.innerHTML += '<span>' + (j + 1) + '</span>';
+                      }
+                    }
+                  })();
               </script>
                 </div>
-                
+                <div class="w-full bg-white text-black p-4 rounded-md border mt-8">
+                  <h1 class="my-3 font-bold">Syntax Feedback</h1>
+                  {{ $submission->syntax_feedback ?? "No Syntax Feedback"}}
+                </div>
+                <div class="w-full bg-white text-black p-4 rounded-md border mt-8">
+                  <h1 class="my-3 font-bold">Style Feedback</h1>
+                  <pre>{{ $submission->style_feedback ?? "No Style Feedback"  }}</pre>
+                </div>
               </div>
               <div
                 class="mt-4"

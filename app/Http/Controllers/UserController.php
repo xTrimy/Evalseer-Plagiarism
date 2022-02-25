@@ -158,6 +158,8 @@ class UserController extends Controller
             $path = public_path('uploadedimages/');
             $request->file('image')->move($path , $fileNameToStore);
             $user->image = $fileNameToStore;
+        } else {
+            $user->image = "user.png";
         }
         $user->save();
         foreach ($request->role as $role) {
