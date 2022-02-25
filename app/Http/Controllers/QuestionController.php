@@ -10,6 +10,7 @@ use App\Models\QuestionTestCases;
 use App\Models\Submission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use RuntimeException;
 use stdClass;
 
 class QuestionController extends Controller
@@ -87,33 +88,114 @@ class QuestionController extends Controller
         return redirect()->back()->with('success',"Question added successfully");
     }
 
+    /**
+     * Save student submission file(s) when uploading an answer
+     * Returns Submission File Path
+     * 
+     * @param  Request  $request
+     * @param  Question  $question
+     * @param  Submission  $submission
+     * @return string
+     *
+     */
+    private function save_submission_file($request, $question, &$submission){
+        $extension = $request->file('submission')->getClientOriginalExtension();
+        $fileNameToStore = $request->file('submission')->getClientOriginalName();
+        $submission_number = count($question->submissions) + 1;
+        $user_name = Auth::user()->name;
+        $assignment_submission_path = "/assignment_submissions/{$question->assignment->name}/{$question->name}/$user_name/$submission_number";
+        $request->submission->move(public_path($assignment_submission_path), $fileNameToStore);
+        $submission->submitted_code = $assignment_submission_path . '/' . $fileNameToStore;
+        $submission->question_id = $question->id;
+        return $assignment_submission_path;
+    }
+    /**
+     * Compile code file
+     * Returns the compilation output
+     *
+     * @param  string  $language
+     * @param  string  $file_path
+     * @param  string  $file_directory
+     * @return string
+     *
+     * @throws RuntimeException
+     */
+    private function compile_file($language,string $file_path,string $file_directory){
+        // TODO: Make languages more dynamic
+        if($language == 'cpp'){
+            $cpp_executable = env('CPP_EXE_PATH');
+            $output = shell_exec("$cpp_executable \"" . $file_path . "\" -o \"" . $file_directory . "/output\" 2>&1");
+            return $output;
+        }else if($language == 'java'){
+            $java_executable = env('JAVA_COMPILER_PATH');
+            $output = shell_exec("$java_executable \"". $file_path . "\" 2>&1 ");
+            return $output;
+        }
+        else{
+            throw new RuntimeException('Language '.$language.' is undefiened');
+        }
+    }
+    /**
+     * Run test cases on submission and return total test cases passed
+     *
+     * @param  array  $test_cases
+     * @param  string  $file_directory
+     * @param  Submission  $submission
+     * @param  string  $language
+     * @return int $number_of_test_cases_passed
+     *
+     */
+    private function run_test_cases_on_submission($test_cases,string $file_directory, Submission &$submission, $language = 'cpp'){
+        if (count($test_cases) <= 0) {
+            return 0;
+        }
+        //Running Test Cases
+        $number_of_test_cases_passed = 0;
+        $total_excectution_time = 0;
+        foreach ($test_cases as $test_case) {
+            //Calculating runtime of the submitted program
+            $start_time = microtime(true);
+            $test_case_file = public_path($file_directory . "/test_case_" . $test_case->id);
+            file_put_contents($test_case_file, $test_case->inputs);
+            if($language == "cpp"){
+                $output = shell_exec("\"" . public_path($file_directory) . "/output\" < \"" . $test_case_file . "\"");
+            }else if($language == "java"){
+                $java_exe = env('JAVA_EXE_PATH');
+                $output = shell_exec("cd \"".public_path($file_directory)."\" && $java_exe " . @end(explode('/', str_replace('.java','',$submission->submitted_code)))." < \"" . $test_case_file . "\"");
+            }
+            if ($output == $test_case->output) {
+                $number_of_test_cases_passed += 1;
+            }
+            $submission->meta .= "\n" . $output;
+            $end_time = microtime(true);
+            $execution_time = ($end_time - $start_time);
+            $execution_time = number_format((float)$execution_time, 4, '.', '');
+            $total_excectution_time += $execution_time;
+        }
+        $avg_execution_time = $total_excectution_time / count($test_cases);
+        $submission->execution_time = $avg_execution_time;
+        return $number_of_test_cases_passed;
+    }
     public function student_submit(Request $request){
         $request->validate([
             'question_id'=>'required|exists:questions,id',
             'submission'=>'file|required'
         ]);
-        
         $total_grade = 0;
-
         $question = Questions::with(['assignment','submissions', 'test_cases','features', 'grading_criteria'])->find($request->question_id);
         $submission = new Submission();
+        $assignment_submission_path = $this->save_submission_file($request, $question, $submission);
 
-        //Saving Submission
-        $extension = $request->file('submission')->getClientOriginalExtension();
-        $fileNameToStore = $request->name . '-' . time() . '.' . $extension;
-        $submission_number = count($question->submissions)+1;
-        $user_name = Auth::user()->name ;
-        $assignment_submission_path = "/assignment_submissions/{$question->assignment->name}/{$question->name}/$user_name/$submission_number";
-        $request->submission->move(public_path($assignment_submission_path), $fileNameToStore);
-        $submission->submitted_code = $assignment_submission_path.'/'. $fileNameToStore;
-        $submission->question_id = $question->id;
-
-        //Compiling Submitted file
-        $cpp_executable = env('CPP_EXE_PATH');
-        $output_1 = shell_exec("$cpp_executable \"" . public_path($submission->submitted_code) . "\" -o \"" . public_path($assignment_submission_path) . "/output\" 2>&1");
+        // TODO: Make languages more dynamic
+        $output_1 = $this->compile_file('cpp', public_path($submission->submitted_code), public_path($assignment_submission_path));
        
         $compiler_feedback = false;
-        //Saving compiler error if exists
+        
+        /**  
+         * *Saving compiler error if exists
+         * Check if compiler throws any errors
+         * 
+        **/
         if($output_1 != null || strlen($output_1)>0) {
             $output_1 = str_replace(public_path($submission->submitted_code),'',$output_1);
             $compiler_feedback = [];
@@ -128,6 +210,7 @@ class QuestionController extends Controller
                 $file = fopen($corrected_code_path,'w');
                 fwrite($file,$compiler_feedback["solution"]);
                 fclose($file);
+                $cpp_executable = env('CPP_EXE_PATH');
                 $output_1 = shell_exec("$cpp_executable \"" . $corrected_code_path . "\" -o \"" . public_path($assignment_submission_path) . "/output\" 2>&1");
             }
             $submission->compile_feedback = json_encode($compiler_feedback);
@@ -146,24 +229,6 @@ class QuestionController extends Controller
             }
         }
 
-        //Running Test Cases
-        $number_of_test_cases_passed=0;
-        $total_excectution_times = 0;
-        foreach ($question->test_cases as $test_case){
-            //Calculating runtime of the submitted program
-            $start_time = microtime(true);
-            $test_case_file = public_path($assignment_submission_path . "/test_case_".$test_case->id);
-            file_put_contents($test_case_file, $test_case->inputs);
-            $output = shell_exec("\"". public_path($assignment_submission_path) . "/output\" < \"". $test_case_file."\"");
-            if($output == $test_case->output) {
-                $number_of_test_cases_passed +=1; 
-            }
-            $submission->meta .= "\n".$output;
-            $end_time = microtime(true);
-            $execution_time = ($end_time - $start_time);
-            $execution_time = number_format((float)$execution_time, 4, '.', '');
-            $total_excectution_times+= $execution_time;
-        }
         //Calculating feature grade
         $count_features_passed = 0;
         foreach ($question->features as $feature) {
@@ -177,16 +242,9 @@ class QuestionController extends Controller
                 }
             }
         }
- 
 
-
-        if(count($question->test_cases)>0){
-            $submission->execution_time = $total_excectution_times / count($question->test_cases);
-        }else{
-            $submission->execution_time = NULL;
-        }
+        $number_of_test_cases_passed = $this->run_test_cases_on_submission($question->test_cases, $assignment_submission_path,$submission,'cpp');
         $number_of_test_cases = count($question->test_cases);
-
         $submission->logic_feedback = "Number of Test Cases Passed: $number_of_test_cases_passed/$number_of_test_cases";
 
         if ($question->grading_criteria->last() && $number_of_test_cases>0) {
