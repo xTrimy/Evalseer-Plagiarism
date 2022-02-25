@@ -10,6 +10,9 @@ use App\Models\Assignments;
 use App\Models\Submission;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Filesystem\Filesystem;
+use File;
 
 class UserController extends Controller
 {
@@ -55,6 +58,7 @@ class UserController extends Controller
     }
 
     public function dashboard_view_students(){
+        // $users = User::role('student')->paginate(15);
         $users = User::role('student')->paginate(15);
         return $this->dashboard_users($users,"Student");
     }
@@ -94,9 +98,25 @@ class UserController extends Controller
         $submissions = DB::table('submissions')
                         ->where('submissions.question_id', $question_id)
                         ->leftJoin('users', 'submissions.user_id', '=', 'users.id')
-                        ->distinct('user_id')
+                        ->select('submissions.*', 'users.name')
+                        // ->distinct('user_id')
                         ->get();
+
+                        // dd($submissions);
         return view('admin.view-question-submissions',['users'=>$users,'submissions'=>$submissions]);
+    }
+
+    public function view_submission($submission_id) {
+        // dd($assignment_id);
+        $users = User::role('instructor')->paginate(15);
+
+        $submissions = DB::table('submissions')
+                        ->where('submissions.id', $submission_id)
+                        ->leftJoin('users', 'submissions.user_id', '=', 'users.id')
+                        ->distinct('user_id')
+                        ->take(1)
+                        ->get();
+        return view('admin.view-submission',['users'=>$users,'submissions'=>$submissions]);
     }
     //User Views END
 
@@ -135,7 +155,8 @@ class UserController extends Controller
             $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
             $extension = $request->file('image')->getClientOriginalExtension();
             $fileNameToStore = $request->name . '-' . time() . '.' . $extension;
-            $path = $request->file('image')->storeAs('public/file', $fileNameToStore);
+            $path = public_path('uploadedimages/');
+            $request->file('image')->move($path , $fileNameToStore);
             $user->image = $fileNameToStore;
         }
         $user->save();

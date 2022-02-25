@@ -14,7 +14,7 @@ users
                 >
                   {{ $data_name??"Users" }}s
                 </h2>
-                <a href="#">
+                <a href="{{ route('dashboard.users.add') }}">
                     <button class="py-2 px-8 text-white rounded-lg bg-orange-600 hover:bg-orange-500 active:bg-orange-400 text-lg ring-0 transition-all active:ring-4 ring-orange-200 dark:ring-orange-800">
                         <i class="las la-plus text-2xl"></i> Add {{ $data_name??"User" }}
                     </button>
@@ -28,11 +28,13 @@ users
                     <tr
                       class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
                     >
+
                       <th class="px-4 py-3">Name</th>
-                      <th class="px-4 py-3">Type</th>
+                      <th class="px-4 py-3">Role</th>
                       <th class="px-4 py-3">Username</th>
-                      <th class="px-4 py-3">Last Access Date</th>
                       <th class="px-4 py-3">Email</th>
+                      <th class="px-4 py-3">University ID</th>
+                      <th class="px-4 py-3">Reputation</th>
                       <th class="px-4 py-3">Actions</th>
                     </tr>
                   </thead>
@@ -49,7 +51,7 @@ users
                           >
                             <img
                               class="object-cover w-full h-full rounded-full"
-                              src="{{ asset($user->image) }}"
+                              src="{{ asset('uploadedimages/'.$user->image) }}"
                               alt=""
                               loading="lazy"
                             />
@@ -69,11 +71,15 @@ users
                       <td class="px-4 py-3 " >
                         {{ $user->username }}
                       </td>
-                      <td class="px-4 py-3 " >
-                        3 mins ago
-                      </td>
+                      
                       <td class="px-4 py-3 text-xs">
-                        {{ $user->email }}
+                        <a href="mailto:{{ $user->email }}">{{ $user->email }}</a>
+                      </td>
+                      <td class="px-4 py-3 " >
+                        {{ $user->university_id }}
+                      </td>
+                      <td class="px-4 py-3 " >
+                        {{ $user->reputation ?? "N/A" }}
                       </td>
                       <td class="px-4 py-3">
                         <div class="flex items-center space-x-4 text-sm">
