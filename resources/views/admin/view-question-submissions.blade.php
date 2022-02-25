@@ -112,7 +112,7 @@ users
                               ></path>
                             </svg>
                           </button>
-                          <a href="" style="display: block;">
+                          <a href="{{ route('dashboard.users.instructors.view_submission',['submission_id'=>$submission->id]) }}" style="display: block;">
                             <button
                               class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
                               aria-label="Delete"

@@ -9,6 +9,7 @@ use App\Models\QuestionTestCases;
 use App\Models\Submission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use stdClass;
 
 class QuestionController extends Controller
@@ -68,6 +69,67 @@ class QuestionController extends Controller
             $grading_criteria_record->save();
         }
         return redirect()->back()->with('success',"Question added successfully");
+    }
+
+    public function edit($question_id){
+        $questions = DB::table('questions')
+        ->where('id',$question_id)
+        // ->leftJoin('courses', 'assignments.course_id', '=', 'courses.id')
+        ->select('questions.*')
+        ->first();
+
+        $assignment = DB::table('assignments')
+        ->where('id',$questions->assignment_id)
+        // ->leftJoin('courses', 'assignments.course_id', '=', 'courses.id')
+        ->select('assignments.*')
+        ->first();
+
+        return view('admin.edit-question',['questions'=>$questions,'assignment'=>$assignment]);
+        // return redirect()->back()->with('success',"Question Edited successfully");
+    }
+
+    public function edit_question(Request $request){
+        $request->validate([
+            'assignment_id'=>"required|exists:assignments,id",
+            'name'=>"required|string",
+            'description' => "required|string",
+            'grade' => "required|numeric",
+            // 'input' => "nullable|array",
+            // 'output' => "nullable|array",
+        ]);
+        $total_grading_criteria=0;
+        foreach($this->grading_criterias as $grading_criteria){
+            $total_grading_criteria += $request[$grading_criteria];
+        }
+        if($total_grading_criteria != 100){
+            return redirect()->back()->with('error','Total grading criteria percentage must be "100%"')->withInput();
+        }
+        $question = Questions::find($request->$question_id);
+        $question->name = $request->name;
+        $question->assignment_id = $request->assignment_id;
+        $question->description = $request->description;
+        $question->grade = $request->grade;
+        $question->save();
+        $i = 0;
+        // foreach($request->input as $input){
+        //     if($i>0){
+        //         $question_test_case = new QuestionTestCases();
+        //         $question_test_case->inputs = $input;
+        //         $question_test_case->output = $request->output[$i];
+        //         $question_test_case->question_id = $question->id;
+        //         $question_test_case->save();
+        //     }
+        //     $i++;
+        // }
+        if(count($this->grading_criterias)>0){
+            $grading_criteria_record = new GradingCriteria();
+            foreach ($this->grading_criterias as $grading_criteria) {
+                $grading_criteria_record["${grading_criteria}_weight"] = $request["${grading_criteria}"];
+            }
+            $grading_criteria_record->question_id = $question->id;
+            $grading_criteria_record->save();
+        }
+        return redirect()->back()->with('success',"Question Edited Successfully");
     }
 
     public function student_submit(Request $request){
