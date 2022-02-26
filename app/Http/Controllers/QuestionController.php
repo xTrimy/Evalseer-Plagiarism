@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Assignments;
 use App\Models\GradingCriteria;
+use App\Models\ProgrammingLanguage;
 use App\Models\QuestionFeature;
 use App\Models\Questions;
 use App\Models\QuestionTestCases;
@@ -26,8 +27,9 @@ class QuestionController extends Controller
     ];
     public function add($id){
 
-        $assignment = Assignments::find($id);
-        return view('instructor.add-question',["assignment"=>$assignment,'grading_criterias'=>$this->grading_criterias]);
+        $assignment = Assignments::with('course.programming_languages')->find($id);
+        $programming_languages = ProgrammingLanguage::all();
+        return view('instructor.add-question',["programming_languages"=>$programming_languages,"assignment"=>$assignment,'grading_criterias'=>$this->grading_criterias]);
     }
     public function store(Request $request){
         $request->validate([
@@ -123,7 +125,7 @@ class QuestionController extends Controller
      */
     private function compile_file($language,string $file_path,string $file_directory){
         // TODO: Make languages more dynamic
-        if($language == 'cpp'){
+        if($language == 'c++'){
             $cpp_executable = env('CPP_EXE_PATH');
             $output = shell_exec("$cpp_executable \"" . $file_path . "\" -o \"" . $file_directory . "/output\" 2>&1");
             return $output;
@@ -158,7 +160,7 @@ class QuestionController extends Controller
             $start_time = microtime(true);
             $test_case_file = public_path($file_directory . "/test_case_" . $test_case->id);
             file_put_contents($test_case_file, $test_case->inputs);
-            if($language == "cpp"){
+            if($language == "c++"){
                 $output = shell_exec("\"" . public_path($file_directory) . "/output\" < \"" . $test_case_file . "\"");
             }else if($language == "java"){
                 $java_exe = env('JAVA_EXE_PATH');
@@ -244,12 +246,15 @@ class QuestionController extends Controller
             'submission'=>'file|required'
         ]);
         $total_grade = 0;
-        $question = Questions::with(['assignment','submissions', 'test_cases','features', 'grading_criteria'])->find($request->question_id);
+        $question = Questions::with(['programming_language','assignment','submissions', 'test_cases','features', 'grading_criteria'])->find($request->question_id);
         $submission = new Submission();
         $assignment_submission_path = $this->save_submission_file($request, $question, $submission);
-
+        if($question->programming_language == null){
+            return redirect()->back()->with('error', "This question has not been configured correctly, please refer to your instructor");
+        }
+        $lang = $question->programming_language->acronym;
         // TODO: Make languages more dynamic
-        $output_1 = $this->compile_file('cpp', public_path($submission->submitted_code), public_path($assignment_submission_path));
+        $output_1 = $this->compile_file($lang, public_path($submission->submitted_code), public_path($assignment_submission_path));
        
         $compiler_feedback = false;
         
@@ -281,13 +286,12 @@ class QuestionController extends Controller
             $submission->compile_feedback = json_encode($compiler_feedback);
             
         }
-        
-        $stylefb = shell_exec("python " . public_path('\\cpplint-file\\cpplint.py') . " " . public_path('\\cpplint-file\\test.cpp'));
-        $stylefb = str_replace(public_path('\\cpplint-file'), '', $stylefb);
+
+        $stylefb = shell_exec("python " . public_path('/cpplint-file/cpplint.py') . " " . public_path(str_replace("/", "\\", $submission->submitted_code)));
+        $stylefb = str_replace(public_path(str_replace("/", "\\", $assignment_submission_path)), '', $stylefb);
         $submission->style_feedback = $stylefb;
         $stylefb = str_replace(public_path($submission->style_feedback), '', $stylefb);
         $submission->style_feedback = $stylefb;
-        
         //If no compiler error (The output file won't exist unless no errors found)
         if($compiler_feedback == false || empty($compiler_feedback)){
             // Give grade for compiling if the criteria exists
@@ -314,7 +318,7 @@ class QuestionController extends Controller
             }
         }
 
-        $number_of_test_cases_passed = $this->run_test_cases_on_submission($question->test_cases, $assignment_submission_path,$submission,'cpp');
+        $number_of_test_cases_passed = $this->run_test_cases_on_submission($question->test_cases, $assignment_submission_path,$submission, $lang);
         $number_of_test_cases = count($question->test_cases);
         $submission->logic_feedback = "Number of Test Cases Passed: $number_of_test_cases_passed/$number_of_test_cases";
 

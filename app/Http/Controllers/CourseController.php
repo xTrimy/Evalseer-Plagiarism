@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\ProgrammingLanguage;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
@@ -38,7 +39,8 @@ class CourseController extends Controller
 
 
     public function add(){
-        return view('admin.add-course');
+        $programming_languages = ProgrammingLanguage::all();
+        return view('admin.add-course',['programming_languages'=>$programming_languages]);
     }
     private function rand_char($length)
     {
@@ -58,6 +60,8 @@ class CourseController extends Controller
             'grade' => "required|numeric",
             'grade_to_pass' => "required|numeric",
             'credit_hours' => "required|numeric",
+            'programming_languages' => "array",
+            'programming_languages.*' => "numeric|exists:programming_languages,id",
         ]);
         $course = new Course();
         $course->name = $request->name;
@@ -70,6 +74,9 @@ class CourseController extends Controller
         $course->active = true;
         $course->access_code = $this->rand_char(6);
         $course->save();
+        foreach ($request->programming_languages as $lang) {
+            $course->programming_languages()->attach($lang);
+        }
         return redirect()->back()->with('success',"Course Added Successfully! \"Access Code: {$course->access_code}\"");
     }
 

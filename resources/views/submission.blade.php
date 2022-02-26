@@ -6,6 +6,9 @@
 @if($errors->any())
                 {!! implode('', $errors->all('<div class="text-red-500">:message</div>')) !!}
             @endif
+            @if(Session::has('error'))
+                <div class="text-red-700 py-2 px-4 bg-red-300 my-2">{{ Session::get('error') }}</div>
+            @endif
     <div class="flex w-full">
             <div class="w-3/4 p-8 bg-gray-200 m-auto rounded-3xl shadow-md">
             <div class="flex-1 flex py-2 px-8 bg-gray-200 rounded-3xl mr-10 items-center mb-8">
