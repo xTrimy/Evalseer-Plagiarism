@@ -132,6 +132,11 @@ class AssignmentController extends Controller
         ]);
     }
 
-    
+    public function delete(Request $request){
+        $assignment = Assignments::find($request->assignment_id);
+        $assignment->delete();
+
+        return redirect()->route('dashboard.users.instructors.view_assignments');
+    }
     
 }

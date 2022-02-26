@@ -3,7 +3,7 @@ using namespace std;
 
 int main() {
     int n;
-    int factorial = 1;
+    int factorial = 1
 
     int a=0;
     cin >> n;
