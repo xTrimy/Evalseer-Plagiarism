@@ -253,7 +253,6 @@ class QuestionController extends Controller
             return redirect()->back()->with('error', "This question has not been configured correctly, please refer to your instructor");
         }
         $lang = $question->programming_language->acronym;
-        // TODO: Make languages more dynamic
         $output_1 = $this->compile_file($lang, public_path($submission->submitted_code), public_path($assignment_submission_path));
        
         $compiler_feedback = false;
