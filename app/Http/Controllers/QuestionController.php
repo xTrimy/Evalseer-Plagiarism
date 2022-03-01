@@ -39,6 +39,7 @@ class QuestionController extends Controller
             'grade' => "required|numeric",
             'input' => "nullable|array",
             'output' => "nullable|array",
+            'programming_language' => "required|exists|programming_languages,id",
         ]);
         $total_grading_criteria=0;
         foreach($this->grading_criterias as $grading_criteria){
@@ -52,6 +53,7 @@ class QuestionController extends Controller
         $question->assignment_id = $request->assignment_id;
         $question->description = $request->description;
         $question->grade = $request->grade;
+        $question->programming_language_id = $request->programming_language;
         $question->save();
         $i = 0;
         foreach($request->input as $input){
