@@ -10,7 +10,9 @@
             @foreach ($test_cases as $key=>$test_case)
                 <tr>
                     <td>
-                        {{ $outputs[$key] }}
+                        @if ($outputs[$key])
+                            {{ $outputs[$key] }}
+                        @endif
                     </td>
                     <td>
                     {{ $test_case->output }}<br>
