@@ -10,7 +10,7 @@
             @foreach ($test_cases as $key=>$test_case)
                 <tr>
                     <td>
-                        @if ($outputs[$key])
+                        @if (array_key_exists($key,$outputs))
                             {{ $outputs[$key] }}
                         @endif
                     </td>
