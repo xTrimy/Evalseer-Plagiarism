@@ -181,6 +181,7 @@
                 foreach ($submitted_code as $key =>$line) {
                     if(isset($styling_comment) && array_key_exists(intval($key)+1,$styling_comment)){
                         $warning = $styling_comment[intval($key)+1];
+                        $line = htmlspecialchars($line);
                         $submitted_code[$key]="<div class=' highlight-inline code style_warning relative' data-warning='$warning'>$line</div>";
                     }else{
                         $submitted_code[$key]="<div class='code'>$line</div>";
