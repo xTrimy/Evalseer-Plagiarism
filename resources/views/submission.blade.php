@@ -179,7 +179,7 @@
                 $submitted_code =file_get_contents(public_path($question->submissions->last()->submitted_code));
                 $submitted_code = explode("\n",$submitted_code);
                 foreach ($submitted_code as $key =>$line) {
-                    if(array_key_exists(intval($key)+1,$styling_comment)){
+                    if(isset($styling_comment) && array_key_exists(intval($key)+1,$styling_comment)){
                         $warning = $styling_comment[intval($key)+1];
                         $submitted_code[$key]="<div class=' highlight-inline code style_warning relative' data-warning='$warning'>$line</div>";
                     }else{
