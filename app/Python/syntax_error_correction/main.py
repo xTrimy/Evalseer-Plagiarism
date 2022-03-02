@@ -29,8 +29,14 @@ def test_solution(test_array, index, token, method):
     f.close()
     os.system(ASTYLE_EXE + " --style=allman " + str(main_directory)+"/tests/test.cpp > " + str(main_directory)+"/log.txt 2>&1")
     os.system(MINGW_EXE + " " + str(main_directory)+"/tests/test.cpp -o "+str(main_directory)+"/tests/test > " + str(main_directory)+"/log.txt 2>&1")
-    if(os.path.exists(str(main_directory)+"/tests/test.exe")):
-        os.remove(str(main_directory)+"/tests/test.exe")
+    if(
+            os.path.exists(str(main_directory)+"/tests/test.exe") or
+            os.path.exists(str(main_directory)+"/tests/test")
+            ):
+        if(os.path.exists(str(main_directory)+"/tests/test.exe")):
+            os.remove(str(main_directory)+"/tests/test.exe")
+        if(os.path.exists(str(main_directory)+"/tests/test")):
+            os.remove(str(main_directory)+"/tests/test")
         f = open(str(main_directory)+"/tests/test.cpp", "r")
         file_contents = f.read()
         line_number = 0
@@ -43,6 +49,7 @@ def test_solution(test_array, index, token, method):
                 error_index += 1
         json_data = {"status": "success", "solution": file_contents,
                      "token": token, "line": line_number+1, "method":method}
+        
         print(json.dumps(json_data))
         # print("Solution worked \"tests/test.cpp\"")
         return True
@@ -64,7 +71,7 @@ def main(file):
         original_text = text[1]
         original_text_array = original_text.split()
         predicted_tokenz = predict_next_token.__main__(tokenized_text)
-
+        
         # Primary predictions
         for i in predicted_tokenz:
             primary_prediction = i[0]
