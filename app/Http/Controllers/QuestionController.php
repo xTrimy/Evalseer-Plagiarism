@@ -269,8 +269,11 @@ class QuestionController extends Controller
             $compiler_feedback = [];
             $compiler_feedback["compiler_feedback"] = $output_1;
             $evalseer_feedback = shell_exec(env('SYNTAX_CORRECTION_PY')." \"". public_path($submission->submitted_code) . "\" 2>&1");
+			
 			$evalseer_feedback = json_decode($evalseer_feedback,true);
-            foreach($evalseer_feedback as $key => $value){
+			
+			
+			foreach($evalseer_feedback as $key => $value){
                 $compiler_feedback[$key] =$value;
             }
             if($compiler_feedback["status"] == "success"){
@@ -284,9 +287,10 @@ class QuestionController extends Controller
             $submission->compile_feedback = json_encode($compiler_feedback);
             
         }
-        $python = env("PYTHON_EXE_PATH");
-        $stylefb = shell_exec($python ." ". public_path('/cpplint-file/cpplint.py') . " " . public_path(str_replace("/", "\\", $submission->submitted_code))." 2>&1");
-        $stylefb = str_replace(public_path(str_replace("/", "\\", $assignment_submission_path)), '', $stylefb);
+       $python = env("PYTHON_EXE_PATH");
+        $stylefb = shell_exec($python ." ". public_path('/cpplint-file/cpplint.py') . " \"" . public_path(str_replace('/', '/', $submission->submitted_code))."\" 2>&1");
+		
+		$stylefb = str_replace(public_path(str_replace("/", "\\", $assignment_submission_path)), '', $stylefb);
         $submission->style_feedback = $stylefb;
         $stylefb = str_replace(public_path($submission->style_feedback), '', $stylefb);
         $submission->style_feedback = $stylefb;
