@@ -164,8 +164,31 @@
                     </div>
                 @endif
             @endif
-                <pre class="p-8" id="question_{{ $question->id }}"><code>{{  file_get_contents(public_path($question->submissions->last()->submitted_code)) }}</code></pre>
-            
+            @if ($submission->style_feedback)
+                @php
+                    $styling_line = explode("\n",$submission->style_feedback);
+                    $styling_comment = [];
+                    array_splice($styling_line, count($styling_line)-3, 3); 
+                    for($i = 0; $i<count($styling_line);$i++){
+                        $data = explode(":",$styling_line[$i]);
+                        $styling_comment[$data[1]] = explode(":",$styling_line[$i])[2];
+                    }
+                @endphp
+            @endif
+            @php
+                $submitted_code =file_get_contents(public_path($question->submissions->last()->submitted_code));
+                $submitted_code = explode("\n",$submitted_code);
+                foreach ($submitted_code as $key =>$line) {
+                    if(array_key_exists(intval($key)+1,$styling_comment)){
+                        $warning = $styling_comment[intval($key)+1];
+                        $submitted_code[$key]="<div class=' highlight-inline code style_warning relative' data-warning='$warning'>$line</div>";
+                    }else{
+                        $submitted_code[$key]="<div class='code'>$line</div>";
+                    }
+                }
+                $submitted_code = implode("",$submitted_code);
+            @endphp
+            <pre class="p-8 fixed_output bg-gray-200 my-5 rounded shadow ">{!! $submitted_code !!}</pre>
             @if ($submission->compile_feedback)
                 @php
                     $data = json_decode($question->submissions->last()->compile_feedback);
@@ -243,6 +266,13 @@
             document.querySelectorAll('div.code').forEach((el) => {
                 hljs.highlightElement(el);
             });
+             var style_warnings = document.getElementsByClassName('style_warning');
+        for(let i = 0; i<style_warnings.length; i++){
+            style_warnings[i].innerHTML = style_warnings[i].innerHTML.replace('\n','');
+            style_warnings[i].innerHTML += "<code class='py-1 text-yellow-600'> //"+ style_warnings[i].getAttribute('data-warning') +" </code>\n";
+        }
         });
+
+       
     </script>
 @endsection
