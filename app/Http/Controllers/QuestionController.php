@@ -284,8 +284,8 @@ class QuestionController extends Controller
             $submission->compile_feedback = json_encode($compiler_feedback);
             
         }
-
-        $stylefb = shell_exec("python " . public_path('/cpplint-file/cpplint.py') . " " . public_path(str_replace("/", "\\", $submission->submitted_code))." 2>&1");
+        $python = env("PYTHON_EXE_PATH");
+        $stylefb = shell_exec($python ." ". public_path('/cpplint-file/cpplint.py') . " " . public_path(str_replace("/", "\\", $submission->submitted_code))." 2>&1");
         $stylefb = str_replace(public_path(str_replace("/", "\\", $assignment_submission_path)), '', $stylefb);
         $submission->style_feedback = $stylefb;
         $stylefb = str_replace(public_path($submission->style_feedback), '', $stylefb);
