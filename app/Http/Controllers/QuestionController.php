@@ -188,19 +188,30 @@ class QuestionController extends Controller
         ->select('questions.*')
         ->first();
 
-        $assignment = DB::table('assignments')
-        ->where('id',$questions->assignment_id)
+        // $assignment = DB::table('assignments')
+        // ->where('id',$questions->assignment_id)
+        // // ->leftJoin('courses', 'assignments.course_id', '=', 'courses.id')
+        // ->select('assignments.*')
+        // ->first();
+
+        $grading_criterias = DB::table('grading_criterias')
+        ->where('question_id',$question_id)
         // ->leftJoin('courses', 'assignments.course_id', '=', 'courses.id')
-        ->select('assignments.*')
+        ->select('grading_criterias.*')
         ->first();
 
-        return view('admin.edit-question',['questions'=>$questions,'assignment'=>$assignment]);
+        $assignment = Assignments::with('course.programming_languages')->find($questions->assignment_id);
+
+        $programming_languages = ProgrammingLanguage::all();
+        return view('admin.edit-question',["programming_languages"=>$programming_languages,'questions'=>$questions,'assignment'=>$assignment,'grading_criterias'=>$grading_criterias]);
         // return redirect()->back()->with('success',"Question Edited successfully");
     }
 
     public function edit_question(Request $request){
+        // dd($request);
+
         $request->validate([
-            'assignment_id'=>"required|exists:assignments,id",
+            // 'assignment_id'=>"required|exists:assignments,id",
             'name'=>"required|string",
             'description' => "required|string",
             'grade' => "required|numeric",
@@ -208,9 +219,10 @@ class QuestionController extends Controller
             // 'output' => "nullable|array",
         ]);
         $total_grading_criteria=0;
-        foreach($this->grading_criterias as $grading_criteria){
-            $total_grading_criteria += $request[$grading_criteria];
-        }
+        // foreach($this->grading_criterias as $grading_criteria){
+        //     $total_grading_criteria += $request[$grading_criteria];
+        // }
+        $total_grading_criteria = $request->compiling_weight + $request->styling_weight + $request->not_hidden_test_cases_weight;
         if($total_grading_criteria != 100){
             return redirect()->back()->with('error','Total grading criteria percentage must be "100%"')->withInput();
         }
@@ -221,21 +233,39 @@ class QuestionController extends Controller
         $question->grade = $request->grade;
         $question->save();
         $i = 0;
-        // foreach($request->input as $input){
-        //     if($i>0){
-        //         $question_test_case = new QuestionTestCases();
-        //         $question_test_case->inputs = $input;
-        //         $question_test_case->output = $request->output[$i];
-        //         $question_test_case->question_id = $question->id;
-        //         $question_test_case->save();
-        //     }
-        //     $i++;
-        // }
-        if(count($this->grading_criterias)>0){
-            $grading_criteria_record = new GradingCriteria();
-            foreach ($this->grading_criterias as $grading_criteria) {
-                $grading_criteria_record["${grading_criteria}_weight"] = $request["${grading_criteria}"];
+        foreach($request->input as $input){
+            if($i>0){
+                $question_test_case = new QuestionTestCases();
+                $question_test_case->inputs = $input;
+                $question_test_case->output = $request->output[$i];
+                $question_test_case->question_id = $question->id;
+                $question_test_case->save();
             }
+            $i++;
+        }
+        $i=0;
+        foreach ($request->feature as $feature) {
+            //skipping first hidden inputs
+            if ($i > 0) {
+                $feature = explode(",",$feature);
+                foreach($feature as $splitted_feature){
+                    $question_feature = new QuestionFeature();
+                    $question_feature->feature = $splitted_feature;
+                    $question_feature->occurrences = $request->occurrences[$i];
+                    $question_feature->question_id = $question->id;
+                    $question_feature->save();
+                }
+            }
+            $i++;
+        }
+        if(count($this->grading_criterias)>0){
+            DB::table('grading_criterias')->where('question_id', $request->question_id)->delete();
+            $grading_criteria_record = new GradingCriteria();
+            // foreach ($this->grading_criterias as $grading_criteria) {
+                $grading_criteria_record->compiling_weight = $request->compiling_weight;
+                $grading_criteria_record->styling_weight = $request->styling_weight;
+                $grading_criteria_record->not_hidden_test_cases_weight = $request->not_hidden_test_cases_weight;
+            // }
             $grading_criteria_record->question_id = $question->id;
             $grading_criteria_record->save();
         }
@@ -292,7 +322,8 @@ class QuestionController extends Controller
 		
 		$stylefb = str_replace(public_path(str_replace("/", "\\", $assignment_submission_path)), '', $stylefb);
         $submission->style_feedback = $stylefb;
-        $stylefb = str_replace(public_path($submission->style_feedback), '', $stylefb);
+        $stylefb = str_replace(public_path($submission->submitted_code), '', $stylefb);
+        $stylefb = str_replace('Done processing', '', $stylefb);
         $submission->style_feedback = $stylefb;
         //If no compiler error (The output file won't exist unless no errors found)
         if($compiler_feedback == false || empty($compiler_feedback)){
