@@ -317,14 +317,37 @@ class QuestionController extends Controller
             $submission->compile_feedback = json_encode($compiler_feedback);
             
         }
-       $python = env("PYTHON_EXE_PATH");
+        $python = env("PYTHON_EXE_PATH");
         $stylefb = shell_exec($python ." ". public_path('/cpplint-file/cpplint.py') . " \"" . public_path(str_replace('/', '/', $submission->submitted_code))."\" 2>&1");
 		
 		$stylefb = str_replace(public_path(str_replace("/", "\\", $assignment_submission_path)), '', $stylefb);
         $submission->style_feedback = $stylefb;
         $stylefb = str_replace(public_path($submission->submitted_code), '', $stylefb);
         $stylefb = str_replace('Done processing', '', $stylefb);
-        $submission->style_feedback = $stylefb;
+
+
+        if($lang == "java") {
+            $javafb = shell_exec("java -jar ".env("CHECKSTYLE_PATH")." -c".env("SUNCHECKS_PATH")." \"".public_path(str_replace('/', '/', $submission->submitted_code))."\" 2>&1");
+            $javafb = str_replace(public_path(), '', $javafb);
+            $javafb = str_replace('\\', '/', $javafb);
+            $javafb = str_replace($submission->submitted_code, '', $javafb);
+            $javafb = str_replace('[ERROR] ', '', $javafb);
+            $javafb = str_replace('Starting audit...', '', $javafb);
+            $javafb = str_replace('Audit done.', '', $javafb);
+            $javafb = str_replace('Checkstyle ends with ', '', $javafb);
+            $submission->style_feedback = $javafb;
+        } else if($lang == "c++") {
+            $stylefb = shell_exec($python ." ". public_path('/cpplint-file/cpplint.py') . " \"" . public_path(str_replace('/', '/', $submission->submitted_code))."\" 2>&1");
+            $stylefb = str_replace(public_path(str_replace("/", "\\", $assignment_submission_path)), '', $stylefb);
+            $submission->style_feedback = $stylefb;
+            $stylefb = str_replace(public_path($submission->submitted_code), '', $stylefb);
+            $stylefb = str_replace('Done processing', '', $stylefb);
+            $submission->style_feedback = $stylefb;
+        } else {
+            $submission->style_feedback = "No Style Feedback";
+            return redirect()->back()->with('error', "This question has not been configured correctly, please refer to your instructor");
+        }
+
         //If no compiler error (The output file won't exist unless no errors found)
         if($compiler_feedback == false || empty($compiler_feedback)){
             // Give grade for compiling if the criteria exists

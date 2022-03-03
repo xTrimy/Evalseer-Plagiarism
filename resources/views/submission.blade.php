@@ -159,12 +159,12 @@
                                 <x-failed-test-cases-feedback :question="$question" :submission="$submission" />
                             </div>
                             All of the test cases failed 
-                            <span data-modal-title="Wrong output reason" data-modal-close-button="Got It!" class="modal_open py-2 px-8 bg-yellow-300 shadow-md mx-2 hover:bg-yellow-400 rounded-md">See why</span>
+                            <span data-modal-title="Wrong output reason" data-modal-close-button="Got It!" class="modal_open py-2 px-8 bg-yellow-300 shadow-md mx-2 hover:bg-yellow-400 rounded-md cursor-pointer">See why</span>
                         </p>
                     </div>
                 @endif
             @endif
-            @if ($submission->style_feedback)
+            {{-- @if ($submission->style_feedback)
                 @php
                     $styling_line = explode("\n",$submission->style_feedback);
                     $styling_comment = [];
@@ -174,7 +174,7 @@
                         $styling_comment[$data[1]] = explode(":",$styling_line[$i])[2];
                     }
                 @endphp
-            @endif
+            @endif --}}
             @php
                 $submitted_code =file_get_contents(public_path($question->submissions->last()->submitted_code));
                 $submitted_code = explode("\n",$submitted_code);
@@ -233,7 +233,7 @@
                         <div class=" justify-center items-center">
                             <label class="table mx-auto bg-text text-white px-10 py-4 rounded-lg font-bold text-sm cursor-pointer">
                             Add Submission for {{ $question->name }}
-                            <input accept=".cpp" id="question_file_{{ $question->id }}" type="file" class="hidden" name="submission" >
+                            <input accept=".java" id="question_file_{{ $question->id }}" type="file" class="hidden" name="submission" >
                         </label>
                             <div id="question_filename_{{ $question->id }}" class="text-gray-500 "></div>
                         </div>
