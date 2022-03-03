@@ -21,9 +21,16 @@ class Questions extends Model
     {
         return $this->hasMany(Submission::class, 'question_id');
     }
-
+    public function features()
+    {
+        return $this->hasMany(QuestionFeature::class, 'question_id');
+    }
     public function grading_criteria()
     {
         return $this->hasMany(GradingCriteria::class, 'question_id');
+    }
+    public function programming_language()
+    {
+        return $this->belongsTo(ProgrammingLanguage::class, 'programming_language_id');
     }
 }

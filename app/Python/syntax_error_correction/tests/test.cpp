@@ -1,13 +1,10 @@
 #include <iostream>
-using namespace std ;
-int multiply_f ( int i )
-{
-    return i * 2 ;
-}
-int main ( )
-{
-    int c ;
-    cin >> c ;
-    cout << multiply_f ( c ) ;
-    return 0 ;
-}
+ using std:: cin ;
+ using std:: cout ;
+ int multiply ( int x ) {
+ return x* 2 ;
+ } int main ( ) {
+ int x ;
+ cin >> x ;
+ cout << multiply ( x ) ;
+ }

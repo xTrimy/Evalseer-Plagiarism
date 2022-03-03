@@ -29,4 +29,9 @@ class Course extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    public function programming_languages()
+    {
+        return $this->belongsToMany(ProgrammingLanguage::class, 'course_programming_languages');
+    }
 }

@@ -29,4 +29,9 @@ class Assignments extends Model
     public function questions(){
         return $this->hasMany(Questions::class,'assignment_id');
     }
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
 }
