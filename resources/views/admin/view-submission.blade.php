@@ -176,7 +176,7 @@ users
                 </div>
                 <div class="w-full bg-white text-black p-4 rounded-md border mt-8">
                   <h1 class="my-3 font-bold">Style Feedback</h1>
-                  <pre>{{ $submission->style_feedback ?? "No Style Feedback"  }}</pre>
+                  <pre>{{ str_replace(public_path($submission->submitted_code), '', $submission->style_feedback)  ?? "No Style Feedback"  }}</pre>
                 </div>
               </div>
               <div
