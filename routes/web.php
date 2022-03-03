@@ -117,6 +117,7 @@ Route::middleware('auth')->group(function (){
 
             Route::prefix('/instructors')->as('instructors.')->group(function ($question_id) {
                 Route::get('/edit-question/{question_id}', [QuestionController::class, "edit"])->name('edit_question');
+                Route::get('/delete-question/{question_id}', [QuestionController::class, "delete_question"])->name('delete_question');
                 Route::post('/edit-question/{question_id}', [QuestionController::class, "edit_question"]);
             });
             

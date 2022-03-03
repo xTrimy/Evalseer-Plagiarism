@@ -142,7 +142,7 @@
 										<h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalLabel">Delete Question</h5>
 										<button type="button" class="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline" data-bs-dismiss="modal" aria-label="Close"></button>
 									</div>
-									<div class="modal-body relative p-4"> Are you sure you want to delete <span class="font-semibold">{{ $question->name }}</span> ? </div>
+									<div class="modal-body relative p-4"> Are you sure you want to delete this question ? </div>
 									<div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
 										<button type="button" class="px-6 
 										py-2.5
@@ -160,9 +160,9 @@
 										transition
 										duration-150
 										ease-in-out" data-bs-dismiss="modal" onclick="closeModal('modal{{$i}}')">Close</button>
-										<form action="/delete" method="POST" enctype="multipart/form-data">
+										{{-- <form action="/delete" method="POST" enctype="multipart/form-data"> --}}
 											<input type="hidden" name="question_id" value="{{ $question->id }}"> @csrf
-											<button  class="px-6
+											<a href="{{route('dashboard.users.instructors.delete_question',['question_id'=>$question->id])}}"><button type="button"  class="px-6
 											py-2.5
 											bg-red-600
 											text-white
@@ -178,21 +178,26 @@
 											transition
 											duration-150
 											ease-in-out
-											ml-1">Delete</button>
-										</form>
+											ml-1">Delete</button></a>
+										{{-- </form> --}}
 									</div>
 								</div>
 							</div>
 						</div>
-						<a href="#" style="display: block;">
-							<button class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Delete"> <a href="{{ route('dashboard.users.instructors.view_question_submission',['question_id'=>$question->id]) }}" class="flex items-center justify-between w-full px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange">
-      View Submissions
-      <i class="ml-2 las la-eye text-xl"></i>
-      </a> </button>
-						</a>
+						
 					</div>
 				</td>
-				</tr> @php $i++; @endphp @endforeach </tbody>
+				<td>
+					<a href="#" style="display: block;">
+						<button class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Delete"> <a href="{{ route('dashboard.users.instructors.view_question_submission',['question_id'=>$question->id]) }}" class="flex items-center justify-between w-full px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange">
+						View Submissions
+						<i class="ml-2 las la-eye text-xl"></i>
+						</a> </button>
+					</a>
+				</td>
+				</tr> 
+				@php $i++; @endphp @endforeach 
+			</tbody>
 				</table>
 			</div>
 			<div class="mt-4">

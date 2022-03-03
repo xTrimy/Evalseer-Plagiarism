@@ -381,10 +381,10 @@ class QuestionController extends Controller
         return redirect()->back()->with('question_'.$request->question_id,"Answer Submitted for {$question->name}");
     }
 
-    public function delete(Request $request){
-        $question = Questions::find($request->question_id);
+    public function delete_question($question_id){
+        $question = Questions::find($question_id);
         $question->delete();
 
-        return redirect()->route('dashboard.users.instructors.view_assignments');
+        return redirect()->back()->with('success',"Question deleted successfully");
     }
 }
