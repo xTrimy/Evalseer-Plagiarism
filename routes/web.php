@@ -6,6 +6,7 @@ use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SubmitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PlagiarismController;
+use App\Http\Controllers\BadgeController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -55,6 +56,9 @@ Route::middleware('auth')->group(function (){
     Route::get('/my-courses', function () {
         return redirect()->route('home');
     })->name('my-courses');
+
+    Route::get('/badges', [BadgeController::class, "view"])->name('view_badges');
+    
 
 
     Route::prefix('/course/{id}')->as('course.')->group(function ($id) {
