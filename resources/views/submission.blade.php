@@ -210,8 +210,11 @@
                         foreach ($solution as $key =>$sol) {
                             $solution[$key]="<div class='code'>$sol</div>";
                         }
-                        $solution[$data->line-1] = "<div class='bg-green-400 text-red-500 highlight-inline'>{$solution[$data->line-1]}</div>";
+                        if($data->line >0){
+                            $solution[$data->line-1] = "<div class='bg-green-400 text-red-500 highlight-inline'>{$solution[$data->line-1]}</div>";
+                        }
                         $solution = implode("",$solution);
+
                     @endphp
                     <pre class="fixed_output bg-gray-200 my-5 rounded shadow ">{!! $solution !!}</pre>
                     @else
