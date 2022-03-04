@@ -172,7 +172,8 @@
                     array_splice($styling_line, count($styling_line)-3, 3); 
                     for($i = 0; $i<count($styling_line);$i++){
                         $data = explode(":",$styling_line[$i]);
-                        $styling_comment[$data[1]] = explode(":",$styling_line[$i])[2];
+						if($data[0] != "Error")
+						$styling_comment[$data[1]] = explode(":",$styling_line[$i])[2];
                     }
                 @endphp
             @endif
