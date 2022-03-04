@@ -164,17 +164,18 @@
                     </div>
                 @endif
             @endif
-            {{-- @if ($submission->style_feedback)
+            @if ($submission->style_feedback)
+            
                 @php
                     $styling_line = explode("\n",$submission->style_feedback);
                     $styling_comment = [];
                     array_splice($styling_line, count($styling_line)-3, 3); 
                     for($i = 0; $i<count($styling_line);$i++){
                         $data = explode(":",$styling_line[$i]);
-                        $styling_comment[$data[1]] = explode(":",$styling_line[$i])[2];
+                        $styling_comment[$data[2]] = explode(":",$styling_line[$i])[3];
                     }
                 @endphp
-            @endif --}}
+            @endif
             @php
                 $submitted_code =file_get_contents(public_path($question->submissions->last()->submitted_code));
                 $submitted_code = explode("\n",$submitted_code);
