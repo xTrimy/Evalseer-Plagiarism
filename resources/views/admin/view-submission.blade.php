@@ -28,7 +28,7 @@ users
                 href="{{ route('dashboard.users.instructors.run_plag',['zipPath'=>'1','type'=>'1']) }}"
                     class="flex items-center justify-between px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange"
                 >
-                    Run Plagiarism
+                    Check Plagiarism
                     <i class="ml-2 fas fa-play text-xl"></i>
                 </a>
             </div>

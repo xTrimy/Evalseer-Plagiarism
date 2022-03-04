@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CourseController extends Controller
 {
@@ -103,5 +104,40 @@ class CourseController extends Controller
         $user->courses()->attach($request->course_id);
 
         return redirect()->back()->with('success','Student Enrolled To Course!');
+    }
+
+    public function view_course($course_id) {
+        // $students = DB::table('course_user')
+        // ->where('course_id',$course_id)
+        // ->leftJoin('users', 'course_user.user_id', '=', 'users.id')
+        // ->leftJoin('model_has_roles', 'course_user.user_id', '!=', 'model_has_roles.model_id')
+        // ->where('role_id','1')
+        // // ->select('course_user.*')
+        // ->select('users.*')
+        // ->get();
+
+        $students = User::role('student')->whereHas('courses',function($query) use($course_id){
+            $query->where('courses.id',$course_id);
+       })->get();
+
+
+        // dd($students);
+
+        // $studentsAll = DB::table('course_user')
+        // ->where('course_id',$course_id)
+        // ->leftJoin('users', 'course_user.user_id', '!=', 'users.id')
+        // ->leftJoin('model_has_roles', 'course_user.user_id', '!=', 'model_has_roles.model_id')
+        // ->where('role_id','1')
+        // ->select('users.*')
+        // ->get();
+
+        $studentsAll = User::role('student')->whereDoesntHave('courses',function($query) use($course_id){
+            $query->where('courses.id',$course_id);
+       })->get();
+
+        // dd($studentsAll);
+
+
+        return view('admin.view-course',['students'=>$students,'studentsAll'=>$studentsAll]);
     }
 }

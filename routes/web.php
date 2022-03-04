@@ -95,6 +95,8 @@ Route::middleware('auth')->group(function (){
             Route::get('/', [CourseController::class, "dashboard_view"])->name('view');
             Route::get('/add', [CourseController::class, "add"])->name('add');
             Route::post('/add', [CourseController::class, "store"]);
+
+            Route::get('/view_course/{course_id}', [CourseController::class, "view_course"])->name('view-course');
         });
 
         Route::prefix('/users')->as('users.')->group(function () {
