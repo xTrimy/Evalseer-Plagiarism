@@ -3,7 +3,7 @@
 add-question
 @endsection
 @section('title')
-Add Question to {{ $assignment->name }}
+Edit Question to {{ $assignment->name }}
 @endsection
 @section('content')
 
@@ -12,7 +12,7 @@ Add Question to {{ $assignment->name }}
             <h2
               class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
             >
-              Add Question to {{ $assignment->name }}
+              Edit Question to {{ $assignment->name }}
             </h2>
             @if(Session::has('success'))
             <div
@@ -24,8 +24,18 @@ Add Question to {{ $assignment->name }}
               </div>
             </div>
             @endif
+             @if(Session::has('error'))
+            <div
+              class="flex items-center justify-between px-4 p-2 mb-8 text-sm font-semibold text-red-600 bg-red-100 rounded-lg focus:outline-none focus:shadow-outline-orange"
+            >
+              <div class="flex items-center">
+                <i class="fas fa-times mr-2"></i>
+                <span>{{ Session::get('error') }}</span>
+              </div>
+            </div>
+            @endif
             <!-- General elements -->
-            <form method="POST" action="{{url('dashboard/users/instructors/editt-question')}}" enctype="multipart/form-data"
+            <form method="POST" enctype="multipart/form-data"
               class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800"
             >
             @csrf
@@ -63,7 +73,7 @@ Add Question to {{ $assignment->name }}
               <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
                 <i class="las la-highlighter text-xl"></i>
-                Grade
+                Total Grade
                 </span>
                 <input
                 value="{{ $questions->grade }}"
@@ -72,6 +82,64 @@ Add Question to {{ $assignment->name }}
                     required
                   class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                   placeholder="5"
+                />
+              </label>
+              <h1 class="text-xl text-black font-bold mt-4">
+                Grading Criteria %
+              </h1>
+              {{-- @foreach ($grading_criterias as $grading_criteria)
+              <label class="block text-sm">
+                <span class="text-gray-700 dark:text-gray-400">
+                {{ ucwords(str_replace('_', ' ', $grading_criteria)); }}
+                </span>
+                <input
+                value="{{ $grading_criteria }}"
+                type="number"
+                name="{{ $grading_criteria }}"
+                  required
+                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  value="0"
+                  placeholder="30"
+                />
+              </label>                
+              @endforeach --}}
+              <label class="block text-sm">
+                <span class="text-gray-700 dark:text-gray-400">
+                  Compiling
+                </span>
+                <input
+                value="{{ $grading_criterias->compiling_weight }}"
+                type="number"
+                name="compiling_weight"
+                  required
+                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="30"
+                />
+              </label>
+              <label class="block text-sm">
+                <span class="text-gray-700 dark:text-gray-400">
+                  Styling
+                </span>
+                <input
+                value="{{ $grading_criterias->styling_weight }}"
+                type="number"
+                name="styling_weight"
+                  required
+                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="30"
+                />
+              </label>
+              <label class="block text-sm">
+                <span class="text-gray-700 dark:text-gray-400">
+                  Test Cases
+                </span>
+                <input
+                value="{{ $grading_criterias->not_hidden_test_cases_weight }}"
+                type="number"
+                name="not_hidden_test_cases_weight"
+                  required
+                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="30"
                 />
               </label>
               <h2 class="font-bold text-xl mt-8">Test Cases</h2>
@@ -104,11 +172,74 @@ Add Question to {{ $assignment->name }}
                   />
                 </label>
               </div>
-              <div id="container">
+              <div class="my-4" id="container">
                 
               </div>
-              <button type="submit" name="edit_question" class="table items-center mt-4 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange">
-              Edit
+              <h1 class="text-xl text-black font-bold mt-4">
+                Feature Checking
+              </h1>
+              <div class="form-group">
+                <label>Features Count</label>
+                <input type="number" name="features" id="count_features" class="form-control" placeholder="Number of Features to check">
+                <input type="button" name="addd" class="px-4 py-2 rounded bg-green-500 text-white" onclick="addFeatureField()" placeholder="" value="Add">
+              </div>
+              
+              <div id="feature_checking" class="hidden">
+                <div class="flex">
+                  <label class="block text-sm">
+                <span class="text-gray-700 dark:text-gray-400">
+                  Feature Text (Seperate with ,)
+                  </span>
+                  <input
+                  type="text"
+                  name="feature[]"
+                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="if,else"
+                  />
+                </label>
+                <label class="block text-sm ml-2">
+                  <span class="text-gray-700 dark:text-gray-400">
+                  Occurrences
+                  </span>
+                  <input
+                  type="text"
+                  name="occurrences[]"
+                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="2"
+                  />
+                </label>
+                </div>
+                
+                
+              </div>
+              <div class="my-4" id="container2">
+                
+              </div>
+
+              <label class="block text-sm">
+                <span class="text-gray-700 dark:text-gray-400">
+                <i class="las la-font text-xl"></i>
+                Programming Language
+                </span>
+                <select name="programming_language"
+                required
+                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                >
+                  <optgroup label="Course">
+                    @foreach ($assignment->course->programming_languages as $lang)
+                      <option value="{{ $lang->id }}">{{ $lang->name }}</option>
+                    @endforeach
+                  </optgroup>
+                  <optgroup label="All">
+                    @foreach ($programming_languages as $lang)
+                      <option value="{{ $lang->id }}">{{ $lang->name }}</option>
+                    @endforeach
+                  </optgroup>
+                </select>
+              </label>
+
+              <button type="submit" class="table items-center mt-4 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange">
+              Add
               <span class="ml-2" aria-hidden="true">
                   <i class='las la-arrow-right'></i>
               </span>
@@ -133,4 +264,21 @@ Add Question to {{ $assignment->name }}
                 }
             }
         </script>
+        <script type='text/javascript'>
+            function addFeatureField()
+            {
+                var number = document.getElementById("count_features").value;
+                var container = document.getElementById("container2");
+                while (container.hasChildNodes()) {
+                    container.removeChild(container.lastChild);
+                }
+                for (i=0;i<number;i++){
+                    var feature_checking = document.getElementById('feature_checking').cloneNode(true);
+                    container.appendChild(feature_checking);
+                    feature_checking.classList.remove('hidden');
+                    container.appendChild(document.createElement("br"));
+                }
+            }
+        </script>
 @endsection
+

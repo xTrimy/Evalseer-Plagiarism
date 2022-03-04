@@ -6,6 +6,7 @@ use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SubmitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PlagiarismController;
+use App\Http\Controllers\BadgeController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -55,6 +56,9 @@ Route::middleware('auth')->group(function (){
     Route::get('/my-courses', function () {
         return redirect()->route('home');
     })->name('my-courses');
+
+    Route::get('/badges', [BadgeController::class, "view"])->name('view_badges');
+    
 
 
     Route::prefix('/course/{id}')->as('course.')->group(function ($id) {
@@ -109,10 +113,14 @@ Route::middleware('auth')->group(function (){
             });
             Route::prefix('/instructors')->as('instructors.')->group(function ($assignment_id) {
                 Route::get('/view-assignments-questions/{assignment_id}', [UserController::class, "view_assignment_questions"])->name('view_assignment_questions');
-                Route::get('/edit-question/{question_id}', [QuestionController::class, "edit"])->name('edit_question');
-                Route::post('/edit-question/{assignment_id}/', [QuestionController::class, "edit_question"]);
-                
             });
+
+            Route::prefix('/instructors')->as('instructors.')->group(function ($question_id) {
+                Route::get('/edit-question/{question_id}', [QuestionController::class, "edit"])->name('edit_question');
+                Route::get('/delete-question/{question_id}', [QuestionController::class, "delete_question"])->name('delete_question');
+                Route::post('/edit-question/{question_id}', [QuestionController::class, "edit_question"]);
+            });
+            
             Route::prefix('/instructors')->as('instructors.')->group(function ($assignment_id) {
                 Route::get('/edit-assignment/{assignment_id}', [AssignmentController::class, "edit_assignment"])->name('edit_assignment');
                 Route::post('/edit-assignment/{assignment_id}', [AssignmentController::class, "edit"]);
