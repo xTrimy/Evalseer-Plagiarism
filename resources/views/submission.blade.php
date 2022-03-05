@@ -164,17 +164,19 @@
                     </div>
                 @endif
             @endif
-            {{-- @if ($submission->style_feedback)
+            @if ($submission->style_feedback)
+            
                 @php
                     $styling_line = explode("\n",$submission->style_feedback);
                     $styling_comment = [];
                     array_splice($styling_line, count($styling_line)-3, 3); 
                     for($i = 0; $i<count($styling_line);$i++){
                         $data = explode(":",$styling_line[$i]);
-                        $styling_comment[$data[1]] = explode(":",$styling_line[$i])[2];
+						if($data[0] != "Error")
+						$styling_comment[$data[1]] = explode(":",$styling_line[$i])[2];
                     }
                 @endphp
-            @endif --}}
+            @endif
             @php
                 $submitted_code =file_get_contents(public_path($question->submissions->last()->submitted_code));
                 $submitted_code = explode("\n",$submitted_code);
@@ -210,8 +212,11 @@
                         foreach ($solution as $key =>$sol) {
                             $solution[$key]="<div class='code'>$sol</div>";
                         }
-                        $solution[$data->line-1] = "<div class='bg-green-400 text-red-500 highlight-inline'>{$solution[$data->line-1]}</div>";
+                        if($data->line >0){
+                            $solution[$data->line-1] = "<div class='bg-green-400 text-red-500 highlight-inline'>{$solution[$data->line-1]}</div>";
+                        }
                         $solution = implode("",$solution);
+
                     @endphp
                     <pre class="fixed_output bg-gray-200 my-5 rounded shadow ">{!! $solution !!}</pre>
                     @else
