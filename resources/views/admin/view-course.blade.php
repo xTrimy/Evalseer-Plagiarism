@@ -72,7 +72,7 @@
                               aria-label="Delete"
                             >
                             <a
-                            href=""
+                            href="{{ route('dashboard.users.students.remove-from-course',['user_id'=>$student->id,'course_id'=>$course_id]) }}"
                               class="flex items-center justify-between w-full px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-600 border border-transparent rounded-lg active:bg-red-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-orange"
                             >
                               Remove From Course
@@ -149,7 +149,7 @@
                               aria-label="Delete"
                             >
                             <a
-                            href=""
+                            href="{{ route('dashboard.users.students.assign-to-course',['user_id'=>$studentAll->id,'course_id'=>$course_id]) }}"
                               class="flex items-center justify-between w-full px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-600 border border-transparent rounded-lg active:bg-green-600 hover:bg-green-700 focus:outline-none focus:shadow-outline-orange"
                             >
                               Assign To Course

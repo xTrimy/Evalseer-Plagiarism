@@ -138,6 +138,20 @@ class CourseController extends Controller
         // dd($studentsAll);
 
 
-        return view('admin.view-course',['students'=>$students,'studentsAll'=>$studentsAll]);
+        return view('admin.view-course',['students'=>$students,'studentsAll'=>$studentsAll,'course_id'=>$course_id]);
+    }
+
+    public function assign_to_course($user_id, $course_id) {
+        $user = User::findOrFail($user_id);
+        $user->courses()->attach($course_id);
+
+        return redirect()->back()->with('success','Student Enrolled To Course!');
+    }
+
+    public function remove_from_course($user_id, $course_id) {
+        $user = User::findOrFail($user_id);
+        $user->courses()->detach($course_id);
+
+        return redirect()->back()->with('success','Student Enrolled To Course!');
     }
 }

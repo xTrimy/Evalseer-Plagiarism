@@ -8,17 +8,26 @@ Courses
 @section('content')
         <main class="h-full pb-16 overflow-y-auto">
           <div class="container grid px-6 mx-auto">
-            <div class="flex justify-between mt-8 items-center">
-                <h2
+            <div class="flex mt-8 items-center">
+              <div class="flex-1">
+                 <h2
                 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
                 >
                 Courses
                 </h2>
-                <a href="{{ route('dashboard.courses.add') }}">
-                    <button class="py-2 px-8 text-white rounded-lg bg-orange-600 hover:bg-orange-500 active:bg-orange-400 text-lg ring-0 transition-all active:ring-4 ring-orange-200 dark:ring-orange-800">
-                        <i class="las la-plus text-2xl"></i> Add Course
+              </div>
+               <div class="flex-1 text-right">
+                  <a href="{{ route('dashboard.users.students.enroll') }}">
+                    <button class="py-2 px-8 text-orange-500  rounded-lg bg-white hover:bg-orange-500 hover:text-white border border-orange-500 active:bg-orange-400 text-lg ring-0 transition-all active:ring-4 ring-orange-200 dark:ring-orange-800">
+                         Enroll Students
                     </button>
-                </a>
+                  </a>
+                  <a href="{{ route('dashboard.courses.add') }}">
+                      <button class="py-2 px-8 text-white rounded-lg bg-orange-600 hover:bg-orange-500 active:bg-orange-400 text-lg ring-0 transition-all active:ring-4 ring-orange-200 dark:ring-orange-800">
+                           Add Course
+                      </button>
+                  </a>
+               </div>
             </div>
            
             

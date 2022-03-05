@@ -131,8 +131,7 @@ users
 
                     pre code,
                     pre .line-number {
-                      /* Ukuran line-height antara teks di dalam tag <code> dan <span class="line-number"> harus sama! */
-                      font:normal normal 12px/14px "Courier New",Courier,Monospace;
+                      font:normal normal 14px/16px "Courier New",Courier,Monospace;
                       color:black;
                       display:block;
                     }
@@ -157,16 +156,15 @@ users
                  <pre><code>{{  file_get_contents(public_path($submission->submitted_code)) }}</code></pre>
                  <script>
                   (function() {
-                    var pre = document.getElementsByTagName('pre'),
-                      pl = pre.length;
-                    for (var i = 0; i < pl; i++) {
-                      pre[i].innerHTML = '<span class="line-number"></span>' + pre[i].innerHTML + '<span class="cl"></span>';
-                      var num = pre[i].innerHTML.split(/\n/).length;
-                      for (var j = 0; j < num; j++) {
-                        var line_num = pre[i].getElementsByTagName('span')[0];
-                        line_num.innerHTML += '<span>' + (j + 1) + '</span>';
+                      var pre = document.getElementsByTagName('pre'),pl = pre.length;
+                      for (var i = 0; i < pl; i++) {
+                        pre[i].innerHTML = '<span class="line-number"></span>' + pre[i].innerHTML + '<span class="cl"></span>';
+                        var num = pre[i].innerHTML.split(/\n/).length;
+                        for (var j = 0; j < num; j++) {
+                          var line_num = pre[i].getElementsByTagName('span')[0];
+                          line_num.innerHTML += '<span>' + (j + 1) + '</span>';
+                        }
                       }
-                    }
                   })();
               </script>
                 </div>
