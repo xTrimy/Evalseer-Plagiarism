@@ -4,7 +4,7 @@
             href="#"
           >
           <div class="w-8 h-8 inline-block mr-4">
-            <img src="{{ asset('img/logo.png') }}" class="w-full h-full object-contain" alt="">
+            <img src="{{ asset('png/logo.png') }}" class="w-full h-full object-contain" alt="">
           </div>
             Evalseer
           </a>
@@ -18,7 +18,7 @@
               @endif
               <a
                 class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
-                href="#"
+                href="/dashboard/"
               >
                 <svg
                   class="w-5 h-5"

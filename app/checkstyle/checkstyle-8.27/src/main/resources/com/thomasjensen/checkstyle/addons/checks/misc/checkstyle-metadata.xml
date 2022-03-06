@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Checkstyle-Addons - Additional Checkstyle checks
+    Copyright (c) 2015-2018, Thomas Jensen and the Checkstyle Addons contributors
+
+    This program is free software: you can redistribute it and/or modify it under the
+    terms of the GNU General Public License, version 3, as published by the Free
+    Software Foundation.
+
+    This program is distributed in the hope that it will be useful, but WITHOUT ANY
+    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+    PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along with this
+    program.  If not, see http://www.gnu.org/licenses/.
+ -->
+<!DOCTYPE checkstyle-metadata PUBLIC "-//eclipse-cs//DTD Check Metadata 1.1//EN"
+        "http://eclipse-cs.sourceforge.net/dtds/checkstyle-metadata_1_1.dtd">
+
+<checkstyle-metadata>
+<rule-group-metadata name="Checkstyle Addons" priority="1600">
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- LocationReference                                                                     -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <rule-metadata name="%LocationReference.name" internal-name="LocationReference" parent="TreeWalker">
+        <alternative-name internal-name="com.thomasjensen.checkstyle.addons.checks.misc.LocationReferenceCheck"/>
+        <description>%LocationReference.desc</description>
+
+        <property-metadata name="methodCalls" datatype="String">
+            <description>%LocationReference.methodCalls</description>
+        </property-metadata>
+        <property-metadata name="variableNames" datatype="String">
+            <description>%LocationReference.variableNames</description>
+        </property-metadata>
+        <property-metadata name="location" datatype="SingleSelect" default-value="method">
+            <description>%LocationReference.location</description>
+            <enumeration>
+                <property-value-option value="method"/>
+                <property-value-option value="simpleclass"/>
+                <property-value-option value="fullclass"/>
+                <property-value-option value="classobject"/>
+            </enumeration>
+        </property-metadata>
+        <property-metadata name="argumentPosition" datatype="Integer" default-value="0">
+            <description>%LocationReference.argumentPosition</description>
+        </property-metadata>
+
+        <message-key key="locationreference.mismatch.method"/>
+        <message-key key="locationreference.mismatch.simpleclass"/>
+        <message-key key="locationreference.mismatch.fullclass"/>
+        <message-key key="locationreference.mismatch.classobject"/>
+    </rule-metadata>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- ModuleDirectoryLayout                                                                 -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <rule-metadata name="%ModuleDirectoryLayout.name" internal-name="ModuleDirectoryLayout" parent="Checker">
+        <alternative-name internal-name="com.thomasjensen.checkstyle.addons.checks.misc.ModuleDirectoryLayoutCheck" />
+        <description>%ModuleDirectoryLayout.desc</description>
+
+        <property-metadata name="baseDir" datatype="String" default-value=".">
+            <description>%ModuleDirectoryLayout.baseDir</description>
+        </property-metadata>
+        <property-metadata name="configFile" datatype="String">
+            <description>%ModuleDirectoryLayout.configFile</description>
+        </property-metadata>
+        <property-metadata name="failQuietly" datatype="Boolean" default-value="false">
+            <description>%ModuleDirectoryLayout.failQuietly</description>
+        </property-metadata>
+
+        <message-key key="moduledirectorylayout.invalid.module" />
+        <message-key key="moduledirectorylayout.invalid.mdlpath" />
+        <message-key key="moduledirectorylayout.nestedsrcfolder" />
+        <message-key key="moduledirectorylayout.illegalcontent" />
+        <message-key key="moduledirectorylayout.notinthismodule" />
+    </rule-metadata>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- PropertyCatalog                                                                       -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <rule-metadata name="%PropertyCatalog.name" internal-name="PropertyCatalog" parent="TreeWalker">
+        <alternative-name internal-name="com.thomasjensen.checkstyle.addons.checks.misc.PropertyCatalogCheck"/>
+        <description>%PropertyCatalog.desc</description>
+
+        <property-metadata name="selection" datatype="Regex" default-value="^(?!x)x">
+            <description>%PropertyCatalog.selection</description>
+        </property-metadata>
+        <property-metadata name="excludedFields" datatype="Regex" default-value="serialVersionUID">
+            <description>%PropertyCatalog.excludedFields</description>
+        </property-metadata>
+        <property-metadata name="enumArgument" datatype="Boolean" default-value="false">
+            <description>%PropertyCatalog.enumArgument</description>
+        </property-metadata>
+        <property-metadata name="baseDir" datatype="String" default-value=".">
+            <description>%PropertyCatalog.baseDir</description>
+        </property-metadata>
+        <property-metadata name="propertyFile" datatype="String">
+            <description>%PropertyCatalog.propertyFile</description>
+        </property-metadata>
+        <property-metadata name="propertyFileEncoding" datatype="String" default-value="UTF-8">
+            <description>%PropertyCatalog.propertyFileEncoding</description>
+        </property-metadata>
+        <property-metadata name="reportDuplicates" datatype="Boolean" default-value="true">
+            <description>%PropertyCatalog.reportDuplicates</description>
+        </property-metadata>
+        <property-metadata name="reportOrphans" datatype="Boolean" default-value="true">
+            <description>%PropertyCatalog.reportOrphans</description>
+        </property-metadata>
+        <property-metadata name="caseSensitive" datatype="Boolean" default-value="true">
+            <description>%PropertyCatalog.caseSensitive</description>
+        </property-metadata>
+        <property-metadata name="fileExludes" datatype="Regex"
+                default-value="[\\/]\.idea[\\/](?:checkstyleidea\.tmp[\\/])?csi-\w+[\\/]">
+            <description>%PropertyCatalog.fileExludes</description>
+        </property-metadata>
+
+        <message-key key="propertycatalog.unclear.constant"/>
+        <message-key key="propertycatalog.unclear.enumparam"/>
+        <message-key key="propertycatalog.file.notfound"/>
+        <message-key key="propertycatalog.missing.property.short"/>
+        <message-key key="propertycatalog.missing.property.long"/>
+        <message-key key="propertycatalog.duplicate.property"/>
+        <message-key key="propertycatalog.orphaned.property"/>
+        <message-key key="propertycatalog.orphaned.properties"/>
+    </rule-metadata>
+
+</rule-group-metadata>
+</checkstyle-metadata>

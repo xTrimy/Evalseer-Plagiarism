@@ -132,6 +132,25 @@ Add Course
                   placeholder="Course End Date"
                 />
               </label>
+              <div class="block text-sm my-4">
+                <span class="text-gray-700 dark:text-gray-400">
+                <i class="las la-code text-xl"></i>
+                Programming Languages
+                </span>
+                <div class="flex flex-wrap">
+                  @foreach ($programming_languages as $lang)
+                  <label class="mr-4 dark:text-gray-400 text-gray-700">
+                    <input
+                    type="checkbox"
+                    value="{{ $lang->id }}"
+                    name="programming_languages[]"
+                    />
+                    {{ $lang->name }}
+                  </label>
+                  @endforeach
+                  
+                </div>
+              </div>
               <button type="submit" class="table items-center mt-4 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange">
               Add
               <span class="ml-2" aria-hidden="true">

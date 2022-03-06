@@ -1,0 +1,14 @@
+{
+    "settings": {
+        "formatVersion": 1,
+        "moduleRegex": "module\\d"
+    },
+    "structure": {
+        "src/main/java": {},
+        "src/main/resources": {},
+        "src/main/webapp": {
+            "comment": "a test comment on this MDL path",
+            "modules": "module-x"
+        }
+    }
+}

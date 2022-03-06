@@ -28,7 +28,7 @@ users
                 href="{{ route('dashboard.users.instructors.run_plag',['zipPath'=>'1','type'=>'1']) }}"
                     class="flex items-center justify-between px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange"
                 >
-                    Run Plagiarism
+                    Check Plagiarism
                     <i class="ml-2 fas fa-play text-xl"></i>
                 </a>
             </div>
@@ -73,10 +73,10 @@ users
                         {{ $submission->execution_time.' Sec' ?? 'Error Compiling' }}
                       </td>
                       <td class="px-4 py-3">
-                        {{-- {{ $submission->plagiarism }} --}}
+                        {{ $submission->plagiarism }}%
                       </td>
                       <td class="px-4 py-3">
-                        {{ $submission->total_grade }}
+                        {{ $submission->total_grade  }}
                       </td>
                       <td class="px-4 py-3">
                         <div class="flex items-center space-x-4 text-sm justify-center">
@@ -112,7 +112,7 @@ users
                               ></path>
                             </svg>
                           </button>
-                          <a href="" style="display: block;">
+                          <a href="{{ route('dashboard.users.instructors.view_submission',['submission_id'=>$submission->id]) }}" style="display: block;">
                             <button
                               class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
                               aria-label="Delete"

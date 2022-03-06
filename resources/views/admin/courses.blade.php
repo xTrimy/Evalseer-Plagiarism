@@ -8,17 +8,26 @@ Courses
 @section('content')
         <main class="h-full pb-16 overflow-y-auto">
           <div class="container grid px-6 mx-auto">
-            <div class="flex justify-between mt-8 items-center">
-                <h2
+            <div class="flex mt-8 items-center">
+              <div class="flex-1">
+                 <h2
                 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
                 >
                 Courses
                 </h2>
-                <a href="{{ route('dashboard.courses.add') }}">
-                    <button class="py-2 px-8 text-white rounded-lg bg-orange-600 hover:bg-orange-500 active:bg-orange-400 text-lg ring-0 transition-all active:ring-4 ring-orange-200 dark:ring-orange-800">
-                        <i class="las la-plus text-2xl"></i> Add Course
+              </div>
+               <div class="flex-1 text-right">
+                  <a href="{{ route('dashboard.users.students.enroll') }}">
+                    <button class="py-2 px-8 text-orange-500  rounded-lg bg-white hover:bg-orange-500 hover:text-white border border-orange-500 active:bg-orange-400 text-lg ring-0 transition-all active:ring-4 ring-orange-200 dark:ring-orange-800">
+                         Enroll Students
                     </button>
-                </a>
+                  </a>
+                  <a href="{{ route('dashboard.courses.add') }}">
+                      <button class="py-2 px-8 text-white rounded-lg bg-orange-600 hover:bg-orange-500 active:bg-orange-400 text-lg ring-0 transition-all active:ring-4 ring-orange-200 dark:ring-orange-800">
+                           Add Course
+                      </button>
+                  </a>
+               </div>
             </div>
            
             
@@ -50,7 +59,7 @@ Courses
                           >
                             <img
                               class="object-cover w-full h-full rounded-full"
-                              src=""
+                              src="{{ asset('png/course.png') }}"
                               alt=""
                               loading="lazy"
                             />
@@ -90,6 +99,7 @@ Courses
                       </td>
                       <td class="px-4 py-3">
                         <div class="flex items-center space-x-4 text-sm">
+                          <a href="">
                           <button
                             class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
                             aria-label="Edit"
@@ -104,7 +114,7 @@ Courses
                                 d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
                               ></path>
                             </svg>
-                          </button>
+                          </button></a>
                           <button
                             class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
                             aria-label="Delete"
@@ -122,7 +132,7 @@ Courses
                               ></path>
                             </svg>
                           </button>
-                          <a href="#" style="display: block;">
+                          <a href="{{ route('dashboard.courses.view-course',['course_id'=>$course->id]) }}" style="display: block;">
                             <button
                               class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
                               aria-label="Delete"

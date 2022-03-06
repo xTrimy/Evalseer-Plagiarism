@@ -10,7 +10,8 @@
     <script src="https://kit.fontawesome.com/b1361fb5d5.js" crossorigin="anonymous"></script>
     <script src="{{ asset('js/app.js') }}"></script>
 </head>
-<body>
+<body class="relative">
+    <x-modal/>
     <div class="flex w-full px-8 py-5">
         <div class="flex-1  text-center flex justify-center">
             <div class="w-3/4">
@@ -30,6 +31,9 @@
         <div class="flex w-full px-32 py-8 bg-gray-900">
             <a href="{{ route('home') }}">
                 <p class="text-white font-bold cursor-pointer mr-6">HOME</p>
+            </a>
+            <a href="/dashboard/">
+                <p class="text-white font-bold cursor-pointer mr-6">DASHBOARD</p>
             </a>
             {{-- <p class="text-white font-bold cursor-pointer mr-6">EDUCATION</p>
             <p class="text-white font-bold cursor-pointer mr-6">CATALOG</p>
@@ -57,7 +61,7 @@
         <div class="flex w-full px-32 py-4 bg-gray-200">
             <div class="bg-red-800 rounded-lg px-8 py-5 text-center mr-5 w-40">
                 <i class="fab fa-buromobelexperte text-white text-center text-2xl"></i>
-                <p class="font-bold text-white">Dashboard</p>
+                <p class="font-bold text-white">Dashboard </p>
             </div>
             <div class="bg-green-600 rounded-lg px-8 py-5 text-center mr-5 w-40">
                 <i class="far fa-calendar text-white text-center text-2xl"></i>

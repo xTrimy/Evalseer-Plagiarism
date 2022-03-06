@@ -1,0 +1,14 @@
+{
+    "comment": "This is directories-scenario3.json.",
+    "settings": {
+        "formatVersion": 1,
+        "moduleRegex": ""
+    },
+    "structure": {
+        "src/main/java": {},
+        "src/main/resources": {},
+        "src/main/webapp": {
+            "modules": "module-x"
+        }
+    }
+}

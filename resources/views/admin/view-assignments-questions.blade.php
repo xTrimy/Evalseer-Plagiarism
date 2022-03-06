@@ -24,7 +24,7 @@ users
                 >
                   Assignments
                 </h2>
-                <a href="#">
+                <a href="{{ route('dashboard.assignments.add_assignment') }}">
                     <button class="py-2 px-8 text-white rounded-lg bg-orange-600 hover:bg-orange-500 active:bg-orange-400 text-lg ring-0 transition-all active:ring-4 ring-orange-200 dark:ring-orange-800">
                         <i class="las la-plus text-2xl"></i> Add Assignment
                     </button>
@@ -66,21 +66,23 @@ users
                       </td>
                       <td class="px-4 py-3">
                         <div class="flex items-center space-x-4 text-sm justify-center">
-                          <button
-                            class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
-                            aria-label="Edit"
-                          >
-                            <svg
-                              class="w-5 h-5"
-                              aria-hidden="true"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
+                          <a href="{{ route('dashboard.users.instructors.edit_question',['question_id'=>$question->id]) }}">
+                            <button
+                              class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
+                              aria-label="Edit"
                             >
-                              <path
-                                d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
-                              ></path>
-                            </svg>
-                          </button>
+                              <svg
+                                class="w-5 h-5"
+                                aria-hidden="true"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                                ></path>
+                              </svg>
+                            </button>
+                          </a>
                           <button
                             class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
                             aria-label="Delete"

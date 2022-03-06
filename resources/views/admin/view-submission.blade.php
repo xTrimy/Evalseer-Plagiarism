@@ -1,312 +1,189 @@
-@php
-    $page = app()->view->getSections()['page'] ?? null;
-    $page = rtrim($page);
-@endphp
-<!DOCTYPE html>
-<html :class="{ 'dark': dark }" x-data="data()" lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@yield('title')</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}" />
-    <script
-      src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
-      defer
-    ></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="{{ asset('js/init-alpine.js') }}"></script>
-  </head>
-  <body>
-    <div
-      class="flex h-screen bg-gray-50 dark:bg-gray-900"
-      :class="{ 'overflow-hidden': isSideMenuOpen}"
-    >
-<!-- Desktop sidebar -->
-<aside
-        class="z-20 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0"
-      >
-        <x-dashboard-navigator/>
-      </aside>
-
-      
-      <!-- Mobile sidebar -->
-      <!-- Backdrop -->
-      <div
-        x-show="isSideMenuOpen"
-        x-transition:enter="transition ease-in-out duration-150"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease-in-out duration-150"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
-        class="fixed inset-0 z-10 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center"
-      ></div>
-      <aside
-        class="fixed inset-y-0 z-20 flex-shrink-0 w-64 mt-16 overflow-y-auto bg-white dark:bg-gray-800 md:hidden"
-        x-show="isSideMenuOpen"
-        x-transition:enter="transition ease-in-out duration-150"
-        x-transition:enter-start="opacity-0 transform -translate-x-20"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease-in-out duration-150"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0 transform -translate-x-20"
-        @click.away="closeSideMenu"
-        @keydown.escape="closeSideMenu"
-      >
-        <x-dashboard-navigator :page="$page" />
-      </aside>
-      <div class="flex flex-col flex-1">
-      <header class="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
-          <div
-            class="container flex items-center justify-between h-full px-6 mx-auto text-orange-600 dark:text-orange-300"
-          >
-            <!-- Mobile hamburger -->
-            <button
-              class="p-1 -ml-1 mr-5 rounded-md md:hidden focus:outline-none focus:shadow-outline-orange"
-              @click="toggleSideMenu"
-              aria-label="Menu"
-            >
-              <svg
-                class="w-6 h-6"
-                aria-hidden="true"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                  clip-rule="evenodd"
-                ></path>
-              </svg>
-            </button>
-            <!-- Search input -->
-            <div class="flex justify-center flex-1 lg:mr-32">
-              <div
-                class="relative w-full max-w-xl mr-6 focus-within:text-orange-500"
-              >
-                <div class="absolute inset-y-0 flex items-center pl-2">
-                  <svg
-                    class="w-4 h-4"
-                    aria-hidden="true"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                      clip-rule="evenodd"
-                    ></path>
-                  </svg>
-                </div>
+@extends('layout.dashboard.app')
+@section('page')
+users
+@endsection
+@section('title')
+  View Assignments
+@endsection
+@section('content')
+        <main class="h-full pb-16 overflow-y-auto">
+          <div class="container grid px-6 mx-auto">
+              <div class=" mt-8 ">
                 <input
-                  id="search_input"
-                  class="w-full pl-8 pr-2 text-sm text-gray-700 placeholder-gray-600 bg-gray-100 border-0 rounded-md dark:placeholder-gray-500 dark:focus:shadow-outline-gray dark:focus:placeholder-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:placeholder-gray-500 focus:bg-white focus:border-orange-300 focus:outline-none focus:shadow-outline-orange form-input"
-                  type="text"
-                  placeholder="Search here"
-                  aria-label="Search"
+                id="search_input"
+                class="w-full shadow pl-8 py-3 pr-2 text-sm text-gray-700 placeholder-gray-600 bg-gray-100 border-0 rounded-md dark:placeholder-gray-500 dark:focus:shadow-outline-gray dark:focus:placeholder-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:placeholder-gray-500 focus:bg-white focus:border-orange-300 focus:outline-none focus:shadow-outline-orange form-input"
+                type="text"
+                placeholder="Search here"
+                aria-label="Search"
                 />
-                <div id="search_dropdown" class="absolute top-full w-full py-2 bg-white dark:bg-gray-800 shadow-sm px-4">
+              </div>
+            <div class="flex justify-between mt-8 items-center">
+                
+                <h2
+                class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
+                >
+                  Assignments
+                </h2>
+                <a
+                href="{{ route('dashboard.users.instructors.run_plag',['zipPath'=>'1','type'=>'1']) }}"
+                    class="flex items-center justify-between px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange"
+                >
+                    Check Plagiarism
+                    <i class="ml-2 fas fa-play text-xl"></i>
+                </a>
+            </div>
+            
+            <div class="w-full overflow-hidden rounded-lg shadow-xs">
+              <div class="w-full overflow-x-auto">
+                <table class="w-full whitespace-no-wrap">
+                  <thead>
+                    <tr
+                      class="text-xs text-center font-semibold tracking-wide text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+                    >
+                      <th class="px-4 py-3">Student Name</th>
+                      <th class="px-4 py-3">Submission</th>
+                      <th class="px-4 py-3">Logic Feedback</th>
+                      <th class="px-4 py-3">Execution Time</th>
+                      <th class="px-4 py-3">Plagiarism</th>
+                      <th class="px-4 py-3">Grade</th>
+                      <th class="px-4 py-3">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800"
+                  >
+                  @foreach ($submissions as $submission)
+                      <tr class="text-gray-700 dark:text-gray-400 text-center">
+                      <td class="px-4 py-3">
+                        <div class="flex items-center text-sm">
+                          <!-- Avatar with inset shadow -->
+                          </div>
+                          <div>
+                            <p class="font-semibold">{{ $submission->name }}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-4 py-3 text-sm " >
+                        <a target="_blank" href="{{ $submission->submitted_code }}">View Submission</a>
+                      </td>
+                      <td class="px-4 py-3 text-center" >
+                        {{ $submission->logic_feedback ?? 'None' }}
+                      </td>
+                      <td class="px-4 py-3 " >
+                        {{ $submission->execution_time.' Sec' ?? 'Error Compiling' }}
+                      </td>
+                      <td class="px-4 py-3">
+                        {{ $submission->plagiarism }}%
+                      </td>
+                      <td class="px-4 py-3">
+                        {{ $submission->total_grade  }}
+                      </td>
+                      <td class="px-4 py-3">
+                        <div class="flex items-center space-x-4 text-sm justify-center">
+                          <button
+                            class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
+                            aria-label="Edit"
+                          >
+                            <svg
+                              class="w-5 h-5"
+                              aria-hidden="true"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                              ></path>
+                            </svg>
+                          </button>
+                          <button
+                            class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
+                            aria-label="Delete"
+                          >
+                            <svg
+                              class="w-5 h-5"
+                              aria-hidden="true"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                clip-rule="evenodd"
+                              ></path>
+                            </svg>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
                     
-                    <div id="code_search_container"></div>
-                    <div id="person_search_container"></div>
-                    <div id="email_search_container"></div>
-                    <div id="phone_search_container"></div>
-                    <div id="slot_search_container"></div>
-                    <div class="hidden" id="search_element_cloner">
-                        <a class="element block py-2 px-4 text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">
-                            
-                        </a>
-                    </div>
-                    
-                </div>
-                <script>
-                    var search_input = document.getElementById('search_input');
-                    var search_cloner = document.getElementById('search_element_cloner');
-                    var search_persons_container = document.getElementById('person_search_container');
-                    var search_emails_container = document.getElementById('email_search_container');
-                    var search_phones_container = document.getElementById('phone_search_container');
-                    var search_codes_container = document.getElementById('code_search_container');
-                    var search_slots_container = document.getElementById('slot_search_container');
-                    var search_dropdown = document.getElementById('search_dropdown');
-                    search_input.addEventListener('focus',function(){
-                      search_dropdown.classList.remove('hidden');
-                    });
-
-                    search_input.addEventListener('input',function(){
-                    if(this.value.length == 0){
-                      search_dropdown.classList.add('hidden');
-                      return;
+                  @endforeach
+                  </tbody>
+                </table>
+                <div class="w-full bg-white text-black p-4 rounded-md border mt-8">
+                  <h1 class="my-3 font-bold">Submitted Code</h1>
+                  <style>
+                    pre {
+                      background-color:#eee;
+                      overflow:auto;
+                      margin:0 0 1em;
+                      padding:.5em 1em;
                     }
-                    search_dropdown.classList.remove('hidden');
-                    
-                    var self = this;
-                    var xhttp = new XMLHttpRequest();
-                    xhttp.onreadystatechange = function() {
-                        if (this.readyState == 4 && this.status == 200) {
-                            search_persons_container.innerHTML = "";
-                            search_emails_container.innerHTML = "";
-                            search_codes_container.innerHTML = "";
-                            search_phones_container.innerHTML = "";
-                            search_slots_container.innerHTML = "";
-                            var data = JSON.parse(xhttp.responseText);
-                            var persons = data.name;
-                            var emails = data.email;
-                            var phones = data.phone;
-                            var codes = data.code;
-                            if(persons){
-                                for(let i = 0; i<persons.length; i++){
-                                    var element = search_cloner.querySelector('a').cloneNode(true);
-                                    element.setAttribute("href","/belonging/"+persons[i].id);
-                                    element.innerHTML = persons[i].name.toLowerCase().replace(self.value.toLowerCase(),`<span class='font-bold text-black dark:text-white'>${self.value}</span>`);
-                                    element.innerHTML += " | " + persons[i].phone;
-                                    element.innerHTML += " | " + persons[i].type.name;
-                                    element.innerHTML += " | " + persons[i].code;
-                                    search_persons_container.appendChild(element);
-                                }
-                            }
-                            if(emails){
-                                for(let i = 0; i<emails.length; i++){
-                                    var element = search_cloner.querySelector('a').cloneNode(true);
-                                    element.setAttribute("href","/belonging/"+emails[i].id);
-                                    element.innerHTML = emails[i].email.toLowerCase().replace(self.value.toLowerCase(),`<span class='font-bold text-black dark:text-white'>${self.value}</span>`);
-                                    element.innerHTML += " | " + emails[i].name;
-                                    element.innerHTML += " | " + emails[i].type.name;
-                                    element.innerHTML += " | " + emails[i].code;
-                                    search_emails_container.appendChild(element);
-                                }
-                            }
-                            if(phones){
-                                for(let i = 0; i<phones.length; i++){
-                                    var element = search_cloner.querySelector('a').cloneNode(true);
-                                    element.setAttribute("href","/belonging/"+phones[i].id);
-                                    element.innerHTML =  phones[i].name; 
-                                    element.innerHTML += " | " + phones[i].phone.replace(self.value,`<span class='font-bold text-black dark:text-white'>${self.value}</span>`);
-                                    element.innerHTML += " | " + phones[i].type.name;
-                                    element.innerHTML += " | " + phones[i].code;
-                                    search_phones_container.appendChild(element);
-                                }
-                            }
-                            if(codes){
-                                for(let i = 0; i<codes.length; i++){
-                                    var element = search_cloner.querySelector('a').cloneNode(true);
-                                    element.setAttribute("href","/belonging/"+codes[i].id);
-                                    element.innerHTML =  codes[i].name; 
-                                    element.innerHTML += " | " + codes[i].code.replace(self.value,`<span class='font-bold text-black dark:text-white'>${self.value}</span>`);
-                                    element.innerHTML += " | " + codes[i].type.name;
-                                    element.innerHTML += " | " + codes[i].size.name;
-                                    search_codes_container.appendChild(element);
-                                }
-                            }
+
+                    pre code,
+                    pre .line-number {
+                      font:normal normal 14px/16px "Courier New",Courier,Monospace;
+                      color:black;
+                      display:block;
+                    }
+
+                    pre .line-number {
+                      float:left;
+                      margin:0 1em 0 -1em;
+                      border-right:1px solid;
+                      text-align:right;
+                    }
+
+                    pre .line-number span {
+                      display:block;
+                      padding:0 .5em 0 1em;
+                    }
+
+                    pre .cl {
+                      display:block;
+                      clear:both;
+                    }
+                  </style>
+                 <pre><code>{{  file_get_contents(public_path($submission->submitted_code)) }}</code></pre>
+                 <script>
+                  (function() {
+                      var pre = document.getElementsByTagName('pre'),pl = pre.length;
+                      for (var i = 0; i < pl; i++) {
+                        pre[i].innerHTML = '<span class="line-number"></span>' + pre[i].innerHTML + '<span class="cl"></span>';
+                        var num = pre[i].innerHTML.split(/\n/).length;
+                        for (var j = 0; j < num; j++) {
+                          var line_num = pre[i].getElementsByTagName('span')[0];
+                          line_num.innerHTML += '<span>' + (j + 1) + '</span>';
                         }
-                    };
-                    xhttp.open("GET", "/api/search?q="+self.value, true);
-                    xhttp.send();
-                    });
-                    document.body.addEventListener('click',function(e){
-                      if(e.target != search_dropdown && e.target != search_input){
-                        search_dropdown.classList.add('hidden');
                       }
-                    });
-                </script>
+                  })();
+              </script>
+                </div>
+                <div class="w-full bg-white text-black p-4 rounded-md border mt-8">
+                  <h1 class="my-3 font-bold">Syntax Feedback</h1>
+                  {{ $submission->syntax_feedback ?? "No Syntax Feedback"}}
+                </div>
+                <div class="w-full bg-white text-black p-4 rounded-md border mt-8">
+                  <h1 class="my-3 font-bold">Style Feedback</h1>
+                  <pre>{{ str_replace(public_path($submission->submitted_code), '', $submission->style_feedback)  ?? "No Style Feedback"  }}</pre>
+                </div>
+              </div>
+              <div
+                class="mt-4"
+              >
+                <!-- Pagination -->
               </div>
             </div>
-            <ul class="flex items-center flex-shrink-0 space-x-6">
-              <!-- Theme toggler -->
-              <li class="flex">
-                <button
-                  class="rounded-md focus:outline-none focus:shadow-outline-orange"
-                  @click="toggleTheme"
-                  aria-label="Toggle color mode"
-                >
-                  <template x-if="!dark">
-                    <svg
-                      class="w-5 h-5"
-                      aria-hidden="true"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
-                      ></path>
-                    </svg>
-                  </template>
-                  <template x-if="dark">
-                    <svg
-                      class="w-5 h-5"
-                      aria-hidden="true"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-                        clip-rule="evenodd"
-                      ></path>
-                    </svg>
-                  </template>
-                </button>
-              </li>
-              <!-- Profile menu -->
-              <li class="relative">
-                <button
-                  class="align-middle rounded-full focus:shadow-outline-orange focus:outline-none"
-                  @click="toggleProfileMenu"
-                  @keydown.escape="closeProfileMenu"
-                  aria-label="Account"
-                  aria-haspopup="true"
-                >
-                  <img
-                    class="object-cover w-8 h-8 rounded-full border"
-                    src="{{ asset("avatars/") }}"
-                    aria-hidden="true"
-                  />
-                </button>
-                <template x-if="isProfileMenuOpen">
-                  <ul
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100"
-                    x-transition:leave-end="opacity-0"
-                    @click.away="closeProfileMenu"
-                    @keydown.escape="closeProfileMenu"
-                    class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"
-                    aria-label="submenu"
-                  >
-                    <li class="flex">
-                      <a
-                        class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                        href="#"
-                      >
-                        <svg
-                          class="w-4 h-4 mr-3"
-                          aria-hidden="true"
-                          fill="none"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
-                          ></path>
-                        </svg>
-                        <span>Log out</span>
-                      </a>
-                    </li>
-                  </ul>
-                </template>
-              </li>
-            </ul>
           </div>
-        </header>
-        @yield('content')
-      </div>
-    </div>
-  </body>
-</html>
+        </main>
+
+@endsection
