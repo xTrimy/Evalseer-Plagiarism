@@ -43,7 +43,9 @@
             <p class="text-white font-bold cursor-pointer mr-6">HOW IT WORKS</p> --}}
         </div>
         <div class="flex w-96 py-8 bg-text text-center justify-center">
+            <a href="{{ route('logout') }}">
             <p class="text-white font-bold text-center cursor-pointer">LOGOUT</p>
+        </a>
         </div>
     </div>
     <div class="w-full bg-text py-1"></div>
