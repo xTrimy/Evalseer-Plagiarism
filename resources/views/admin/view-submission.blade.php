@@ -74,6 +74,8 @@ users
                       </td>
                       <td class="px-4 py-3">
                         {{ $submission->plagiarism }}%
+                        <br>
+                        <a href="{{ route('dashboard.users.instructors.plagiarism_report') }}" class=" font-thin text-green-800">View Report</a>
                       </td>
                       <td class="px-4 py-3">
                         {{ $submission->total_grade  }}

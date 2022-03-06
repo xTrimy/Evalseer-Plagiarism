@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
 
+namespace App\Http\Controllers;
+session_start();
 use Illuminate\Http\Request;
 use File;
 use ZipArchive;
@@ -58,11 +59,15 @@ class PlagiarismController extends Controller
                 $zip->close();
                 $submission_root_folder = str_replace("\\","/", $submission_root_folder);
                 $extract_dir_path = str_replace("\\", "/", $extract_dir_path);
-                $x = shell_exec("java -jar $path_to_jplag -r $submission_root_folder/$submission_folder-results -m 99999 -l $type -s $extract_dir_path/*");
+                $x = shell_exec("java -jar $path_to_jplag -r $submission_root_folder/$submission_folder-results -m 99999 -l $type -s $extract_dir_path");
+                $_SESSION['plag'] = $submission_root_folder.'/'.$submission_folder.'-results/';
+                
+                $_SESSION['plag'] = file_get_contents($_SESSION['plag'].'match3-link.html');
                 $errors = ["Error: Not enough valid submissions!"];
                 if(strpos($x,$errors[0])){
                     $message = "Error: Not enough valid submissions!<br>Check submission type";
                 }
+                return redirect()->back()->with('success','Plagiarism Done');
             } else {
                 return FALSE;
             }
@@ -70,9 +75,13 @@ class PlagiarismController extends Controller
             dd("x");
         }
         // if(strlen($message) > 0 ){
-        //     return redirect()->back()->with(["message" => $message]);
+        //     return redirect()->back()->with("Plagiarism Detection Is Succuss");
         // }else{
         //     return redirect()->back()->with(["unique_id" => $submission_folder]);
         // }
+    }
+
+    public function plagiarism_report() {
+        return view('admin.plagiarism-report');
     }
 }

@@ -142,6 +142,8 @@ Route::middleware('auth')->group(function (){
             });
             Route::prefix('/instructors')->as('instructors.')->group(function () {
                 Route::get('/run-plag/{zipPath}/{type}', [PlagiarismController::class, "run_plag"])->name('run_plag');
+
+                Route::get('/plagiarism-report', [PlagiarismController::class, "plagiarism_report"])->name('plagiarism_report');
             });
             Route::get('/add', [UserController::class, "add"])->name('add');
             Route::post('/add', [UserController::class, "store"]);
