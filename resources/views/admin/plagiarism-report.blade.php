@@ -41,7 +41,7 @@ Plagiarism Report
                                 </tr>
                                 <tr>
                                     <td class="font-bold w-1/4">Plagiarism Percentage</td>
-                                    <td>100%</td>
+                                    <td>67%</td>
                                 </tr>
                                 <tr>
                                     <td class="font-bold w-2/4">Submission Date</td>
@@ -61,7 +61,7 @@ Plagiarism Report
                                 </tr>
                                 <tr>
                                     <td class="font-bold w-1/4">Plagiarism Percentage</td>
-                                    <td>100%</td>
+                                    <td>67%</td>
                                 </tr>
                                 <tr>
                                     <td class="font-bold w-2/4">Submission Date</td>

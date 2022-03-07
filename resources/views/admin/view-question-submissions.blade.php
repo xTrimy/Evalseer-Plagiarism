@@ -32,7 +32,7 @@ users
                   Assignments
                 </h2>
                 <a
-                href="{{ route('dashboard.users.instructors.run_plag',['zipPath'=>'1','type'=>'1']) }}"
+                href="{{ route('dashboard.users.instructors.run_plag',['zipPath'=>'1','type'=>'1','question_id'=>11]) }}"
                     class="flex items-center justify-between px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange"
                 >
                     Check Plagiarism

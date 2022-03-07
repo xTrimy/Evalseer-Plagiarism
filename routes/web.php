@@ -141,7 +141,7 @@ Route::middleware('auth')->group(function (){
                 Route::get('/view-submission/{submission_id}', [UserController::class, "view_submission"])->name('view_submission');
             });
             Route::prefix('/instructors')->as('instructors.')->group(function () {
-                Route::get('/run-plag/{zipPath}/{type}', [PlagiarismController::class, "run_plag"])->name('run_plag');
+                Route::get('/run-plag/{zipPath}/{type}/{question_id}', [PlagiarismController::class, "run_plag"])->name('run_plag');
 
                 Route::get('/plagiarism-report', [PlagiarismController::class, "plagiarism_report"])->name('plagiarism_report');
             });
