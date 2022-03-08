@@ -205,7 +205,7 @@
                     <pre class=" bg-gray-200 my-5 px-3 py-4 rounded shadow">{!! nl2br(e($data->compiler_feedback)) !!}</pre>
                     @if($data->status == "success")
                     <h1 class="text-xl font-bold mt-4 text-green-600">Evalseer Feedback:</h1>
-                    @if($data->original_token)
+                    @if(isset($data->original_token))
                         @if($data->method == 2)
                             <pre class=" bg-gray-200 my-5 px-3 py-4 rounded shadow">Missing `{{ $data->token }}` instead of `{{ $data->original_token }}` at line {{ $data->line }}</pre>
                         @endif
