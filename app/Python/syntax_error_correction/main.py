@@ -14,7 +14,8 @@ ASTYLE_EXE = os.environ.get("ASTYLE_EXE")
 file_path = sys.argv[1]
 main_directory = pathlib.Path(__file__).resolve().parent
 
-def test_solution(test_array, index, token, method):
+
+def test_solution(test_array, index, token, method, original_token=False):
     code_array = test_array.copy()
     test_array = ' '.join(test_array)
     test_array = re.sub(
@@ -57,7 +58,11 @@ def test_solution(test_array, index, token, method):
                 if(re.match("<[\w\s]+>",j)):
                     error_index += 2
                 error_index += 1
-        json_data = {"status": "success", "solution": file_contents,
+        if(original_token!=False):
+            json_data = {"status": "success", "solution": file_contents,
+                         "token": token,"original_token":original_token, "line": line_number, "method": method}
+        else:
+            json_data = {"status": "success", "solution": file_contents,
                      "token": token, "line": line_number, "method":method}
         
         print(json.dumps(json_data))
@@ -95,11 +100,34 @@ def main(file):
             if(result == True):
                 return [primary_prediction[1],primary_prediction[0],0]
             # Substitution trial
-            test_array = original_text_array[:primary_prediction[0]] + [primary_prediction[1]] + original_text_array[primary_prediction[0] + 1:]
-            result = test_solution(test_array, primary_prediction[0], primary_prediction[1], 2)
+            test_array = original_text_array[:primary_prediction[0]-2] + [primary_prediction[1]] + original_text_array[primary_prediction[0]-1:]
+            
+            result = test_solution(
+                test_array, primary_prediction[0], primary_prediction[1], 2, original_token=original_text_array[primary_prediction[0]-4])
             if(result == True):
                 return [primary_prediction[1], primary_prediction[0], 1]
+
+        for i in predicted_tokenz:
+            secondary_prediction = i[1]
+            # Insertion trial
+            # print("Predicted "+primary_prediction[1]+" at index of " +
+            #   str(primary_prediction[0])+" instead of "+original_text_array[primary_prediction[0]] + " or before it")
+            # print("Testing the solution...")
+            test_array = original_text_array.copy()
+            test_array.insert(secondary_prediction[0]-1, secondary_prediction[1])
+
+            result = test_solution(
+                test_array, secondary_prediction[0], secondary_prediction[1], 1)
+            if(result == True):
+                return [secondary_prediction[1], secondary_prediction[0], 0]
+            # Substitution trial
+            test_array = original_text_array[:secondary_prediction[0]-2] + [
+                secondary_prediction[1]] + original_text_array[secondary_prediction[0]-1:]
             
+            result = test_solution(
+                test_array, secondary_prediction[0], secondary_prediction[1], 2, original_token=original_text_array[secondary_prediction[0]-2])
+            if(result == True):
+                return [secondary_prediction[1], secondary_prediction[0], 1]
             # Removing Trial
             # test_array = original_text_array[:primary_prediction[0]] + original_text_array[primary_prediction[0] + 1:]
             # result = test_solution(test_array)
