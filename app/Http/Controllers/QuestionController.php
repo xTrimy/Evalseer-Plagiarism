@@ -126,7 +126,6 @@ class QuestionController extends Controller
      * @throws RuntimeException
      */
     private function compile_file($language,string $file_path,string $file_directory){
-        // TODO: Make languages more dynamic
         if($language == 'c++'){
             $cpp_executable = env('CPP_EXE_PATH');
             $output = shell_exec("$cpp_executable \"" . $file_path . "\" -o \"" . $file_directory . "/output\" 2>&1");
