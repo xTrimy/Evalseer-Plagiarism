@@ -154,4 +154,49 @@ class CourseController extends Controller
 
         return redirect()->back()->with('success','Student Enrolled To Course!');
     }
+
+    public function edit_course($course_id) {
+        $course = Course::find($course_id);
+        $programming_languages = ProgrammingLanguage::all();
+        return view('admin.edit-course',['course'=>$course,'programming_languages'=>$programming_languages]);
+    }
+
+    public function edit(Request $request) {
+        $request->validate([
+            'name' => 'required|string',
+            'course_code' => 'required|string',
+            'start_date' => "required|date",
+            'end_date' => "required|date",
+            'grade' => "required|numeric",
+            'grade_to_pass' => "required|numeric",
+            'credit_hours' => "required|numeric",
+            'programming_languages' => "array",
+            'programming_languages.*' => "numeric|exists:programming_languages,id",
+        ]);
+
+        // dd($request->name);
+        $course = Course::find($request->course_id);
+        // dd($request->active);
+        $course->name = $request->name;
+        $course->start_date = $request->start_date;
+        $course->end_date = $request->end_date;
+        $course->grade_to_pass = $request->grade_to_pass;
+        $course->grade = $request->grade;
+        $course->course_id = $request->course_code;
+        $course->credit_hours = $request->credit_hours;
+        if($request->active == "on") {
+            $course->active = true;
+        } else {
+            $course->active = false;
+        }
+        $course->access_code = $this->rand_char(6);
+        $course->save();
+        
+        if ($request->programming_languages != null) {
+            foreach ($request->programming_languages as $lang) {
+                $course->programming_languages()->attach($lang);
+            }
+        }
+        return redirect()->back()->with('success',"Course Edited Successfully! \"Access Code: {$course->access_code}\"");
+    }
 }

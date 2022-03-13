@@ -97,6 +97,9 @@ Route::middleware('auth')->group(function (){
             Route::post('/add', [CourseController::class, "store"]);
 
             Route::get('/view_course/{course_id}', [CourseController::class, "view_course"])->name('view-course');
+
+            Route::get('/edit-course/{course_id}', [CourseController::class, "edit_course"])->name('edit-course');
+            Route::post('/edit-course/{course_id}', [CourseController::class, "edit"]);
         });
 
         Route::prefix('/users')->as('users.')->group(function () {
@@ -145,6 +148,14 @@ Route::middleware('auth')->group(function (){
 
                 Route::get('/plagiarism-report', [PlagiarismController::class, "plagiarism_report"])->name('plagiarism_report');
             });
+
+            Route::prefix('/instructors')->as('instructors.')->group(function ($user_id) {
+                Route::get('/edit-user/{user_id}', [UserController::class, "edit_user"])->name('edit-user');
+                Route::post('/edit-user/{user_id}', [UserController::class, "edit"]);
+
+                Route::get('/delete-user/{user_id}', [UserController::class, "delete_user"])->name('delete-user');
+            });
+
             Route::get('/add', [UserController::class, "add"])->name('add');
             Route::post('/add', [UserController::class, "store"]);
         });

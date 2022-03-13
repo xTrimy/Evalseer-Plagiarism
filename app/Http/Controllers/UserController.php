@@ -165,7 +165,55 @@ class UserController extends Controller
         foreach ($request->role as $role) {
             $user->assignRole($role);
         }
-        return redirect()->back()->with('success','User created successfully!');
+        return redirect()->back()->with('success','User Created Successfully!');
     }
     //User Add END
+
+    public function edit_user($user_id) {
+        $user = User::find($user_id);
+
+        return view('instructor.edit-user',['user'=>$user]);
+    }
+
+    public function edit(Request $request) {
+        $request->validate([
+            'name'=>'required|string',
+            'username'=>"required|string",
+            'email'=>"required",
+            'birth_date'=>"nullable|date",
+            'title'=>'nullable|string',
+            'university_id'=>'nullable|string',
+            'image' => "nullable|mimes:jpg,jpeg,png|max:1024",
+            'phone' => "nullable|string",
+        ]);
+        $user = User::find($request->user_id);
+        $user->name = $request->name;
+        $user->username = $request->username;
+        $user->email = $request->email;
+        $user->birth_date = $request->birth_date;
+        $user->title = $request->title;
+        $user->university_id = $request->university_id;
+        $user->phone = $request->phone;
+        if ($request->hasFile('image')) {
+            $filenameWithExt = $request->file('image')->getClientOriginalName();
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            $extension = $request->file('image')->getClientOriginalExtension();
+            $fileNameToStore = $request->name . '-' . time() . '.' . $extension;
+            $path = public_path('uploadedimages/');
+            $request->file('image')->move($path , $fileNameToStore);
+            $user->image = $fileNameToStore;
+        } else {
+            $user->image = "user.png";
+        }
+        $user->save();
+        return redirect()->back()->with('success','User Edited Successfully!');
+
+    }
+
+    public function delete_user($user_id) {
+        $user = User::find($user_id);
+        $user->delete();
+
+        return redirect()->back()->with('success',"User Deleted Successfully");
+    }
 }
