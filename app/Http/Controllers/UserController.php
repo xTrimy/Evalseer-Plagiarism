@@ -216,4 +216,33 @@ class UserController extends Controller
 
         return redirect()->back()->with('success',"User Deleted Successfully");
     }
+
+    public function edit_submission($submission_id) {
+        $users = User::role('instructor')->paginate(15);
+
+        $submissions = DB::table('submissions')
+                        ->where('submissions.id', $submission_id)
+                        ->leftJoin('users', 'submissions.user_id', '=', 'users.id')
+                        ->select('users.name','submissions.*')
+                        ->get()
+                        ->first();
+        // dd($submissions);
+        return view('admin.edit-submission',['users'=>$users,'submissions'=>$submissions]);
+    }
+
+    public function edit_sub(Request $request) {
+
+        $submission = Submission::find($request->submission_id);
+
+        // dd($request);
+
+        $submission->logic_feedback = $request->logic_feedback;
+        $submission->execution_time = $request->execution_time;
+        $submission->plagiarism = $request->plagiarism;
+        $submission->total_grade = $request->total_grade;
+
+        $submission->save();
+        return redirect()->back()->with('success','Submission Edited Successfully!');
+
+    }
 }

@@ -100,6 +100,8 @@ Route::middleware('auth')->group(function (){
 
             Route::get('/edit-course/{course_id}', [CourseController::class, "edit_course"])->name('edit-course');
             Route::post('/edit-course/{course_id}', [CourseController::class, "edit"]);
+
+            Route::get('/delete/{course_id}', [CourseController::class, "delete"])->name('delete');
         });
 
         Route::prefix('/users')->as('users.')->group(function () {
@@ -140,9 +142,12 @@ Route::middleware('auth')->group(function (){
             });
 
             Route::prefix('/instructors')->as('instructors.')->group(function ($submission_id) {
-                
                 Route::get('/view-submission/{submission_id}', [UserController::class, "view_submission"])->name('view_submission');
+
+                Route::get('/edit-submission/{submission_id}', [UserController::class, "edit_submission"])->name('edit_submission');
+                Route::post('/edit-submission/{submission_id}', [UserController::class, "edit_sub"]);
             });
+
             Route::prefix('/instructors')->as('instructors.')->group(function () {
                 Route::get('/run-plag/{zipPath}/{type}/{question_id}', [PlagiarismController::class, "run_plag"])->name('run_plag');
 

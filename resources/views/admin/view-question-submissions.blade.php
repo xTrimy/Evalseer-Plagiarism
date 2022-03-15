@@ -88,6 +88,7 @@ users
                       </td>
                       <td class="px-4 py-3">
                         <div class="flex items-center space-x-4 text-sm justify-center">
+                          <a href="{{ route('dashboard.users.instructors.edit_submission',['submission_id'=>$submission->id]) }}">
                           <button
                             class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
                             aria-label="Edit"
@@ -103,6 +104,7 @@ users
                               ></path>
                             </svg>
                           </button>
+                        </a>
                           <button
                             class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
                             aria-label="Delete"

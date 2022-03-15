@@ -199,4 +199,11 @@ class CourseController extends Controller
         }
         return redirect()->back()->with('success',"Course Edited Successfully! \"Access Code: {$course->access_code}\"");
     }
+
+    public function delete($course_id){
+        $course = Course::find($course_id);
+        $course->delete();
+
+        return redirect()->back()->with('success',"Course deleted successfully");
+    }
 }
