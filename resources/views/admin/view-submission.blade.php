@@ -25,10 +25,10 @@ users
                   Assignments
                 </h2>
                 <a
-                href="{{ route('dashboard.users.instructors.run_plag',['zipPath'=>'1','type'=>'1']) }}"
+                href="{{ route('dashboard.users.instructors.run_plag',['zipPath'=>'1','type'=>'1','question_id'=>11]) }}"
                     class="flex items-center justify-between px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange"
                 >
-                    Run Plagiarism
+                    Check Plagiarism
                     <i class="ml-2 fas fa-play text-xl"></i>
                 </a>
             </div>
@@ -74,12 +74,15 @@ users
                       </td>
                       <td class="px-4 py-3">
                         {{ $submission->plagiarism }}%
+                        <br>
+                        <a href="{{ route('dashboard.users.instructors.plagiarism_report') }}" class=" font-thin text-green-800">View Report</a>
                       </td>
                       <td class="px-4 py-3">
                         {{ $submission->total_grade  }}
                       </td>
                       <td class="px-4 py-3">
                         <div class="flex items-center space-x-4 text-sm justify-center">
+                          <a href="{{ route('dashboard.users.instructors.edit_submission',['submission_id'=>$submission->id]) }}">
                           <button
                             class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
                             aria-label="Edit"
@@ -94,7 +97,7 @@ users
                                 d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
                               ></path>
                             </svg>
-                          </button>
+                          </button></a>
                           <button
                             class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
                             aria-label="Delete"
@@ -131,8 +134,7 @@ users
 
                     pre code,
                     pre .line-number {
-                      /* Ukuran line-height antara teks di dalam tag <code> dan <span class="line-number"> harus sama! */
-                      font:normal normal 12px/14px "Courier New",Courier,Monospace;
+                      font:normal normal 14px/16px "Courier New",Courier,Monospace;
                       color:black;
                       display:block;
                     }
@@ -157,16 +159,15 @@ users
                  <pre><code>{{  file_get_contents(public_path($submission->submitted_code)) }}</code></pre>
                  <script>
                   (function() {
-                    var pre = document.getElementsByTagName('pre'),
-                      pl = pre.length;
-                    for (var i = 0; i < pl; i++) {
-                      pre[i].innerHTML = '<span class="line-number"></span>' + pre[i].innerHTML + '<span class="cl"></span>';
-                      var num = pre[i].innerHTML.split(/\n/).length;
-                      for (var j = 0; j < num; j++) {
-                        var line_num = pre[i].getElementsByTagName('span')[0];
-                        line_num.innerHTML += '<span>' + (j + 1) + '</span>';
+                      var pre = document.getElementsByTagName('pre'),pl = pre.length;
+                      for (var i = 0; i < pl; i++) {
+                        pre[i].innerHTML = '<span class="line-number"></span>' + pre[i].innerHTML + '<span class="cl"></span>';
+                        var num = pre[i].innerHTML.split(/\n/).length;
+                        for (var j = 0; j < num; j++) {
+                          var line_num = pre[i].getElementsByTagName('span')[0];
+                          line_num.innerHTML += '<span>' + (j + 1) + '</span>';
+                        }
                       }
-                    }
                   })();
               </script>
                 </div>
@@ -176,7 +177,7 @@ users
                 </div>
                 <div class="w-full bg-white text-black p-4 rounded-md border mt-8">
                   <h1 class="my-3 font-bold">Style Feedback</h1>
-                  <pre>{{ $submission->style_feedback ?? "No Style Feedback"  }}</pre>
+                  <pre>{{ str_replace(public_path($submission->submitted_code), '', $submission->style_feedback)  ?? "No Style Feedback"  }}</pre>
                 </div>
               </div>
               <div

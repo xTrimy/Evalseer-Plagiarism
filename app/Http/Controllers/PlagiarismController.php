@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
 
+namespace App\Http\Controllers;
+session_start();
 use Illuminate\Http\Request;
 use File;
 use ZipArchive;
 use Illuminate\Filesystem\Filesystem;
+use App\Models\Questions;
+use App\Models\Submission;
 class PlagiarismController extends Controller
 {
     // To Do
@@ -39,11 +42,34 @@ class PlagiarismController extends Controller
         $file->cleanDirectory(public_path('Plagiarism'));
     }
 
-    public function run_plag($zipPath, $type){
+    public function run_plag($zipPath, $type, $question_id){
         $zipPath = public_path("PlagiarismZipped/Assignment.zip");
-        $type = 'c/c++';
+        $type = 'java17';
         $submission_folder = uniqid();
         // $submission_folder = "bodda";
+
+
+        
+
+        $question = Questions::with('assignment')->find($question_id);
+        $assignment_name = $question->assignment->name;
+        $question_name = $question->name;
+
+        $submission_dir = public_path('assignment_submissions/'.$assignment_name.'/'.$question_name);
+        $destination_dir = public_path('PlagiarismZipped/');
+        mkdir($destination_dir.'/'.$submission_folder);
+        // copy();
+        // File::copyDirectory($submission_dir,$destination_dir.'/'.$submission_folder);
+
+        $subs = Submission::latest()->get()->unique('user_id');
+
+        foreach($subs as $sub) {
+            File::copy(public_path($sub->submitted_code), $destination_dir.'/'.$submission_folder.'/'.$sub->id.'.java');
+        }
+
+
+
+        // dd($submission_dir);
         $message = "";
         if(true){
             $zip = new \ZipArchive();
@@ -53,16 +79,21 @@ class PlagiarismController extends Controller
                 $path_to_jplag = env("JPLAG_PATH");
                 $submission_root_folder = public_path("submissions");
                 mkdir(public_path("submissions/$submission_folder"));
-                $extract_dir_path = public_path("submissions/$submission_folder");
-                $zip->extractTo($extract_dir_path);
-                $zip->close();
+                $extract_dir_path = $destination_dir.'/'.$submission_folder;
+                // $zip->extractTo($extract_dir_path);
+                // $zip->close();
                 $submission_root_folder = str_replace("\\","/", $submission_root_folder);
                 $extract_dir_path = str_replace("\\", "/", $extract_dir_path);
-                $x = shell_exec("java -jar $path_to_jplag -r $submission_root_folder/$submission_folder-results -m 99999 -l $type -s $extract_dir_path/*");
+                $x = shell_exec("java -jar $path_to_jplag -r $submission_root_folder/$submission_folder-results -m 99999 -l $type -s $extract_dir_path");
+                dd($x);
+                $_SESSION['plag'] = $submission_root_folder.'/'.$submission_folder.'-results/';
+                
+                $_SESSION['plag'] = file_get_contents($_SESSION['plag'].'match3-link.html');
                 $errors = ["Error: Not enough valid submissions!"];
                 if(strpos($x,$errors[0])){
                     $message = "Error: Not enough valid submissions!<br>Check submission type";
                 }
+                return redirect()->back()->with('success','Plagiarism Done');
             } else {
                 return FALSE;
             }
@@ -70,9 +101,13 @@ class PlagiarismController extends Controller
             dd("x");
         }
         // if(strlen($message) > 0 ){
-        //     return redirect()->back()->with(["message" => $message]);
+        //     return redirect()->back()->with("Plagiarism Detection Is Succuss");
         // }else{
         //     return redirect()->back()->with(["unique_id" => $submission_folder]);
         // }
+    }
+
+    public function plagiarism_report() {
+        return view('admin.plagiarism-report');
     }
 }

@@ -1,0 +1,18 @@
+{
+    "settings": {
+        "formatVersion": 1,
+        "moduleRegex": "",
+        "allowNestedSrcFolder": false
+    },
+    "structure": {
+        "src/main/java": {
+            "allow": [],
+            "deny": [
+                {
+                    "type": "SpecificPathRegex",
+                    "spec": "[\\\\/]illegal\\."
+                }
+            ]
+        }
+    }
+}

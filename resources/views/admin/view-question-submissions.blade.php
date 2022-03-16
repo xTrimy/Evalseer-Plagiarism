@@ -1,3 +1,6 @@
+@php
+session_start();   
+@endphp
 @extends('layout.dashboard.app')
 @section('page')
 users
@@ -8,7 +11,7 @@ users
 @section('content')
         <main class="h-full pb-16 overflow-y-auto">
           <div class="container grid px-6 mx-auto">
-              <div class=" mt-8 ">
+              <div class=" mt-8 mb-8">
                 <input
                 id="search_input"
                 class="w-full shadow pl-8 py-3 pr-2 text-sm text-gray-700 placeholder-gray-600 bg-gray-100 border-0 rounded-md dark:placeholder-gray-500 dark:focus:shadow-outline-gray dark:focus:placeholder-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:placeholder-gray-500 focus:bg-white focus:border-orange-300 focus:outline-none focus:shadow-outline-orange form-input"
@@ -17,6 +20,10 @@ users
                 aria-label="Search"
                 />
               </div>
+              @if(Session::has('success'))
+              <div class="flex items-center justify-between px-4 p-2 mb-8 text-sm font-semibold text-green-600 bg-green-100 rounded-lg focus:outline-none focus:shadow-outline-orange">
+                <div class="flex items-center"> <i class="fas fa-check mr-2"></i> <span>{{ Session::get('success') }}</span> </div>
+              </div> @endif
             <div class="flex justify-between mt-8 items-center">
                 
                 <h2
@@ -25,10 +32,10 @@ users
                   Assignments
                 </h2>
                 <a
-                href="{{ route('dashboard.users.instructors.run_plag',['zipPath'=>'1','type'=>'1']) }}"
+                href="{{ route('dashboard.users.instructors.run_plag',['zipPath'=>'1','type'=>'1','question_id'=>11]) }}"
                     class="flex items-center justify-between px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange"
                 >
-                    Run Plagiarism
+                    Check Plagiarism
                     <i class="ml-2 fas fa-play text-xl"></i>
                 </a>
             </div>
@@ -72,14 +79,16 @@ users
                       <td class="px-4 py-3 " >
                         {{ $submission->execution_time.' Sec' ?? 'Error Compiling' }}
                       </td>
-                      <td class="px-4 py-3">
-                        {{ $submission->plagiarism }}%
+                      <td class="px-4 py-3" id="plagValue">
+                        
+                        {{-- {{ $submission->plagiarism }}% --}}
                       </td>
                       <td class="px-4 py-3">
                         {{ $submission->total_grade  }}
                       </td>
                       <td class="px-4 py-3">
                         <div class="flex items-center space-x-4 text-sm justify-center">
+                          <a href="{{ route('dashboard.users.instructors.edit_submission',['submission_id'=>$submission->id]) }}">
                           <button
                             class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
                             aria-label="Edit"
@@ -95,6 +104,7 @@ users
                               ></path>
                             </svg>
                           </button>
+                        </a>
                           <button
                             class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
                             aria-label="Delete"
@@ -119,6 +129,11 @@ users
                             >
                               <i class="fas fa-eye text-xl"></i>
                             </button>
+                            {{-- @php
+                              $plag_content = file_get_contents($_SESSION['plag'].'match3-link.html');
+                            @endphp --}}
+
+                            <div type="hidden" id="plagg" class=" hidden">@php echo $_SESSION['plag'] ?? '' @endphp</div>
                           </a>
                         </div>
                       </td>
@@ -136,5 +151,16 @@ users
             </div>
           </div>
         </main>
+        <script>
+          var content = document.getElementById('plagg').innerHTML;
+
+          var str = content; // your HTML string
+
+          var doc = new DOMParser().parseFromString(str, "text/html") 
+          
+          console.log( doc.getElementById("rounded_percent").innerHTML )
+
+          var plagValue = document.getElementById('plagValue').innerHTML = doc.getElementById("rounded_percent").innerHTML;
+        </script>
 
 @endsection

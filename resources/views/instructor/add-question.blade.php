@@ -132,9 +132,72 @@ Add Question to {{ $assignment->name }}
                   />
                 </label>
               </div>
-              <div id="container">
+              <div class="my-4" id="container">
                 
               </div>
+              <h1 class="text-xl text-black font-bold mt-4">
+                Feature Checking
+              </h1>
+              <div class="form-group">
+                <label>Features Count</label>
+                <input type="number" name="features" id="count_features" class="form-control" placeholder="Number of Features to check">
+                <input type="button" name="addd" class="px-4 py-2 rounded bg-green-500 text-white" onclick="addFeatureField()" placeholder="" value="Add">
+              </div>
+              
+              <div id="feature_checking" class="hidden">
+                <div class="flex">
+                  <label class="block text-sm">
+                <span class="text-gray-700 dark:text-gray-400">
+                  Feature Text (Seperate with ,)
+                  </span>
+                  <input
+                  type="text"
+                  name="feature[]"
+                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="if,else"
+                  />
+                </label>
+                <label class="block text-sm ml-2">
+                  <span class="text-gray-700 dark:text-gray-400">
+                  Occurrences
+                  </span>
+                  <input
+                  type="text"
+                  name="occurrences[]"
+                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="2"
+                  />
+                </label>
+                </div>
+                
+                
+              </div>
+              <div class="my-4" id="container2">
+                
+              </div>
+
+              <label class="block text-sm">
+                <span class="text-gray-700 dark:text-gray-400">
+                <i class="las la-font text-xl"></i>
+                Programming Language
+                </span>
+                <select name="programming_language"
+                required
+                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                >
+                  <optgroup label="Course">
+                    @foreach ($assignment->course->programming_languages as $lang)
+                      <option value="{{ $lang->id }}">{{ $lang->name }}</option>
+                    @endforeach
+                  </optgroup>
+                  <optgroup label="All">
+                    @foreach ($programming_languages as $lang)
+                      <option value="{{ $lang->id }}">{{ $lang->name }}</option>
+                    @endforeach
+                  </optgroup>
+                </select>
+              </label>
+
               <button type="submit" class="table items-center mt-4 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange">
               Add
               <span class="ml-2" aria-hidden="true">
@@ -157,6 +220,22 @@ Add Question to {{ $assignment->name }}
                     var test_cases = document.getElementById('test_cases').cloneNode(true);
                     container.appendChild(test_cases);
                     test_cases.classList.remove('hidden');
+                    container.appendChild(document.createElement("br"));
+                }
+            }
+        </script>
+        <script type='text/javascript'>
+            function addFeatureField()
+            {
+                var number = document.getElementById("count_features").value;
+                var container = document.getElementById("container2");
+                while (container.hasChildNodes()) {
+                    container.removeChild(container.lastChild);
+                }
+                for (i=0;i<number;i++){
+                    var feature_checking = document.getElementById('feature_checking').cloneNode(true);
+                    container.appendChild(feature_checking);
+                    feature_checking.classList.remove('hidden');
                     container.appendChild(document.createElement("br"));
                 }
             }

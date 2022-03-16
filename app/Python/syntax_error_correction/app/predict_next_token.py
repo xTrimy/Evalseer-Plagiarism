@@ -1,4 +1,6 @@
 import pathlib
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from tensorflow.keras.models import load_model
 from silence_tensorflow import silence_tensorflow
 silence_tensorflow()
@@ -27,16 +29,15 @@ def __main__(text):
     # while(True):
     text = text.split()
     prediction_list = []
-    for i in range(len(text)-2):
-        text_p = text[i:i+3]
+    for i in range(len(text)-5):
+        text_p = text[i:i+6]
         text_p = " ".join(text_p)
         if text_p == "0":
             print("Execution completed.....")
         else:
             try:
                 text_p = (" ".join(text_p.split())).split(" ")
-                text_p = text_p[-3:]
-
+                text_p = text_p[-6:]
                 predicted_tokens=Predict_Next_Words(model, tokenizer, text_p)
                 if(text[i+3].lower() not in predicted_tokens
                     ):

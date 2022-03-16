@@ -1,3 +1,4 @@
+from cgi import test
 import app.predict_next_token as predict_next_token
 import app.tokenize_script as tokenize_script
 import sys
@@ -19,30 +20,46 @@ def test_solution(test_array, index, token, method):
     test_array = re.sub(
         "({)(?![^\"]*\"|[^\"\"]*\")(?![ ^ ']*'|[^''] *')", r'\1\n', test_array, flags=re.S)
     test_array = re.sub(
+        "(})(?![^\"]*\"|[^\"\"]*\")(?![ ^ ']*'|[^''] *')", r'\1\n', test_array, flags=re.S)
+    test_array = re.sub(
         "(;)(?![^\"]*\"|[^\"\"]*\")(?![ ^ ']*'|[^''] *')", r'\1\n', test_array, flags=re.S)
     test_array = re.sub(
         "( ; )", r"\1\n".replace(" ",""), test_array, flags=re.S)
     test_array = re.sub(
-        "(<[\w]+?>)", r'\1\n', test_array, flags=re.S)
+        "(<[\w\s]+?>)", r'\1\n', test_array, flags=re.S)
+    test_array = re.sub(
+        "(<\s)(?![^\"]*\"|[^\"\"]*\")(?![ ^ ']*'|[^''] *')", r'<', test_array, flags=re.S)
+    test_array = re.sub(
+        "(\s>)(?![^\"]*\"|[^\"\"]*\")(?![ ^ ']*'|[^''] *')", r'>', test_array, flags=re.S)
     f = open(str(main_directory)+"/tests/test.cpp", "w")
+ 
     f.write(test_array)
     f.close()
     os.system(ASTYLE_EXE + " --style=allman " + str(main_directory)+"/tests/test.cpp > " + str(main_directory)+"/log.txt 2>&1")
     os.system(MINGW_EXE + " " + str(main_directory)+"/tests/test.cpp -o "+str(main_directory)+"/tests/test > " + str(main_directory)+"/log.txt 2>&1")
-    if(os.path.exists(str(main_directory)+"/tests/test.exe")):
-        os.remove(str(main_directory)+"/tests/test.exe")
+    if(
+            os.path.exists(str(main_directory)+"/tests/test.exe") or
+            os.path.exists(str(main_directory)+"/tests/test")
+            ):
+        if(os.path.exists(str(main_directory)+"/tests/test.exe")):
+            os.remove(str(main_directory)+"/tests/test.exe")
+        if(os.path.exists(str(main_directory)+"/tests/test")):
+            os.remove(str(main_directory)+"/tests/test")
         f = open(str(main_directory)+"/tests/test.cpp", "r")
         file_contents = f.read()
         line_number = 0
         error_index = 0
-        for i,value in enumerate(file_contents.split('\n')):
+        for i, value in enumerate(file_contents.split('\n')):
             tokens = value.split()
             for j in tokens:
                 if(error_index == index):
                     line_number = i
+                if(re.match("<[\w\s]+>",j)):
+                    error_index += 2
                 error_index += 1
         json_data = {"status": "success", "solution": file_contents,
-                     "token": token, "line": line_number+1, "method":method}
+                     "token": token, "line": line_number, "method":method}
+        
         print(json.dumps(json_data))
         # print("Solution worked \"tests/test.cpp\"")
         return True
@@ -64,7 +81,6 @@ def main(file):
         original_text = text[1]
         original_text_array = original_text.split()
         predicted_tokenz = predict_next_token.__main__(tokenized_text)
-
         # Primary predictions
         for i in predicted_tokenz:
             primary_prediction = i[0]
@@ -73,7 +89,8 @@ def main(file):
             #   str(primary_prediction[0])+" instead of "+original_text_array[primary_prediction[0]] + " or before it")
             # print("Testing the solution...")
             test_array = original_text_array.copy()
-            test_array.insert(primary_prediction[0], primary_prediction[1])
+            test_array.insert(primary_prediction[0]-1, primary_prediction[1])
+            
             result = test_solution(test_array, primary_prediction[0],primary_prediction[1], 1)
             if(result == True):
                 return [primary_prediction[1],primary_prediction[0],0]
