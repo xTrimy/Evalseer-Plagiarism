@@ -86,7 +86,13 @@
             <div class=" bg-white w-full shadow rounded-md px-4">
                 <h1 class="text-gray-800 text-2xl p-2 font-bold">
                    Question: {{ $question->name }}</h1>
-                <p class="text-gray-800 text-lg p-2  "><i class="las la-align-left"></i> Description: {{ $question->description }}</p>
+                <p class="text-gray-800 text-lg p-2  ">
+                    <i class="las la-align-left"></i> Description: 
+                    {{-- {{ $question->description }} --}}
+                    <div class="break-all">
+                        {!! str_replace('&nbsp;', ' ', $question->description ) !!}
+                    </div>
+                </p>
                 <p class="text-gray-800 text-lg p-2  "><i class="las la-file"></i> Remaining Submissions: {{ $assignment->submissions-count($question->submissions) }}</p>
                 <p class="text-gray-800 text-lg p-2  ">
                     @if(count($question->submissions)>0)
@@ -238,7 +244,7 @@
                         <div class=" justify-center items-center">
                             <label class="table mx-auto bg-text text-white px-10 py-4 rounded-lg font-bold text-sm cursor-pointer">
                             Add Submission for {{ $question->name }}
-                            <input accept=".java" id="question_file_{{ $question->id }}" type="file" class="hidden" name="submission" >
+                            <input accept=".zip" id="question_file_{{ $question->id }}" type="file" class="hidden" name="submission" >
                         </label>
                             <div id="question_filename_{{ $question->id }}" class="text-gray-500 "></div>
                         </div>

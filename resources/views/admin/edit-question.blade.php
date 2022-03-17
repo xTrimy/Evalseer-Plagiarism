@@ -65,6 +65,7 @@ Edit Question to {{ $assignment->name }}
                 </span>
                 <textarea
                     name="description"
+                    id="summernote"
                     required
                   class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                   placeholder="Assignment Description"
@@ -239,7 +240,7 @@ Edit Question to {{ $assignment->name }}
               </label>
 
               <button type="submit" class="table items-center mt-4 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange">
-              Add
+              Edit
               <span class="ml-2" aria-hidden="true">
                   <i class='las la-arrow-right'></i>
               </span>
@@ -279,6 +280,12 @@ Edit Question to {{ $assignment->name }}
                     container.appendChild(document.createElement("br"));
                 }
             }
+        </script>
+
+        <script>
+          $(document).ready(function() {
+            $('#summernote').summernote();
+          });
         </script>
 @endsection
 
