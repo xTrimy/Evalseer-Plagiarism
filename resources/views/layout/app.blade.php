@@ -33,7 +33,8 @@
                 <p class="text-white font-bold cursor-pointer mr-6">HOME</p>
             </a>
             <a href="/dashboard/">
-                <p class="text-white font-bold cursor-pointer mr-6">DASHBOARD</p>
+                {{-- {{ Auth::user()->getRoleNames() }} --}}
+                {{-- <p class="text-white font-bold cursor-pointer mr-6">DASHBOARD</p> --}}
             </a>
             {{-- <p class="text-white font-bold cursor-pointer mr-6">EDUCATION</p>
             <p class="text-white font-bold cursor-pointer mr-6">CATALOG</p>
