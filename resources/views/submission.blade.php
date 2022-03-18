@@ -184,18 +184,40 @@
                 @endphp
             @endif --}}
             @php
-                $submitted_code =file_get_contents(public_path($question->submissions->last()->submitted_code));
-                $submitted_code = explode("\n",$submitted_code);
-                foreach ($submitted_code as $key =>$line) {
-                    $line = htmlspecialchars($line);
-                    if(isset($styling_comment) && array_key_exists(intval($key)+1,$styling_comment)){
-                        $warning = $styling_comment[intval($key)+1];
-                        $submitted_code[$key]="<div class=' highlight-inline code style_warning relative' data-warning='$warning'>$line</div>";
-                    }else{
-                        $submitted_code[$key]="<div class='code'>$line</div>";
+                $ext = substr(public_path($question->submissions->last()->submitted_code), -3);
+
+                if ($ext == "zip") {
+                    $dir_path = dirname($question->submissions->last()->submitted_code);
+                    $code_path = $dir_path.'/main.java';
+
+                    $submitted_code = file_get_contents(public_path($code_path));
+                    $submitted_code = explode("\n",$submitted_code);
+                    foreach ($submitted_code as $key =>$line) {
+                        $line = htmlspecialchars($line);
+                        if(isset($styling_comment) && array_key_exists(intval($key)+1,$styling_comment)){
+                            $warning = $styling_comment[intval($key)+1];
+                            $submitted_code[$key]="<div class=' highlight-inline code style_warning relative' data-warning='$warning'>$line</div>";
+                        }else{
+                            $submitted_code[$key]="<div class='code'>$line</div>";
+                        }
                     }
-                }
-                $submitted_code = implode("",$submitted_code);
+                    $submitted_code = implode("",$submitted_code);
+                } else {
+                    $submitted_code =file_get_contents(public_path($question->submissions->last()->submitted_code));
+                    $submitted_code = explode("\n",$submitted_code);
+                    foreach ($submitted_code as $key =>$line) {
+                        $line = htmlspecialchars($line);
+                        if(isset($styling_comment) && array_key_exists(intval($key)+1,$styling_comment)){
+                            $warning = $styling_comment[intval($key)+1];
+                            $submitted_code[$key]="<div class=' highlight-inline code style_warning relative' data-warning='$warning'>$line</div>";
+                        }else{
+                            $submitted_code[$key]="<div class='code'>$line</div>";
+                        }
+                    }
+                    $submitted_code = implode("",$submitted_code);
+                }   
+
+                
             @endphp
             <pre class="p-8 fixed_output bg-gray-200 my-5 rounded shadow ">{!! $submitted_code !!}</pre>
             @if ($submission->compile_feedback)
@@ -244,7 +266,7 @@
                         <div class=" justify-center items-center">
                             <label class="table mx-auto bg-text text-white px-10 py-4 rounded-lg font-bold text-sm cursor-pointer">
                             Add Submission for {{ $question->name }}
-                            <input accept="" id="question_file_{{ $question->id }}" type="file" class="hidden" name="submission" >
+                            <input accept=".zip" id="question_file_{{ $question->id }}" type="file" class="hidden" name="submission" >
                         </label>
                             <div id="question_filename_{{ $question->id }}" class="text-gray-500 "></div>
                         </div>
