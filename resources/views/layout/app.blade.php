@@ -7,6 +7,7 @@
     <title>@yield('title')</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <link rel="icon" type="image/x-icon" href="{{ asset('png/logo.png') }}">
     <script src="https://kit.fontawesome.com/b1361fb5d5.js" crossorigin="anonymous"></script>
     <script src="{{ asset('js/app.js') }}"></script>
 </head>
@@ -15,7 +16,7 @@
     <div class="flex w-full px-8 py-5">
         <div class="flex-1  text-center flex justify-center">
             <div class="w-3/4">
-                <img class="ml-8" src="{{ asset('png/logo.png') }}" width="100" alt="">
+                <a href="/"><img class="ml-8" src="{{ asset('png/logo.png') }}" width="100" alt=""></a>
             </div>
             
         </div>
@@ -44,7 +45,7 @@
             <p class="text-white font-bold cursor-pointer mr-6">HOW IT WORKS</p> --}}
         </div>
         <div class="flex w-96 py-8 bg-text text-center justify-center">
-            <p class="text-white font-bold text-center cursor-pointer">LOGOUT</p>
+            <a href="/logout"><p class="text-white font-bold text-center cursor-pointer">LOGOUT</p></a>
         </div>
     </div>
     <div class="w-full bg-text py-1"></div>
