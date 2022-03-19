@@ -59,7 +59,7 @@ Route::middleware('auth')->group(function (){
 
     Route::get('/badges', [BadgeController::class, "view"])->name('view_badges');
     
-
+    Route::get('/logout', [UserController::class, "logout"])->name('logout');
 
     Route::prefix('/course/{id}')->as('course.')->group(function ($id) {
         Route::get('/', [CourseController::class, 'index'])->name('view');

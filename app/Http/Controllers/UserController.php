@@ -245,4 +245,14 @@ class UserController extends Controller
         return redirect()->back()->with('success','Submission Edited Successfully!');
 
     }
+
+    public function logout() {
+        Auth::logout();
+
+        // $request->session()->invalidate();
+
+        // $request->session()->regenerateToken();
+
+        return redirect()->route('home');
+    }
 }

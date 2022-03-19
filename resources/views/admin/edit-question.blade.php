@@ -147,10 +147,10 @@ Edit Question to {{ $assignment->name }}
               <div class="mb-8">
                 <div class="flex flex-col">
                   <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
-                    <div class="py-4 inline-block min-w-full sm:px-6 lg:px-8">
+                    <div class="py-4 inline-block w-full sm:px-6 lg:px-8">
                       <div class="overflow-hidden">
-                        <table class="min-w-full text-center">
-                          <thead class="border-b bg-gray-800">
+                        <table class="w-full text-center">
+                          <thead class="border-b bg-gray-400">
                             <tr>
                               <th scope="col" class="text-sm font-medium text-white px-6 py-4">
                                 #
