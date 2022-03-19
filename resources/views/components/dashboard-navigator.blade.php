@@ -1,7 +1,7 @@
 <div class="py-4 text-gray-500 dark:text-gray-400">
           <a
             class="ml-6 text-lg flex items-center font-bold text-gray-800 dark:text-gray-200"
-            href="#"
+            href="/dashboard"
           >
           <div class="w-8 h-8 inline-block mr-4">
             <img src="{{ asset('png/logo.png') }}" class="w-full h-full object-contain" alt="">
