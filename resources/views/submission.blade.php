@@ -266,7 +266,7 @@
                         <div class=" justify-center items-center">
                             <label class="table mx-auto bg-text text-white px-10 py-4 rounded-lg font-bold text-sm cursor-pointer">
                             Add Submission for {{ $question->name }}
-                            <input accept=".zip" id="question_file_{{ $question->id }}" type="file" class="hidden" name="submission" >
+                            <input accept=".java" id="question_file_{{ $question->id }}" type="file" class="hidden" name="submission" >
                         </label>
                             <div id="question_filename_{{ $question->id }}" class="text-gray-500 "></div>
                         </div>
