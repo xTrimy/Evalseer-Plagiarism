@@ -32,6 +32,10 @@ Route::middleware('guest')->group(function(){
         return view('signup');
     })->name('signup');
 
+    // Route::get('/logout', 'UserController@logout')->name('logout');
+
+    
+
     Route::get('/jplag', function () {
         return view('home');
     })->name('jplag');
@@ -41,6 +45,8 @@ Route::middleware('guest')->group(function(){
 
 //Must be authenticated routes
 Route::middleware('auth')->group(function (){
+
+    Route::get('/logout', [UserController::class,'logout'])->name('logout');
 
     Route::get('/jplag', function () {
         return view('home');
