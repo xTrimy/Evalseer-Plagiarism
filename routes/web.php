@@ -83,10 +83,13 @@ Route::middleware('auth')->group(function (){
 
         Route::get('/form-zip', [PlagiarismController::class, "formZip"]);
         // Instructor routes
-        Route::get('/', function () {
-            return view('instructor.index');
+        // Route::get('/', function () {
+        //     return view('instructor.index');
             
-        });
+        // });
+
+        Route::get('/', [UserController::class, "home_instructor"]);
+
         Route::prefix('/assignments')->as('assignments.')->group(function () {
             Route::get('/add', [AssignmentController::class, "add"])->name('add_assignment');
             Route::post('/add', [AssignmentController::class, "store"]);

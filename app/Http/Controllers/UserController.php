@@ -255,4 +255,18 @@ class UserController extends Controller
 
         return redirect()->route('home');
     }
+
+    public function home_instructor() {
+        $users = User::role('student')->get();
+        $users = count($users);
+
+        $assignments = Assignments::get();
+        $assignments = count($assignments);
+
+        $submissions = Submission::get();
+        $submissions = count($submissions);
+
+
+        return view('instructor.index',["users"=>$users,"assignments"=>$assignments,"submissions"=>$submissions]);
+    }
 }
