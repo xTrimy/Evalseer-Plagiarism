@@ -119,7 +119,7 @@ class AssignmentController extends Controller
     }
 
     public function view($id){
-        $assignment = Assignments::with(['questions.test_cases', 'questions.grading_criteria', 'questions.submissions'=>function(HasMany $query){
+        $assignment = Assignments::with(['questions.test_cases', 'questions.grading_criteria', 'questions.programming_language', 'questions.submissions'=>function(HasMany $query){
             return $query->where('user_id',Auth::user()->id);
         }])->find($id);
         $submission_allowed = (strtotime($assignment->start_time) <= time() && strtotime($assignment->end_time) >= time())?true:false;

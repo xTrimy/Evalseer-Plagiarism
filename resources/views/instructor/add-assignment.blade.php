@@ -54,6 +54,7 @@ Add Assignment
                 </span>
                 <textarea
                     name="description"
+                    id="summernote"
                   class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                   placeholder="Assignment Description"
                 >{{ old('description') }}</textarea>
@@ -205,6 +206,11 @@ Add Assignment
                   groups_el.appendChild(option);
                 }
               }});
+          });
+        </script>
+        <script>
+          $(document).ready(function() {
+            $('#summernote').summernote();
           });
         </script>
 @endsection

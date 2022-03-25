@@ -32,6 +32,10 @@ Route::middleware('guest')->group(function(){
         return view('signup');
     })->name('signup');
 
+    // Route::get('/logout', 'UserController@logout')->name('logout');
+
+    
+
     Route::get('/jplag', function () {
         return view('home');
     })->name('jplag');
@@ -41,6 +45,8 @@ Route::middleware('guest')->group(function(){
 
 //Must be authenticated routes
 Route::middleware('auth')->group(function (){
+
+    Route::get('/logout', [UserController::class,'logout'])->name('logout');
 
     Route::get('/jplag', function () {
         return view('home');
@@ -59,7 +65,7 @@ Route::middleware('auth')->group(function (){
 
     Route::get('/badges', [BadgeController::class, "view"])->name('view_badges');
     
-
+    Route::get('/logout', [UserController::class, "logout"])->name('logout');
 
     Route::prefix('/course/{id}')->as('course.')->group(function ($id) {
         Route::get('/', [CourseController::class, 'index'])->name('view');
@@ -77,10 +83,13 @@ Route::middleware('auth')->group(function (){
 
         Route::get('/form-zip', [PlagiarismController::class, "formZip"]);
         // Instructor routes
-        Route::get('/', function () {
-            return view('instructor.index');
+        // Route::get('/', function () {
+        //     return view('instructor.index');
             
-        });
+        // });
+
+        Route::get('/', [UserController::class, "home_instructor"]);
+
         Route::prefix('/assignments')->as('assignments.')->group(function () {
             Route::get('/add', [AssignmentController::class, "add"])->name('add_assignment');
             Route::post('/add', [AssignmentController::class, "store"]);
@@ -97,6 +106,11 @@ Route::middleware('auth')->group(function (){
             Route::post('/add', [CourseController::class, "store"]);
 
             Route::get('/view_course/{course_id}', [CourseController::class, "view_course"])->name('view-course');
+
+            Route::get('/edit-course/{course_id}', [CourseController::class, "edit_course"])->name('edit-course');
+            Route::post('/edit-course/{course_id}', [CourseController::class, "edit"]);
+
+            Route::get('/delete/{course_id}', [CourseController::class, "delete"])->name('delete');
         });
 
         Route::prefix('/users')->as('users.')->group(function () {
@@ -137,14 +151,25 @@ Route::middleware('auth')->group(function (){
             });
 
             Route::prefix('/instructors')->as('instructors.')->group(function ($submission_id) {
-                
                 Route::get('/view-submission/{submission_id}', [UserController::class, "view_submission"])->name('view_submission');
+
+                Route::get('/edit-submission/{submission_id}', [UserController::class, "edit_submission"])->name('edit_submission');
+                Route::post('/edit-submission/{submission_id}', [UserController::class, "edit_sub"]);
             });
+
             Route::prefix('/instructors')->as('instructors.')->group(function () {
                 Route::get('/run-plag/{zipPath}/{type}/{question_id}', [PlagiarismController::class, "run_plag"])->name('run_plag');
 
                 Route::get('/plagiarism-report', [PlagiarismController::class, "plagiarism_report"])->name('plagiarism_report');
             });
+
+            Route::prefix('/instructors')->as('instructors.')->group(function ($user_id) {
+                Route::get('/edit-user/{user_id}', [UserController::class, "edit_user"])->name('edit-user');
+                Route::post('/edit-user/{user_id}', [UserController::class, "edit"]);
+
+                Route::get('/delete-user/{user_id}', [UserController::class, "delete_user"])->name('delete-user');
+            });
+
             Route::get('/add', [UserController::class, "add"])->name('add');
             Route::post('/add', [UserController::class, "store"]);
         });

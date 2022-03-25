@@ -23,7 +23,7 @@
          <i class="las la-align-left text-xl"></i>
          Description (optional)
          </span>
-				<textarea name="description" class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input" placeholder="Assignment Description">{{ $assignment->description }}</textarea>
+				<textarea name="description" id="summernote" class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input" placeholder="Assignment Description">{{ $assignment->description }}</textarea>
 			</label>
 			<label class="block text-sm mt-2"> <span class="text-gray-700 dark:text-gray-400">
          <i class="las la-clock text-xl"></i>
@@ -97,7 +97,7 @@
 								<th class="px-4 py-3">Actions</th>
 							</tr>
 						</thead>
-						<tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800"> @foreach ($questions as $question) @php $i = 0; @endphp
+						<tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">  @php $i = 0; @endphp @foreach ($questions as $question)
 							<tr class="text-gray-700 dark:text-gray-400 text-center">
 								<td class="px-4 py-3">
 									<div class="flex items-center text-sm">
@@ -243,4 +243,10 @@ function closeModal(modalId) {
 	modal = document.getElementById(modalId)
 	modal.classList.add('hidden')
 }
-</script> @endsection
+</script> 
+<script>
+          $(document).ready(function() {
+            $('#summernote').summernote();
+          });
+        </script>
+@endsection
