@@ -380,7 +380,18 @@ class QuestionController extends Controller
         }
         return redirect()->back()->with('success',"Question Edited Successfully");
     }
-
+    private function run_basic_compiling_error_checker(&$compiler_feedback, Submission &$submission, $language = 'c++' ){
+        if($language == "c++"){
+            $evalseer_feedback = shell_exec(env('BASIC_SYNTAX_PY') . " \"" . public_path($submission->submitted_code) . "\" 2>&1");
+            $evalseer_feedback = json_decode($evalseer_feedback, true);
+            if($evalseer_feedback["status"] == "success"){
+                return true;
+            } else {
+                $compiler_feedback["basic_checking"][] = $evalseer_feedback;
+                return false;
+            }
+        }
+    }
     public function student_submit(Request $request){
         $request->validate([
             'question_id'=>'required|exists:questions,id',
@@ -412,21 +423,25 @@ class QuestionController extends Controller
             $output_1 = str_replace(public_path($submission->submitted_code),'',$output_1);
             $compiler_feedback = [];
             $compiler_feedback["compiler_feedback"] = $output_1;
-            $evalseer_feedback = shell_exec(env('SYNTAX_CORRECTION_PY')." \"". public_path($submission->submitted_code) . "\" 2>&1");
-			$evalseer_feedback = json_decode($evalseer_feedback,true);
-            foreach ($evalseer_feedback as $key => $value){
-                $compiler_feedback[$key] =$value;
-            }
-            if($compiler_feedback["status"] == "success"){
-                $corrected_code_path = public_path($assignment_submission_path)."/fixed.cpp";
-                $file = fopen($corrected_code_path,'w');
-                fwrite($file,$compiler_feedback["solution"]);
-                fclose($file);
-                $cpp_executable = env('CPP_EXE_PATH');
-                $output_1 = shell_exec("$cpp_executable \"" . $corrected_code_path . "\" -o \"" . public_path($assignment_submission_path) . "/output\" 2>&1");
+            
+            $basic_syntax_checking = $this->run_basic_compiling_error_checker($compiler_feedback,$submission, $lang);
+
+            if($basic_syntax_checking){
+                $evalseer_feedback = shell_exec(env('SYNTAX_CORRECTION_PY')." \"". public_path($submission->submitted_code) . "\" 2>&1");
+                $evalseer_feedback = json_decode($evalseer_feedback,true);
+                foreach ($evalseer_feedback as $key => $value){
+                    $compiler_feedback[$key] =$value;
+                }
+                if($compiler_feedback["status"] == "success"){
+                    $corrected_code_path = public_path($assignment_submission_path)."/fixed.cpp";
+                    $file = fopen($corrected_code_path,'w');
+                    fwrite($file,$compiler_feedback["solution"]);
+                    fclose($file);
+                    $cpp_executable = env('CPP_EXE_PATH');
+                    $output_1 = shell_exec("$cpp_executable \"" . $corrected_code_path . "\" -o \"" . public_path($assignment_submission_path) . "/output\" 2>&1");
+                }
             }
             $submission->compile_feedback = json_encode($compiler_feedback);
-            
         }
         $python = env("PYTHON_EXE_PATH");
         $stylefb = shell_exec("python ". public_path('/cpplint-file/cpplint.py') . " \"" . public_path(str_replace('/', '/', $submission->submitted_code))."\" 2>&1");
