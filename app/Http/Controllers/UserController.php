@@ -51,6 +51,15 @@ class UserController extends Controller
         return back()->withInput()->with('status','Invalid login details!');
     }
 
+    public function logout()
+    {
+        // Session::flush();
+        
+        Auth::logout();
+
+        return view('login');
+    }
+
     //User Views START
     public function dashboard_users($users=null,$title="User"){
         $users = $users ?? User::paginate(15);
