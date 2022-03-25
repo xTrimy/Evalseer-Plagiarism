@@ -23,7 +23,7 @@ class QuestionController extends Controller
         // 'logic',
         'not_hidden_test_cases',
         // 'hidden_test_cases',
-        // 'features',
+        'features',
     ];
     public function add($id){
 
@@ -314,7 +314,7 @@ class QuestionController extends Controller
             
         }
         $python = env("PYTHON_EXE_PATH");
-        $stylefb = shell_exec($python ." ". public_path('/cpplint-file/cpplint.py') . " \"" . public_path(str_replace('/', '/', $submission->submitted_code))."\" 2>&1");
+        $stylefb = shell_exec("python ". public_path('/cpplint-file/cpplint.py') . " \"" . public_path(str_replace('/', '/', $submission->submitted_code))."\" 2>&1");
 		
 		$stylefb = str_replace(public_path(str_replace("/", "\\", $assignment_submission_path)), '', $stylefb);
         $submission->style_feedback = $stylefb;
