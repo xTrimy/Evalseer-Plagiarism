@@ -20,7 +20,7 @@
               Total Students
             </p>
             <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
-              6389
+              {{ $users }}
             </p>
           </div>
         </div>
@@ -34,7 +34,7 @@
                 Total Assignments
               </p>
               <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                6389
+                {{ $assignments }}
               </p>
             </div>
           </div>
@@ -48,7 +48,7 @@
                 Total Submissions
               </p>
               <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                6389
+                {{ $submissions }}
               </p>
             </div>
         </div>

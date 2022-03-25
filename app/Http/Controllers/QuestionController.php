@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+session_start();
 use App\Models\Assignments;
 use App\Models\GradingCriteria;
 use App\Models\ProgrammingLanguage;
@@ -103,17 +103,105 @@ class QuestionController extends Controller
      * @return string
      *
      */
-    private function save_submission_file($request, $question, &$submission){
+    private function save_submission_file($request, $question, &$submission) {
         $extension = $request->file('submission')->getClientOriginalExtension();
-        $fileNameToStore = $request->file('submission')->getClientOriginalName();
-        $submission_number = count($question->submissions) + 1;
-        $user_name = Auth::user()->name;
-        $assignment_submission_path = "/assignment_submissions/{$question->assignment->name}/{$question->name}/$user_name/$submission_number";
-        $request->submission->move(public_path($assignment_submission_path), $fileNameToStore);
-        $submission->submitted_code = $assignment_submission_path . '/' . $fileNameToStore;
-        $submission->question_id = $question->id;
-        return $assignment_submission_path;
+        if($extension != "zip") {
+            $fileNameToStore = $request->file('submission')->getClientOriginalName();
+            $submission_number = count($question->submissions) + 1;
+            $user_name = Auth::user()->name;
+            $assignment_submission_path = "/assignment_submissions/{$question->assignment->name}/{$question->name}/$user_name/$submission_number";
+            $request->submission->move(public_path($assignment_submission_path), $fileNameToStore);
+            $submission->submitted_code = $assignment_submission_path . '/' . $fileNameToStore;
+            $submission->question_id = $question->id;
+            return $assignment_submission_path;
+        } else {
+            $fileNameToStore = $request->file('submission')->getClientOriginalName();
+            $submission_number = count($question->submissions) + 1;
+            $user_name = Auth::user()->name;
+            $assignment_submission_path = "/assignment_submissions/{$question->assignment->name}/{$question->name}/$user_name/$submission_number";
+            $request->submission->move(public_path($assignment_submission_path), $fileNameToStore);
+            $full_path = $assignment_submission_path."/".$fileNameToStore;
+            // dd($full_path);
+            // $this->compile_zip_file("java",$assignment_submission_path,$assignment_submission_path."/".$fileNameToStore);
+            $submission->submitted_code = $assignment_submission_path . '/' . $fileNameToStore;
+            $this->unZip($assignment_submission_path,$assignment_submission_path."/".$fileNameToStore);
+
+            // $submission->submitted_code = $assignment_submission_path . '/main.java';
+            $submission->question_id = $question->id;
+            return $assignment_submission_path;
+        }
     }
+
+    public function unZip(string $file_path,string $file) {
+        $zip = new \ZipArchive();
+
+        $file = public_path($file);
+        $file = str_replace("\\","/", $file);
+        $res = $zip->open($file);
+
+
+        $file_path = public_path($file_path);
+        $file_path = str_replace("\\","/", $file_path);
+        $zip->extractTo($file_path);
+        
+        $zip->close();
+    }
+    
+
+    public function compile_zip_file($language,string $file_path,string $file_directory) {
+        $java_executable = env('JAVA_COMPILER_PATH');
+        // $submission_folder = uniqid();
+        // $zip = new \ZipArchive();
+        // $res  = $zip->open($file_path);
+        $filesInside = array();
+        if (TRUE) {
+            $submission_root_folder = public_path("zip_submissions");
+            // mkdir(public_path("zip_submissions/$submission_folder"));
+            // $extract_dir_path = public_path("zip_submissions/$submission_folder");
+            // $zip->extractTo($extract_dir_path);
+            // $zip->close();
+            $submission_root_folder = str_replace("\\","/", $submission_root_folder);
+
+            
+            $extract_dir_path = $file_path;
+            $extract_dir_path = str_replace("\\", "/", $extract_dir_path);
+
+
+            $extract_dir_path = dirname($extract_dir_path);
+
+            foreach(glob($extract_dir_path.'/*.*') as $file) {
+                array_push($filesInside,$file);
+            }
+
+          
+
+            $filesInside = scandir($extract_dir_path, 1);
+            $filesCount = count($filesInside);
+            $filesCount -= 3;
+            
+            // Check if the folder has a main.java (ToDo)
+            
+            // $extract_dir_path = str_replace(" ", "%", $extract_dir_path);
+            $compiling_command = "$java_executable"." \"$extract_dir_path"."/main.java\" ";
+            
+            
+            for($i=0;$i<=$filesCount;$i++) {
+                $ext = substr($filesInside[$i], -4);
+                if($filesInside[$i] != "main.java" && $ext == "java") {
+                    $compiling_command .= "\"$extract_dir_path\\$filesInside[$i]\"";
+                }
+            }
+            $compiling_command .= " 2>&1 ";
+            // $compiling_command = "javac C:/xampp/htdocs/Evalseer-Plagiarism/public/assignment_submissions/Rectangle Problem/Rectangle Problem/Abdelrahman/7/main.java C:/xampp/htdocs/Evalseer-Plagiarism/public/assignment_submissions/Rectangle Problem/Rectangle Problem/Abdelrahman/7/Rectangle.java  2>&1 ";
+            // dd($compiling_command);
+            $output = shell_exec($compiling_command);
+            // dd($output);
+            return $output;
+        } else {
+            return FALSE;
+        }
+    }
+
     /**
      * Compile code file
      * Returns the compilation output
@@ -125,15 +213,23 @@ class QuestionController extends Controller
      *
      * @throws RuntimeException
      */
-    private function compile_file($language,string $file_path,string $file_directory){
+    private function compile_file($language,string $file_path,string $file_directory) {
+        $ext = substr($file_path, -4);
+        // TODO: Make languages more dynamic
         if($language == 'c++'){
             $cpp_executable = env('CPP_EXE_PATH');
             $output = shell_exec("$cpp_executable \"" . $file_path . "\" -o \"" . $file_directory . "/output\" 2>&1");
             return $output;
         }else if($language == 'java'){
-            $java_executable = env('JAVA_COMPILER_PATH');
-            $output = shell_exec("$java_executable \"". $file_path . "\" 2>&1 ");
-            return $output;
+            if($ext == ".zip") {
+                $output = $this->compile_zip_file($language,$file_path,$file_directory);
+                return $output;
+            } else {
+                $java_executable = env('JAVA_COMPILER_PATH');
+                $output = shell_exec("$java_executable \"". $file_path . "\" 2>&1 ");
+                
+                return $output;
+            }
         }
         else{
             throw new RuntimeException('Language '.$language.' is undefiened');
@@ -153,6 +249,7 @@ class QuestionController extends Controller
         if (count($test_cases) <= 0) {
             return 0;
         }
+        $isZip = false;
         //Running Test Cases
         $number_of_test_cases_passed = 0;
         $total_excectution_time = 0;
@@ -164,8 +261,22 @@ class QuestionController extends Controller
             if($language == "c++"){
                 $output = shell_exec("\"" . public_path($file_directory) . "/output\" < \"" . $test_case_file . "\"");
             }else if($language == "java"){
-                $java_exe = env('JAVA_EXE_PATH');
-                $output = shell_exec("cd \"".public_path($file_directory)."\" && $java_exe " . @end(explode('/', str_replace('.java','',$submission->submitted_code)))." < \"" . $test_case_file . "\"");
+                $filesInside = scandir(public_path($file_directory), 1);
+                for($i=0;$i<count($filesInside);$i++) {
+                    $ext = substr($filesInside[$i], -3);
+                    if($ext == "zip") {
+                        $isZip = true;
+                    }
+                }
+
+                if($isZip) {
+                    $java_exe = env('JAVA_EXE_PATH');
+                    $commandd = "cd \"".public_path($file_directory)."\" && $java_exe " . "main.java"." < \"" . $test_case_file . "\"";
+                    $output = shell_exec($commandd);
+                } else {
+                    $java_exe = env('JAVA_EXE_PATH');
+                    $output = shell_exec("cd \"".public_path($file_directory)."\" && $java_exe " . @end(explode('/', str_replace('.java','',$submission->submitted_code)))." < \"" . $test_case_file . "\"");
+                }
             }
             if ($output == $test_case->output) {
                 $number_of_test_cases_passed += 1;
@@ -187,12 +298,6 @@ class QuestionController extends Controller
         ->select('questions.*')
         ->first();
 
-        // $assignment = DB::table('assignments')
-        // ->where('id',$questions->assignment_id)
-        // // ->leftJoin('courses', 'assignments.course_id', '=', 'courses.id')
-        // ->select('assignments.*')
-        // ->first();
-
         $grading_criterias = DB::table('grading_criterias')
         ->where('question_id',$question_id)
         // ->leftJoin('courses', 'assignments.course_id', '=', 'courses.id')
@@ -201,8 +306,13 @@ class QuestionController extends Controller
 
         $assignment = Assignments::with('course.programming_languages')->find($questions->assignment_id);
 
+        $test_cases = DB::table('question_test_cases')
+        ->where('question_id',$question_id)
+        ->select('question_test_cases.*')
+        ->get();
+
         $programming_languages = ProgrammingLanguage::all();
-        return view('admin.edit-question',["programming_languages"=>$programming_languages,'questions'=>$questions,'assignment'=>$assignment,'grading_criterias'=>$grading_criterias]);
+        return view('admin.edit-question',["test_cases"=>$test_cases,"programming_languages"=>$programming_languages,'questions'=>$questions,'assignment'=>$assignment,'grading_criterias'=>$grading_criterias]);
         // return redirect()->back()->with('success',"Question Edited successfully");
     }
 
@@ -285,7 +395,11 @@ class QuestionController extends Controller
         }
         $lang = $question->programming_language->acronym;
         $output_1 = $this->compile_file($lang, public_path($submission->submitted_code), public_path($assignment_submission_path));
-       
+        // dd($submission->submitted_code);
+
+        // ! To Be Changed
+        // $submission->submitted_code = $_SESSION['submited_code'];
+
         $compiler_feedback = false;
         
         /**  
@@ -293,6 +407,7 @@ class QuestionController extends Controller
          * Check if compiler throws any errors
          * 
         **/
+        // dd($output_1);
         if($output_1 != null || strlen($output_1)>0) {
             $output_1 = str_replace(public_path($submission->submitted_code),'',$output_1);
             $compiler_feedback = [];

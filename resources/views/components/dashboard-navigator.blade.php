@@ -1,7 +1,7 @@
 <div class="py-4 text-gray-500 dark:text-gray-400">
           <a
             class="ml-6 text-lg flex items-center font-bold text-gray-800 dark:text-gray-200"
-            href="#"
+            href="/dashboard"
           >
           <div class="w-8 h-8 inline-block mr-4">
             <img src="{{ asset('png/logo.png') }}" class="w-full h-full object-contain" alt="">
@@ -102,7 +102,7 @@
           </ul>
           <div class="px-6 my-6">
             <a
-            href="#"
+            href="/logout"
               class="flex items-center justify-between w-full px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange"
             >
               Logout

@@ -13,6 +13,14 @@ Login
             @if(Session::has('status'))
                 <div class="text-red-500">{{ Session::get('status') }}</div>
             @endif
+                <div class=" bg-blue-500 w-full px-3 py-2 shadow-md rounded-sm text-white mb-5">
+                    <h1 class="font-bold my-2">Login Instructions</h1>
+                    <hr class="my-2">
+                    <p class="font-bold">Example:  </p>
+                    <p>Email Address: <span class="font-bold">abdelrahman1814541@miuegypt.edu.eg</span> </p>   
+                    <p class=" mb-3">Password: <span class="font-bold">abdelrahman1814541</span> </p>
+                    <p>Note: <span class="font-bold">Use Lowercase Characters</span> </p>  
+                </div>
                 <h1 class=" text-3xl font-bold mb-4">Sign In</h1>
                 {{-- <div class="w-full shadow py-5 text-center font-bold text-xl mb-5 cursor-pointer flex px-4">
                     <div>

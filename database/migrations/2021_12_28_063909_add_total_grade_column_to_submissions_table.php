@@ -15,7 +15,7 @@ class AddTotalGradeColumnToSubmissionsTable extends Migration
     {
         Schema::table('submissions', function (Blueprint $table) {
             $table->float('total_grade')->nullable();
-        });
+        }); 
     }
 
     /**

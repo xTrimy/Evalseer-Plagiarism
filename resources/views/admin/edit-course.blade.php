@@ -1,9 +1,9 @@
 @extends('layout.dashboard.app')
 @section('page')
-add-assignment
+edit-course
 @endsection
 @section('title')
-Add Assignment
+Edit Course
 @endsection
 @section('content')
 
@@ -12,7 +12,7 @@ Add Assignment
             <h2
               class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
             >
-              Add Assignment
+              Edit Course
             </h2>
             
             @if(Session::has('success'))
@@ -33,13 +33,14 @@ Add Assignment
             @if($errors->any())
                 {!! implode('', $errors->all('<div class="text-red-500">:message</div>')) !!}
             @endif
+            <input type="hidden" name="course_id" value="{{ $course->id }}">
               <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
                 <i class="las la-font text-xl"></i>
-                Assignment Title
+                Course Title
                 </span>
                 <input
-                value="{{ old('name') }}"
+                value="{{ $course->name }}"
                 type="text"
                 name="name"
                     required
@@ -47,133 +48,121 @@ Add Assignment
                   placeholder="Title"
                 />
               </label>
-              <label class="block text-sm mt-2">
+              <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
-                <i class="las la-align-left text-xl"></i>
-                Description (optional)
+                <i class="las la-font text-xl"></i>
+                Course Code
                 </span>
-                <textarea
-                    name="description"
-                    id="summernote"
+                <input
+                value="{{ $course->course_id }}"
+                type="text"
+                name="course_code"
+                    required
                   class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder="Assignment Description"
-                >{{ old('description') }}</textarea>
+                  placeholder="Course Code"
+                />
               </label>
-              <label class="block text-sm mt-2">
+              <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
                 <i class="las la-clock text-xl"></i>
-                Start Time
+                Credit Hours
                 </span>
                 <input
-                value="{{ old('start_time') }}"
-                    type="datetime-local"
-                    name="start_time"
+                value="{{ $course->credit_hours }}"
+                type="number"
+                name="credit_hours"
                     required
                   class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder=""
+                  placeholder="Credit Hours"
                 />
               </label>
-              <label class="block text-sm mt-2">
+              
+              <label class="block text-sm">
+                <span class="text-gray-700 dark:text-gray-400">
+                <i class="las la-marker text-xl"></i>
+                Grade
+                </span>
+                <input
+                value="{{ $course->grade }}"
+                type="number"
+                name="grade"
+                    required
+                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="Grade"
+                />
+              </label>
+              <label class="block text-sm">
+                <span class="text-gray-700 dark:text-gray-400">
+                <i class="las la-graduation text-xl"></i>
+                Minimum Grade To Pass
+                </span>
+                <input
+                value="{{ $course->grade_to_pass }}"
+                type="number"
+                name="grade_to_pass"
+                    required
+                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="Minimum Grade To Pass"
+                />
+              </label>
+              <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
                 <i class="las la-clock text-xl"></i>
-                End Time
+                Course Start Date
                 </span>
                 <input
-                id="end_time"
-                value="{{ old('end_time') }}"
-                    type="datetime-local"
-                    name="end_time"
+                value="{{ $course->start_date }}"
+                type="date"
+                name="start_date"
                     required
                   class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder=""
+                  placeholder="Course Start Date"
                 />
               </label>
-              <label class="block text-sm mt-2">
+              <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
                 <i class="las la-clock text-xl"></i>
-                Late Submission Time
+                Course End Date
                 </span>
                 <input
-                id="late_time"
-                value="{{ old('late_time') }}"
-                    type="datetime-local"
-                    name="late_time"
+                value="{{ $course->end_date }}"
+                type="date"
+                name="end_date"
                     required
                   class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder=""
+                  placeholder="Course End Date"
                 />
               </label>
-              <label class="block text-sm mt-2">
+              <div class="block text-sm my-4">
                 <span class="text-gray-700 dark:text-gray-400">
-                <i class="las la-sort-amount-up text-xl"></i>
-                Maximum Submissions
+                <i class="las la-code text-xl"></i>
+                Programming Languages
                 </span>
-                <input
-                value="{{ old('max') }}"
-                    type="number"
-                    name="max"
-                    required
-                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder="3"
-                />
-              </label>
-              <label class="block text-sm mt-2">
-                <span class="text-gray-700 dark:text-gray-400">
-                <i class="las la-highlighter text-xl"></i>
-                Total Grade
-                </span>
-                <input
-                value="{{ old('grade') }}"
-                    type="number"
-                    name="grade"
-                    required
-                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder="10"
-                />
-              </label>
-              <label class="block text-sm mt-2">
-                <span class="text-gray-700 dark:text-gray-400">
-                <i class="las la-file-pdf text-xl"></i>
-                PDF Instructions (optional)
-                </span>
-                <input
-                    accept=".pdf"
-                    type="file"
-                    name="pdf"
-                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                />
-              </label>
-              <label class="block text-sm mt-2">
-                <span class="text-gray-700 dark:text-gray-400">
-                <i class="las la-book text-xl"></i>
-                Assign To Course
-                </span>
-                <select 
-                required
-                  id="course"
-                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  name="course_id">
-                  <option value="" disabled selected>Select a course to assign</option>
-                  @foreach ($courses as $course)
-                  <option value="{{ $course->id }}" >{{ $course->name }}</option>
+                <div class="flex flex-wrap">
+                  @foreach ($programming_languages as $lang)
+                  <label class="mr-4 dark:text-gray-400 text-gray-700">
+                    <input
+                    type="checkbox"
+                    value="{{ $lang->id }}"
+                    name="programming_languages[]"
+                    />
+                    {{ $lang->name }}
+                  </label>
                   @endforeach
-                </select>
-              </label>
-              <label class="block text-sm mt-2">
-                <span class="text-gray-700 dark:text-gray-400">
-                <i class="las la-bookmark text-xl"></i>
-                Assign To Group
-                </span>
-                <select 
-                required
-                id="groups"
-                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                 name="group_id">
-                  <option value="" disabled selected>Select a course first</option>
-                </select>
-              </label>
+                  
+                </div>
+              </div>
+              <div class="flex">
+                <div class="form-check form-switch">
+                  <input class="form-check-input appearance-none w-9 rounded-full float-left outline-none h-6 align-top bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm outline-0 mr-2" type="checkbox" name="active" role="switch" id="flexSwitchCheckDefault" 
+                  @php
+                    if($course->active == 1) { echo 'checked'; }
+                  @endphp>
+                  <label class="form-check-label inline-block text-gray-800 outline-none" for="flexSwitchCheckDefault">Active</label>
+                </div>
+              </div>
               <button type="submit" class="table items-center mt-4 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange">
-              Next
+              Edit
               <span class="ml-2" aria-hidden="true">
                   <i class='las la-arrow-right'></i>
               </span>
@@ -206,11 +195,6 @@ Add Assignment
                   groups_el.appendChild(option);
                 }
               }});
-          });
-        </script>
-        <script>
-          $(document).ready(function() {
-            $('#summernote').summernote();
           });
         </script>
 @endsection
