@@ -257,8 +257,15 @@
                     
             @endif
             @endif
-
             @if(count($question->submissions)<$assignment->submissions && $submission_allowed)
+            @php
+                $lang = " ";
+                if($question->programming_language_id == 1) {
+                    $lang = ".cpp";
+                } else if ($question->programming_language_id == 2) {
+                    $lang = ".java";
+                }
+            @endphp
             <form method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="question_id" value="{{ $question->id }}">
@@ -266,7 +273,7 @@
                         <div class=" justify-center items-center">
                             <label class="table mx-auto bg-text text-white px-10 py-4 rounded-lg font-bold text-sm cursor-pointer">
                             Add Submission for {{ $question->name }}
-                            <input accept=".java" id="question_file_{{ $question->id }}" type="file" class="hidden" name="submission" >
+                            <input accept="{{ $lang }}" id="question_file_{{ $question->id }}" type="file" class="hidden" name="submission" >
                         </label>
                             <div id="question_filename_{{ $question->id }}" class="text-gray-500 "></div>
                         </div>
