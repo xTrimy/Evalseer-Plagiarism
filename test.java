@@ -8,7 +8,7 @@ public class test {
          for(i=1;i<=number;i++){    
              fact=fact*i;    
          }    
-         System.out.println(fact);
+         System.out.print(fact);
     }  
     
 }

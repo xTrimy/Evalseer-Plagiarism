@@ -7,9 +7,6 @@ int main() {
 
     int a = 0;
     cin >> n;
-<<<<<<< HEAD
-    cout << "The output is" << n*2;
-=======
 
     // for(int i=0;i<1000000;i++){
     //     a++;
@@ -24,6 +21,5 @@ int main() {
         cout << factorial;    
     }
 
->>>>>>> 2f8e6d7abc2fbd9f8c10fc3e2971db56d86821ea
     return 0;
 }
