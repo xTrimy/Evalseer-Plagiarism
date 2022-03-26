@@ -138,5 +138,4 @@ class AssignmentController extends Controller
 
         return redirect()->route('dashboard.users.instructors.view_assignments');
     }
-    
 }

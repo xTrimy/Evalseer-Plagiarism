@@ -69,10 +69,12 @@
                 <i class="far fa-calendar text-white text-center text-2xl"></i>
                 <p class="font-bold text-white">Calendar</p>
             </div>
-            <div class="bg-orange-500 rounded-lg px-8 py-5 text-center mr-5 w-40">
-                <i class="fas fa-certificate text-white text-center text-2xl"></i>
-                <p class="font-bold text-white">Badges</p>
-            </div>
+            <a href="/badges">
+              <div class="bg-orange-500 rounded-lg px-8 py-5 text-center mr-5 w-40">
+                  <i class="fas fa-certificate text-white text-center text-2xl"></i>
+                  <p class="font-bold text-white">Badges</p>
+              </div>
+            </a>
             <div class="bg-blue-500 rounded-lg px-8 py-5 text-center mr-5 w-40">
                 <i class="fas fa-book text-white text-center text-2xl"></i>
                 <p class="font-bold text-white">All Courses</p>
