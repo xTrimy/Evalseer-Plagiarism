@@ -65,6 +65,7 @@ Edit Question to {{ $assignment->name }}
                 </span>
                 <textarea
                     name="description"
+                    id="summernote"
                     required
                   class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                   placeholder="Assignment Description"
@@ -143,6 +144,61 @@ Edit Question to {{ $assignment->name }}
                 />
               </label>
               <h2 class="font-bold text-xl mt-8">Test Cases</h2>
+              <div class="mb-8">
+                <div class="flex flex-col">
+                  <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div class="py-4 inline-block w-full sm:px-6 lg:px-8">
+                      <div class="overflow-hidden">
+                        <table class="w-full text-center">
+                          <thead class="border-b bg-gray-400">
+                            <tr>
+                              <th scope="col" class="text-sm font-medium text-white px-6 py-4">
+                                #
+                              </th>
+                              <th scope="col" class="text-sm font-medium text-white px-6 py-4">
+                                Inputs
+                              </th>
+                              <th scope="col" class="text-sm font-medium text-white px-6 py-4">
+                                Output
+                              </th>
+                              <th scope="col" class="text-sm font-medium text-white px-6 py-4">
+                                Actions
+                              </th>
+                            </tr>
+                          </thead class="border-b">
+                          <tbody>
+                            @php
+                              $i = 1;
+                            @endphp
+                            @foreach ($test_cases as $test_case)
+                            <tr class="bg-white border-b">
+                              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">@php
+                                  echo $i;
+                              @endphp</td>
+                              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                <input type="text" id="input{{$i}}" class="outline-none outline-0 text-center focus:outline-0 rounded-sm" value="{{ $test_case->inputs }}">
+                                
+                              </td>
+                              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                {{ $test_case->output }}
+                              </td>
+                              <td class="text-sm text-gray-900 font-light px-2 py-4 whitespace-nowrap">
+                                <button type="button" id="save{{$i}}" class="px-12 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out"><i class="fas fa-check"></i> Save</button>
+                                <button type="button" class="inline-block px-4 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out"><i class="fas fa-trash"></i> Delete</button>
+                              </td>
+                            </tr class="bg-white border-b">
+                              @php
+                                $i++;
+                              @endphp
+                             @endforeach
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
               <div class="form-group">
                 <label>Test Cases Number</label>
                 <input type="number" name="features" id="count" class="form-control" placeholder="Number of Test Cases">
@@ -239,7 +295,7 @@ Edit Question to {{ $assignment->name }}
               </label>
 
               <button type="submit" class="table items-center mt-4 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange">
-              Add
+              Edit
               <span class="ml-2" aria-hidden="true">
                   <i class='las la-arrow-right'></i>
               </span>
@@ -279,6 +335,21 @@ Edit Question to {{ $assignment->name }}
                     container.appendChild(document.createElement("br"));
                 }
             }
+        </script>
+
+        <script>
+          $(document).ready(function() {
+            $('#summernote').summernote();
+          });
+        </script>
+
+        <script>
+          function editTestCase(element) {
+            var input = document.getElementById(element);
+            input.readOnly = false;
+            input.focus();
+            input.select();
+          }
         </script>
 @endsection
 

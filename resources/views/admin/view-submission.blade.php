@@ -173,7 +173,7 @@ users
                 </div>
                 <div class="w-full bg-white text-black p-4 rounded-md border mt-8">
                   <h1 class="my-3 font-bold">Syntax Feedback</h1>
-                  {{ $submission->syntax_feedback ?? "No Syntax Feedback"}}
+                  {{ $submission->compile_feedback ?? "No Syntax Feedback"}}
                 </div>
                 <div class="w-full bg-white text-black p-4 rounded-md border mt-8">
                   <h1 class="my-3 font-bold">Style Feedback</h1>

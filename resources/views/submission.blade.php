@@ -86,7 +86,13 @@
             <div class=" bg-white w-full shadow rounded-md px-4">
                 <h1 class="text-gray-800 text-2xl p-2 font-bold">
                    Question: {{ $question->name }}</h1>
-                <p class="text-gray-800 text-lg p-2  "><i class="las la-align-left"></i> Description: {{ $question->description }}</p>
+                <p class="text-gray-800 text-lg p-2  ">
+                    <i class="las la-align-left"></i> Description: 
+                    {{-- {{ $question->description }} --}}
+                    <div class="break-all">
+                        {!! str_replace('&nbsp;', ' ', $question->description ) !!}
+                    </div>
+                </p>
                 <p class="text-gray-800 text-lg p-2  "><i class="las la-file"></i> Remaining Submissions: {{ $assignment->submissions-count($question->submissions) }}</p>
                 <p class="text-gray-800 text-lg p-2  ">
                     @if(count($question->submissions)>0)
@@ -178,18 +184,40 @@
                 @endphp
             @endif --}}
             @php
-                $submitted_code =file_get_contents(public_path($question->submissions->last()->submitted_code));
-                $submitted_code = explode("\n",$submitted_code);
-                foreach ($submitted_code as $key =>$line) {
-                    $line = htmlspecialchars($line);
-                    if(isset($styling_comment) && array_key_exists(intval($key)+1,$styling_comment)){
-                        $warning = $styling_comment[intval($key)+1];
-                        $submitted_code[$key]="<div class=' highlight-inline code style_warning relative' data-warning='$warning'>$line</div>";
-                    }else{
-                        $submitted_code[$key]="<div class='code'>$line</div>";
+                $ext = substr(public_path($question->submissions->last()->submitted_code), -3);
+
+                if ($ext == "zip") {
+                    $dir_path = dirname($question->submissions->last()->submitted_code);
+                    $code_path = $dir_path.'/main.java';
+
+                    $submitted_code = file_get_contents(public_path($code_path));
+                    $submitted_code = explode("\n",$submitted_code);
+                    foreach ($submitted_code as $key =>$line) {
+                        $line = htmlspecialchars($line);
+                        if(isset($styling_comment) && array_key_exists(intval($key)+1,$styling_comment)){
+                            $warning = $styling_comment[intval($key)+1];
+                            $submitted_code[$key]="<div class=' highlight-inline code style_warning relative' data-warning='$warning'>$line</div>";
+                        }else{
+                            $submitted_code[$key]="<div class='code'>$line</div>";
+                        }
                     }
-                }
-                $submitted_code = implode("",$submitted_code);
+                    $submitted_code = implode("",$submitted_code);
+                } else {
+                    $submitted_code =file_get_contents(public_path($question->submissions->last()->submitted_code));
+                    $submitted_code = explode("\n",$submitted_code);
+                    foreach ($submitted_code as $key =>$line) {
+                        $line = htmlspecialchars($line);
+                        if(isset($styling_comment) && array_key_exists(intval($key)+1,$styling_comment)){
+                            $warning = $styling_comment[intval($key)+1];
+                            $submitted_code[$key]="<div class=' highlight-inline code style_warning relative' data-warning='$warning'>$line</div>";
+                        }else{
+                            $submitted_code[$key]="<div class='code'>$line</div>";
+                        }
+                    }
+                    $submitted_code = implode("",$submitted_code);
+                }   
+
+                
             @endphp
             <pre class="p-8 fixed_output bg-gray-200 my-5 rounded shadow ">{!! $submitted_code !!}</pre>
             @if ($submission->compile_feedback)
@@ -229,8 +257,15 @@
                     
             @endif
             @endif
-
             @if(count($question->submissions)<$assignment->submissions && $submission_allowed)
+            @php
+                $lang = " ";
+                if($question->programming_language_id == 1) {
+                    $lang = ".cpp";
+                } else if ($question->programming_language_id == 2) {
+                    $lang = ".java";
+                }
+            @endphp
             <form method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="question_id" value="{{ $question->id }}">
@@ -238,7 +273,7 @@
                         <div class=" justify-center items-center">
                             <label class="table mx-auto bg-text text-white px-10 py-4 rounded-lg font-bold text-sm cursor-pointer">
                             Add Submission for {{ $question->name }}
-                            <input accept=".java" id="question_file_{{ $question->id }}" type="file" class="hidden" name="submission" >
+                            <input accept="{{ $lang }}" id="question_file_{{ $question->id }}" type="file" class="hidden" name="submission" >
                         </label>
                             <div id="question_filename_{{ $question->id }}" class="text-gray-500 "></div>
                         </div>

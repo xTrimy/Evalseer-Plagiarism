@@ -45,6 +45,18 @@ class UserController extends Controller
         $credentials  = $request->only(['email','password']);
         //|| Auth::attempt(['username' => request('email'), 'password' => request('password')])
         if (Auth::attempt(['email' => request('email'), 'password' => request('password')]) ) {
+            $user = Auth::user();
+            $this->earn_rank($user->id,1);
+            if ($user->number_of_logins == null) {
+                $user->number_of_logins = 1;
+                $user->save();
+            } else {
+                $user->number_of_logins += 1;
+                $user->reputation += 5;
+                $user->save();
+                $this->check_for_badge($user->id);
+            }
+
             $request->session()->regenerate();
             return redirect()->route('home');
         }
@@ -244,5 +256,93 @@ class UserController extends Controller
         $submission->save();
         return redirect()->back()->with('success','Submission Edited Successfully!');
 
+    }
+
+    public function logout() {
+        Auth::logout();
+
+        // $request->session()->invalidate();
+
+        // $request->session()->regenerateToken();
+
+        return redirect()->route('home');
+    }
+
+    public function home_instructor() {
+        $users = User::role('student')->get();
+        $users = count($users);
+
+        $assignments = Assignments::get();
+        $assignments = count($assignments);
+
+        $submissions = Submission::get();
+        $submissions = count($submissions);
+
+
+        return view('instructor.index',["users"=>$users,"assignments"=>$assignments,"submissions"=>$submissions]);
+    }
+
+    public function check_for_badge($user_id) {
+        $user = User::find($user_id);
+        $ranks = DB::table('ranks')->distinct()->get();
+        foreach ($ranks as $rank) {
+            if ($user->reputation == $rank->score) {
+                $this->earn_rank($user_id,$rank->id);
+            } else if ($user->number_of_logins == $rank->number_of_logins) {
+                $this->earn_rank($user_id,$rank->id);
+            }
+        }
+    }
+
+    public function earn_badge($user_id,$badge_id) {
+        $hasBadge = false;
+
+        $user_badges = DB::table('user_badges')
+                        ->where('user_id',$user_id)
+                        ->select('user_badges.badge_id')
+                        ->get();
+
+        foreach ($user_badges as $user_badge) {
+            if($user_badge->badge_id == $badge_id) {
+                $hasBadge = true;
+            }
+        }
+
+        if(!$hasBadge) {
+            $date = date('Y/m/d h:i:s', time());
+            DB::table('user_badges')->insert([
+                'id' => null,
+                'user_id' => $user_id,
+                'badge_id' => $rank_id,
+                'created_at' => $date,
+                'updated_at' => $date
+            ]);
+        }
+    }
+
+    public function earn_rank($user_id,$rank_id) {
+        $hasBadge = false;
+
+        $user_ranks = DB::table('user_ranks')
+                        ->where('user_id',$user_id)
+                        ->select('user_ranks.badge_id')
+                        ->get();
+
+        foreach ($user_ranks as $user_rank) {
+            if($user_rank->badge_id == $rank_id) {
+                $hasBadge = true;
+            }
+        }
+
+        if(!$hasBadge) {
+            $date = date('Y/m/d h:i:s', time());
+            DB::table('user_ranks')->insert([
+                'id' => null,
+                'user_id' => $user_id,
+                'badge_id' => $rank_id,
+                'created_at' => $date,
+                'updated_at' => $date
+            ]);
+        }
     }
 }

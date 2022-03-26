@@ -32,6 +32,10 @@ Route::middleware('guest')->group(function(){
         return view('signup');
     })->name('signup');
 
+    // Route::get('/logout', 'UserController@logout')->name('logout');
+
+    
+
     Route::get('/jplag', function () {
         return view('home');
     })->name('jplag');
@@ -41,6 +45,8 @@ Route::middleware('guest')->group(function(){
 
 //Must be authenticated routes
 Route::middleware('auth')->group(function (){
+
+    Route::get('/logout', [UserController::class,'logout'])->name('logout');
 
     Route::get('/jplag', function () {
         return view('home');
@@ -59,7 +65,7 @@ Route::middleware('auth')->group(function (){
 
     Route::get('/badges', [BadgeController::class, "view"])->name('view_badges');
     
-
+    Route::get('/logout', [UserController::class, "logout"])->name('logout');
 
     Route::prefix('/course/{id}')->as('course.')->group(function ($id) {
         Route::get('/', [CourseController::class, 'index'])->name('view');
@@ -77,10 +83,13 @@ Route::middleware('auth')->group(function (){
 
         Route::get('/form-zip', [PlagiarismController::class, "formZip"]);
         // Instructor routes
-        Route::get('/', function () {
-            return view('instructor.index');
+        // Route::get('/', function () {
+        //     return view('instructor.index');
             
-        });
+        // });
+
+        Route::get('/', [UserController::class, "home_instructor"]);
+
         Route::prefix('/assignments')->as('assignments.')->group(function () {
             Route::get('/add', [AssignmentController::class, "add"])->name('add_assignment');
             Route::post('/add', [AssignmentController::class, "store"]);

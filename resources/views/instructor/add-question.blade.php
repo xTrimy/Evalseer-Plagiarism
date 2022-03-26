@@ -64,6 +64,7 @@ Add Question to {{ $assignment->name }}
                 </span>
                 <textarea
                     name="description"
+                    id="summernote"
                     required
                   class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                   placeholder="Assignment Description"
@@ -239,5 +240,10 @@ Add Question to {{ $assignment->name }}
                     container.appendChild(document.createElement("br"));
                 }
             }
+        </script>
+        <script>
+          $(document).ready(function() {
+            $('#summernote').summernote();
+          });
         </script>
 @endsection
