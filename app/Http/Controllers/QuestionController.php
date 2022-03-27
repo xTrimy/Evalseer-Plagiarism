@@ -298,12 +298,7 @@ class QuestionController extends Controller
         ->select('questions.*')
         ->first();
 
-        $grading_criterias = DB::table('grading_criterias')
-        ->where('question_id',$question_id)
-        // ->leftJoin('courses', 'assignments.course_id', '=', 'courses.id')
-        ->select('grading_criterias.*')
-        ->first();
-
+       
         $assignment = Assignments::with('course.programming_languages')->find($questions->assignment_id);
 
         $test_cases = DB::table('question_test_cases')
@@ -311,8 +306,9 @@ class QuestionController extends Controller
         ->select('question_test_cases.*')
         ->get();
 
+        $grading_criterias = GradingCriteria::where('question_id',$questions->id)->get()->last();
         $programming_languages = ProgrammingLanguage::all();
-        return view('admin.edit-question',["test_cases"=>$test_cases,"programming_languages"=>$programming_languages,'questions'=>$questions,'assignment'=>$assignment,'grading_criterias'=>$grading_criterias]);
+        return view('admin.edit-question',["grading_crit"=> $grading_criterias,"test_cases"=>$test_cases,"programming_languages"=>$programming_languages,'questions'=>$questions,'assignment'=>$assignment,'grading_criterias'=>$this->grading_criterias]);
         // return redirect()->back()->with('success',"Question Edited successfully");
     }
 
@@ -367,14 +363,11 @@ class QuestionController extends Controller
             }
             $i++;
         }
-        if(count($this->grading_criterias)>0){
-            DB::table('grading_criterias')->where('question_id', $request->question_id)->delete();
+        if (count($this->grading_criterias) > 0) {
             $grading_criteria_record = new GradingCriteria();
-            // foreach ($this->grading_criterias as $grading_criteria) {
-                $grading_criteria_record->compiling_weight = $request->compiling_weight;
-                $grading_criteria_record->styling_weight = $request->styling_weight;
-                $grading_criteria_record->not_hidden_test_cases_weight = $request->not_hidden_test_cases_weight;
-            // }
+            foreach ($this->grading_criterias as $grading_criteria) {
+                $grading_criteria_record["${grading_criteria}_weight"] = $request["${grading_criteria}"];
+            }
             $grading_criteria_record->question_id = $question->id;
             $grading_criteria_record->save();
         }

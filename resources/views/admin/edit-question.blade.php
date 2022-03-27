@@ -88,13 +88,13 @@ Edit Question to {{ $assignment->name }}
               <h1 class="text-xl text-black font-bold mt-4">
                 Grading Criteria %
               </h1>
-              {{-- @foreach ($grading_criterias as $grading_criteria)
+              @foreach ($grading_criterias as $grading_criteria)
               <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
                 {{ ucwords(str_replace('_', ' ', $grading_criteria)); }}
                 </span>
                 <input
-                value="{{ $grading_criteria }}"
+                value="{{ $grading_crit[$grading_criteria."_weight"] }}"
                 type="number"
                 name="{{ $grading_criteria }}"
                   required
@@ -103,46 +103,8 @@ Edit Question to {{ $assignment->name }}
                   placeholder="30"
                 />
               </label>                
-              @endforeach --}}
-              <label class="block text-sm">
-                <span class="text-gray-700 dark:text-gray-400">
-                  Compiling
-                </span>
-                <input
-                value="{{ $grading_criterias->compiling_weight }}"
-                type="number"
-                name="compiling_weight"
-                  required
-                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder="30"
-                />
-              </label>
-              <label class="block text-sm">
-                <span class="text-gray-700 dark:text-gray-400">
-                  Styling
-                </span>
-                <input
-                value="{{ $grading_criterias->styling_weight }}"
-                type="number"
-                name="styling_weight"
-                  required
-                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder="30"
-                />
-              </label>
-              <label class="block text-sm">
-                <span class="text-gray-700 dark:text-gray-400">
-                  Test Cases
-                </span>
-                <input
-                value="{{ $grading_criterias->not_hidden_test_cases_weight }}"
-                type="number"
-                name="not_hidden_test_cases_weight"
-                  required
-                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder="30"
-                />
-              </label>
+              @endforeach
+            
               <h2 class="font-bold text-xl mt-8">Test Cases</h2>
               <div class="mb-8">
                 <div class="flex flex-col">
