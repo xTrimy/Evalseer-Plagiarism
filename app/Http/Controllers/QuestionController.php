@@ -327,7 +327,9 @@ class QuestionController extends Controller
         // foreach($this->grading_criterias as $grading_criteria){
         //     $total_grading_criteria += $request[$grading_criteria];
         // }
-        $total_grading_criteria = $request->compiling_weight + $request->styling_weight + $request->not_hidden_test_cases_weight;
+        foreach ($this->grading_criterias as $grading_criteria) {
+            $total_grading_criteria += $request[$grading_criteria];
+        }
         if($total_grading_criteria != 100){
             return redirect()->back()->with('error','Total grading criteria percentage must be "100%"')->withInput();
         }
