@@ -7,6 +7,7 @@ use App\Http\Controllers\SubmitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PlagiarismController;
 use App\Http\Controllers\BadgeController;
+use App\Http\Controllers\OnlineIDEController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -72,6 +73,8 @@ Route::middleware('auth')->group(function (){
         Route::get('/assignments', [CourseController::class, 'assignments'])->name('assignments');
     });
 
+    Route::get('/assignment/ide/{id}', [OnlineIDEController::class, "view"])->name('ide');
+    Route::post('/assignment/ide/{id}', [OnlineIDEController::class, "run"]);
     Route::get('/assignment/{id}', [AssignmentController::class, "view"])->name('assignment');
     Route::post('/assignment/{id}', [QuestionController::class, "student_submit"]);
 

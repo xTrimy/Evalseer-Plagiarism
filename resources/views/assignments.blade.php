@@ -34,6 +34,5 @@
     <div class="flex w-full">
 
     </div>
-</body>
-</html>
+
 @endsection

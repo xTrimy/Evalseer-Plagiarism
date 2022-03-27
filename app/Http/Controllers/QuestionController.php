@@ -209,16 +209,23 @@ class QuestionController extends Controller
      * @param  string  $language
      * @param  string  $file_path
      * @param  string  $file_directory
+     * @param  bool    $run_file = false
      * @return string
      *
      * @throws RuntimeException
      */
-    private function compile_file($language,string $file_path,string $file_directory) {
+    public function compile_file($language,string $file_path,string $file_directory, bool $run_file = false) {
         $ext = substr($file_path, -4);
         // TODO: Make languages more dynamic
         if($language == 'c++'){
             $cpp_executable = env('CPP_EXE_PATH');
             $output = shell_exec("$cpp_executable \"" . $file_path . "\" -o \"" . $file_directory . "/output\" 2>&1");
+            if(strlen($output) == 0){
+                if($run_file){
+                    $output = shell_exec(public_path($file_directory."/output")." 2>&1");
+                    return $output;
+                }
+            }
             return $output;
         }else if($language == 'java'){
             if($ext == ".zip") {
@@ -245,7 +252,7 @@ class QuestionController extends Controller
      * @return int $number_of_test_cases_passed
      *
      */
-    private function run_test_cases_on_submission($test_cases,string $file_directory, Submission &$submission, $language = 'cpp'){
+    public function run_test_cases_on_submission($test_cases,string $file_directory, Submission &$submission, $language = 'c++'){
         if (count($test_cases) <= 0) {
             return 0;
         }
