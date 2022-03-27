@@ -328,6 +328,7 @@ class QuestionController extends Controller
         //     $total_grading_criteria += $request[$grading_criteria];
         // }
         foreach ($this->grading_criterias as $grading_criteria) {
+            echo ($grading_criteria); echo ($request[$grading_criteria]);
             $total_grading_criteria += $request[$grading_criteria];
         }
         if($total_grading_criteria != 100){

@@ -163,7 +163,7 @@ Edit Question to {{ $assignment->name }}
               
               <div class="form-group">
                 <label>Test Cases Number</label>
-                <input type="number" name="features" id="count" class="form-control" placeholder="Number of Test Cases">
+                <input type="number" id="count" class="form-control" placeholder="Number of Test Cases">
                 <input type="button" name="addd" class="px-4 py-2 rounded bg-green-500 text-white" onclick="addField()" placeholder="" value="Add">
               </div>
               <div id="test_cases" class="hidden">
@@ -198,7 +198,7 @@ Edit Question to {{ $assignment->name }}
               </h1>
               <div class="form-group">
                 <label>Features Count</label>
-                <input type="number" name="features" id="count_features" class="form-control" placeholder="Number of Features to check">
+                <input type="number"  id="count_features" class="form-control" placeholder="Number of Features to check">
                 <input type="button" name="addd" class="px-4 py-2 rounded bg-green-500 text-white" onclick="addFeatureField()" placeholder="" value="Add">
               </div>
               
