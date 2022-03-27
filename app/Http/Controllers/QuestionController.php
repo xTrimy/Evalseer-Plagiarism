@@ -23,7 +23,7 @@ class QuestionController extends Controller
         // 'logic',
         'not_hidden_test_cases',
         // 'hidden_test_cases',
-        // 'features',
+        'features',
     ];
     public function add($id){
 
@@ -298,12 +298,7 @@ class QuestionController extends Controller
         ->select('questions.*')
         ->first();
 
-        $grading_criterias = DB::table('grading_criterias')
-        ->where('question_id',$question_id)
-        // ->leftJoin('courses', 'assignments.course_id', '=', 'courses.id')
-        ->select('grading_criterias.*')
-        ->first();
-
+       
         $assignment = Assignments::with('course.programming_languages')->find($questions->assignment_id);
 
         $test_cases = DB::table('question_test_cases')
@@ -311,8 +306,9 @@ class QuestionController extends Controller
         ->select('question_test_cases.*')
         ->get();
 
+        $grading_criterias = GradingCriteria::where('question_id',$questions->id)->get()->last();
         $programming_languages = ProgrammingLanguage::all();
-        return view('admin.edit-question',["test_cases"=>$test_cases,"programming_languages"=>$programming_languages,'questions'=>$questions,'assignment'=>$assignment,'grading_criterias'=>$grading_criterias]);
+        return view('admin.edit-question',["grading_crit"=> $grading_criterias,"test_cases"=>$test_cases,"programming_languages"=>$programming_languages,'questions'=>$questions,'assignment'=>$assignment,'grading_criterias'=>$this->grading_criterias]);
         // return redirect()->back()->with('success',"Question Edited successfully");
     }
 
@@ -331,7 +327,10 @@ class QuestionController extends Controller
         // foreach($this->grading_criterias as $grading_criteria){
         //     $total_grading_criteria += $request[$grading_criteria];
         // }
-        $total_grading_criteria = $request->compiling_weight + $request->styling_weight + $request->not_hidden_test_cases_weight;
+        foreach ($this->grading_criterias as $grading_criteria) {
+            echo ($grading_criteria); echo ($request[$grading_criteria]);
+            $total_grading_criteria += $request[$grading_criteria];
+        }
         if($total_grading_criteria != 100){
             return redirect()->back()->with('error','Total grading criteria percentage must be "100%"')->withInput();
         }
@@ -367,20 +366,28 @@ class QuestionController extends Controller
             }
             $i++;
         }
-        if(count($this->grading_criterias)>0){
-            DB::table('grading_criterias')->where('question_id', $request->question_id)->delete();
+        if (count($this->grading_criterias) > 0) {
             $grading_criteria_record = new GradingCriteria();
-            // foreach ($this->grading_criterias as $grading_criteria) {
-                $grading_criteria_record->compiling_weight = $request->compiling_weight;
-                $grading_criteria_record->styling_weight = $request->styling_weight;
-                $grading_criteria_record->not_hidden_test_cases_weight = $request->not_hidden_test_cases_weight;
-            // }
+            foreach ($this->grading_criterias as $grading_criteria) {
+                $grading_criteria_record["${grading_criteria}_weight"] = $request["${grading_criteria}"];
+            }
             $grading_criteria_record->question_id = $question->id;
             $grading_criteria_record->save();
         }
         return redirect()->back()->with('success',"Question Edited Successfully");
     }
-
+    private function run_basic_compiling_error_checker(&$compiler_feedback, Submission &$submission, $language = 'c++' ){
+        if($language == "c++"){
+            $evalseer_feedback = shell_exec(env('BASIC_SYNTAX_PY') . " \"" . public_path($submission->submitted_code) . "\" 2>&1");
+            $evalseer_feedback = json_decode($evalseer_feedback, true);
+            if($evalseer_feedback["status"] == "success"){
+                return true;
+            } else {
+                $compiler_feedback["basic_checking"][] = $evalseer_feedback;
+                return false;
+            }
+        }
+    }
     public function student_submit(Request $request){
         $request->validate([
             'question_id'=>'required|exists:questions,id',
@@ -412,24 +419,28 @@ class QuestionController extends Controller
             $output_1 = str_replace(public_path($submission->submitted_code),'',$output_1);
             $compiler_feedback = [];
             $compiler_feedback["compiler_feedback"] = $output_1;
-            $evalseer_feedback = shell_exec(env('SYNTAX_CORRECTION_PY')." \"". public_path($submission->submitted_code) . "\" 2>&1");
-			$evalseer_feedback = json_decode($evalseer_feedback,true);
-            foreach ($evalseer_feedback as $key => $value){
-                $compiler_feedback[$key] =$value;
-            }
-            if($compiler_feedback["status"] == "success"){
-                $corrected_code_path = public_path($assignment_submission_path)."/fixed.cpp";
-                $file = fopen($corrected_code_path,'w');
-                fwrite($file,$compiler_feedback["solution"]);
-                fclose($file);
-                $cpp_executable = env('CPP_EXE_PATH');
-                $output_1 = shell_exec("$cpp_executable \"" . $corrected_code_path . "\" -o \"" . public_path($assignment_submission_path) . "/output\" 2>&1");
+            
+            $basic_syntax_checking = $this->run_basic_compiling_error_checker($compiler_feedback,$submission, $lang);
+
+            if($basic_syntax_checking){
+                $evalseer_feedback = shell_exec(env('SYNTAX_CORRECTION_PY')." \"". public_path($submission->submitted_code) . "\" 2>&1");
+                $evalseer_feedback = json_decode($evalseer_feedback,true);
+                foreach ($evalseer_feedback as $key => $value){
+                    $compiler_feedback[$key] =$value;
+                }
+                if($compiler_feedback["status"] == "success"){
+                    $corrected_code_path = public_path($assignment_submission_path)."/fixed.cpp";
+                    $file = fopen($corrected_code_path,'w');
+                    fwrite($file,$compiler_feedback["solution"]);
+                    fclose($file);
+                    $cpp_executable = env('CPP_EXE_PATH');
+                    $output_1 = shell_exec("$cpp_executable \"" . $corrected_code_path . "\" -o \"" . public_path($assignment_submission_path) . "/output\" 2>&1");
+                }
             }
             $submission->compile_feedback = json_encode($compiler_feedback);
-            
         }
         $python = env("PYTHON_EXE_PATH");
-        $stylefb = shell_exec($python ." ". public_path('/cpplint-file/cpplint.py') . " \"" . public_path(str_replace('/', '/', $submission->submitted_code))."\" 2>&1");
+        $stylefb = shell_exec("python ". public_path('/cpplint-file/cpplint.py') . " \"" . public_path(str_replace('/', '/', $submission->submitted_code))."\" 2>&1");
 		
 		$stylefb = str_replace(public_path(str_replace("/", "\\", $assignment_submission_path)), '', $stylefb);
         $submission->style_feedback = $stylefb;

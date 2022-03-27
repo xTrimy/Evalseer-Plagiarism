@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\CourseController;
+use App\Models\Course;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +22,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/course/{id}/groups',[CourseController::class,'course_groups']);
+
+Route::get('/test', function(){
+    $course_id = 1;
+    $x = User::role('student')->whereDoesntHave('courses',function($query) use($course_id){
+         $query->where('courses.id',$course_id);
+    })->get();
+    return $x;
+});

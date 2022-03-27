@@ -1,4 +1,5 @@
 from cgi import test
+from tabnanny import check
 import app.predict_next_token as predict_next_token
 import app.tokenize_script as tokenize_script
 import sys
@@ -14,7 +15,8 @@ ASTYLE_EXE = os.environ.get("ASTYLE_EXE")
 file_path = sys.argv[1]
 main_directory = pathlib.Path(__file__).resolve().parent
 
-def test_solution(test_array, index, token, method):
+
+def test_solution(test_array, index, token, method, original_token=False):
     code_array = test_array.copy()
     test_array = ' '.join(test_array)
     test_array = re.sub(
@@ -57,14 +59,56 @@ def test_solution(test_array, index, token, method):
                 if(re.match("<[\w\s]+>",j)):
                     error_index += 2
                 error_index += 1
-        json_data = {"status": "success", "solution": file_contents,
+        if(original_token!=False):
+            json_data = {"status": "success", "solution": file_contents,
+                         "token": token,"original_token":original_token, "line": line_number, "method": method}
+        else:
+            json_data = {"status": "success", "solution": file_contents,
                      "token": token, "line": line_number, "method":method}
         
         print(json.dumps(json_data))
+        exit(0)
         # print("Solution worked \"tests/test.cpp\"")
         return True
     # os.remove(str(main_directory)+"/tests/test.cpp")
     return False
+
+def token_checker(check_for):
+    file = ""
+    try:
+        file = file_path
+    except NameError:
+        file = input("Enter file name:")
+    text = tokenize_script.__main__(path=file_path, return_original=True)
+
+    tokenized_text = text[0].split()
+    original_text = text[1].split()
+    #Check for a default return in main function
+    if(check_for == "return in main"):
+        found_main = False
+        in_main = False
+        brace_count = 0
+        for i,token in enumerate(tokenized_text):
+            if(token == "START_OF_FILE" or token == "END_OF_FILE"):
+                continue
+            if(found_main == False and token == "int" and tokenized_text[i+1] == "IDENTIFIER" and original_text[i] == "main"):
+                found_main = True
+            elif(found_main == True and in_main == False and token == "{"):
+                in_main = True
+            elif(brace_count == 0 and in_main and token == "return"):
+                return True
+            elif(in_main == True):
+                if(token == "{"):
+                    brace_count += 1
+                elif(token == "}"):
+                    if(brace_count > 0):
+                        brace_count -= 1
+                    else:
+                        return False
+
+
+    
+
 
 def main(file):
     file_path = ""
@@ -95,11 +139,34 @@ def main(file):
             if(result == True):
                 return [primary_prediction[1],primary_prediction[0],0]
             # Substitution trial
-            test_array = original_text_array[:primary_prediction[0]] + [primary_prediction[1]] + original_text_array[primary_prediction[0] + 1:]
-            result = test_solution(test_array, primary_prediction[0], primary_prediction[1], 2)
+            test_array = original_text_array[:primary_prediction[0]-2] + [primary_prediction[1]] + original_text_array[primary_prediction[0]-1:]
+            
+            result = test_solution(
+                test_array, primary_prediction[0], primary_prediction[1], 2, original_token=original_text_array[primary_prediction[0]-4])
             if(result == True):
                 return [primary_prediction[1], primary_prediction[0], 1]
+
+        for i in predicted_tokenz:
+            secondary_prediction = i[1]
+            # Insertion trial
+            # print("Predicted "+primary_prediction[1]+" at index of " +
+            #   str(primary_prediction[0])+" instead of "+original_text_array[primary_prediction[0]] + " or before it")
+            # print("Testing the solution...")
+            test_array = original_text_array.copy()
+            test_array.insert(secondary_prediction[0]-1, secondary_prediction[1])
+
+            result = test_solution(
+                test_array, secondary_prediction[0], secondary_prediction[1], 1)
+            if(result == True):
+                return [secondary_prediction[1], secondary_prediction[0], 0]
+            # Substitution trial
+            test_array = original_text_array[:secondary_prediction[0]-2] + [
+                secondary_prediction[1]] + original_text_array[secondary_prediction[0]-1:]
             
+            result = test_solution(
+                test_array, secondary_prediction[0], secondary_prediction[1], 2, original_token=original_text_array[secondary_prediction[0]-2])
+            if(result == True):
+                return [secondary_prediction[1], secondary_prediction[0], 1]
             # Removing Trial
             # test_array = original_text_array[:primary_prediction[0]] + original_text_array[primary_prediction[0] + 1:]
             # result = test_solution(test_array)

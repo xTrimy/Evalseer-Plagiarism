@@ -15,6 +15,6 @@ class Controller extends BaseController
 
     public function __construct()
     {
-       
+        set_time_limit(8000000);
     }
 }

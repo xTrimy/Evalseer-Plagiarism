@@ -110,6 +110,13 @@
                     <div class="flex-1 p-3">
                       <h1 class="md:text-xl text-gray-600">Number of Test Cases Passed</h1>
                       <p class="text-gray-400 text-xs md:text-sm font-light">{{ $question->submissions->last()->logic_feedback }}</p>
+                      
+                      <p>
+                            <div class="hidden modal_contains">
+                                <x-failed-test-cases-feedback :question="$question" :submission="$submission" />
+                            </div>
+                            <div data-modal-title="Test Cases" data-modal-close-button="Close" class="modal_open mt-2 bg-green-500 p-1 rounded-md table text-white cursor-pointer">View Test Cases</div>
+                        </p>
                     </div>
                     <div class="border-l border-gray-100 px-8 flex place-items-center">
                       <p class="text-gray-400 text-xs"><i class="fas fa-check"></i></p>
@@ -170,7 +177,7 @@
                     </div>
                 @endif
             @endif
-            {{-- @if ($submission->style_feedback)
+            @if ($submission->style_feedback)
             
                 @php
                     $styling_line = explode("\n",$submission->style_feedback);
@@ -178,11 +185,14 @@
                     array_splice($styling_line, count($styling_line)-3, 3); 
                     for($i = 0; $i<count($styling_line);$i++){
                         $data = explode(":",$styling_line[$i]);
-						if($data[0] != "Error")
-						$styling_comment[$data[1]] = explode(":",$styling_line[$i])[2];
+						if($data[0] != "Error"){
+                            if(isset($data[1])){
+						        $styling_comment[$data[1]] = explode(":",$styling_line[$i])[2];
+                            }
+                        }
                     }
                 @endphp
-            @endif --}}
+            @endif
             @php
                 $ext = substr(public_path($question->submissions->last()->submitted_code), -3);
 
@@ -217,6 +227,16 @@
                     $submitted_code = implode("",$submitted_code);
                 }   
 
+                //Highlight features checked in the question
+                foreach($question->features as $key=>$feature){
+                    $feature->feature = htmlspecialchars(str_replace('regex:','',$feature->feature));
+                    $matches=[];
+                    preg_match("/".$feature->feature."/imU",$submitted_code,$matches);
+                    if(count($matches)>0){
+                        $match = $matches[0];
+                        $submitted_code = str_replace($match,"<code class='feature_highlight text-red-500 style_warning relative highlight-inline code'>".$match."</code>",$submitted_code);
+                    }
+                }
                 
             @endphp
             <pre class="p-8 fixed_output bg-gray-200 my-5 rounded shadow ">{!! $submitted_code !!}</pre>
@@ -227,25 +247,48 @@
                 @if($data != null)
                 <div class=" bg-white w-full shadow rounded-md px-4 py-4">
                     <div class="text-center text-2xl font-bold mb-3">
-                        Syntax Errors <i class="fas fa-exclamation-triangle"></i>
+                        Compilation Errors <i class="fas fa-exclamation-triangle"></i>
                     </div>
                     <h1 class="text-xl font-bold mt-4">Compiler Feedback:</h1>
                     <pre class=" bg-gray-200 my-5 px-3 py-4 rounded shadow">{!! nl2br(e($data->compiler_feedback)) !!}</pre>
-                    @if($data->status == "success")
-                    <h1 class="text-xl font-bold mt-4 text-green-600">Evalseer Feedback:</h1>
-                    <pre class=" bg-gray-200 my-5 px-3 py-4 rounded shadow">Missing {{ $data->token }} at line {{ $data->line }}</pre>
-                    @php
-                        $solution = htmlspecialchars($data->solution);
-                        $solution = explode("\n",$solution);
-                        foreach ($solution as $key =>$sol) {
-                            $solution[$key]="<div class='code'>$sol</div>";
-                        }
-                        if($data->line >0) {
-                            $solution[$data->line-1] = "<div class='bg-green-400 text-red-500 highlight-inline'>{$solution[$data->line-1]}</div>";
-                        }
-                        $solution = implode("",$solution);
-                    @endphp
-                    <pre class="fixed_output bg-gray-200 my-5 rounded shadow ">{!! $solution !!}</pre>
+                    @if(isset($data->basic_checking) || $data->status == "success")
+                            <h1 class="text-xl font-bold mt-4 text-green-600">Evalseer Feedback:</h1>
+                        @if(isset($data->status))
+                            @if(isset($data->original_token))
+                                @if($data->method == 2)
+                                    <pre class=" bg-gray-200 my-5 px-3 py-4 rounded shadow">Missing `{{ $data->token }}` instead of `{{ $data->original_token }}` at line {{ $data->line }}</pre>
+                                @endif
+                            @else
+                                <pre class=" bg-gray-200 my-5 px-3 py-4 rounded shadow">Missing `{{ $data->token }}` at line {{ $data->line }}</pre>
+                            @endif
+                            @php
+                                $solution = htmlspecialchars($data->solution);
+                                
+                                $solution = explode("\n",$solution);
+                                foreach ($solution as $key =>$sol) {
+                                    $solution[$key]="<div class='code'>$sol</div>";
+                                }
+                                if($data->line >0){
+                                    $solution[$data->line-1] = "<div class='bg-green-400 text-red-500 highlight-inline'>{$solution[$data->line-1]}</div>";
+                                }
+                                $solution = implode("",$solution);
+
+                            @endphp
+                            <pre class="fixed_output bg-gray-200 my-5 rounded shadow ">{!! $solution !!}</pre>
+                        @endif
+                        @if($data->basic_checking)
+                        @foreach($data->basic_checking as $feedback)
+                            @php
+                                $feedback_type = $feedback->status
+                            @endphp
+                            <p class="{{ $feedback_type=="warning"?"text-yellow-500":"text-red-500" }} font-bold">
+                            {{ ucfirst($feedback_type) }}: 
+                            @if($feedback->checker == "return in main")
+                                Please consider adding a default "return" method in the main function as no "return" method may cause some problems while running your code
+                            @endif
+                            </p>
+                        @endforeach
+                        @endif
                     @else
                     <div class="bg-gray-200 my-5 px-3 py-4 rounded shadow">
                         <h1 class="text-xl font-bold mt-4 text-red-600">Evalseer Couldn't find any possible solutions:</h1>
@@ -311,17 +354,21 @@
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             document.querySelectorAll('pre code').forEach((el) => {
-                hljs.highlightElement(el);
+                hljs.highlightBlock(el);
             });
         });
         document.addEventListener('DOMContentLoaded', (event) => {
             document.querySelectorAll('div.code').forEach((el) => {
-                hljs.highlightElement(el);
+                hljs.highlightBlock(el);
             });
              var style_warnings = document.getElementsByClassName('style_warning');
+             var feature_highlights = document.getElementsByClassName('feature_highlight');
         for(let i = 0; i<style_warnings.length; i++){
             style_warnings[i].innerHTML = style_warnings[i].innerHTML.replace('\n','');
             style_warnings[i].innerHTML += "<code class='py-1 text-yellow-600'> //"+ style_warnings[i].getAttribute('data-warning') +" </code>\n";
+        }
+        for(let i = 0; i<feature_highlights.length; i++){
+            feature_highlights[i].style.color = "red";
         }
         });
 

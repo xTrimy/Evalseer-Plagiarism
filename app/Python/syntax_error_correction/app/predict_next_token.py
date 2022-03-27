@@ -11,7 +11,8 @@ main_directory=pathlib.Path(__file__).resolve().parent.parent
 model = load_model(str(main_directory)+'/next_words.h5')
 tokenizer = pickle.load(open(str(main_directory)+'/token.pkl', 'rb'))
 
-def Predict_Next_Words(model, tokenizer, text):
+
+def Predict_Next_Word(model, tokenizer, text):
 
   sequence = tokenizer.texts_to_sequences([text])
   sequence = np.array(sequence)
@@ -26,7 +27,6 @@ def Predict_Next_Words(model, tokenizer, text):
   
   return predicted_word
 def __main__(text):
-    # while(True):
     text = text.split()
     prediction_list = []
     for i in range(len(text)-5):
@@ -38,10 +38,11 @@ def __main__(text):
             try:
                 text_p = (" ".join(text_p.split())).split(" ")
                 text_p = text_p[-6:]
-                predicted_tokens=Predict_Next_Words(model, tokenizer, text_p)
+                predicted_tokens=Predict_Next_Word(model, tokenizer, text_p)
                 if(text[i+3].lower() not in predicted_tokens
                     ):
                     predicted_l = []
+                    # Get top 2 predictions (index 4 and 3)
                     predicted_l.append([i+3, predicted_tokens[4].lower()])
                     predicted_l.append([i+3, predicted_tokens[3].lower()])
                     prediction_list.append(predicted_l)
