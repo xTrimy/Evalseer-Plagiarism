@@ -232,8 +232,10 @@
                     $feature->feature = htmlspecialchars(str_replace('regex:','',$feature->feature));
                     $matches=[];
                     preg_match("/".$feature->feature."/imU",$submitted_code,$matches);
-                    $match = $matches[0];
+                    if(count($matches)>0){
+                        $match = $matches[0];
                         $submitted_code = str_replace($match,"<code class='feature_highlight text-red-500 style_warning relative highlight-inline code'>".$match."</code>",$submitted_code);
+                    }
                 }
                 
             @endphp
