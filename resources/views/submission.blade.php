@@ -240,11 +240,10 @@
                         foreach ($solution as $key =>$sol) {
                             $solution[$key]="<div class='code'>$sol</div>";
                         }
-                        if($data->line >0){
+                        if($data->line >0) {
                             $solution[$data->line-1] = "<div class='bg-green-400 text-red-500 highlight-inline'>{$solution[$data->line-1]}</div>";
                         }
                         $solution = implode("",$solution);
-
                     @endphp
                     <pre class="fixed_output bg-gray-200 my-5 rounded shadow ">{!! $solution !!}</pre>
                     @else
@@ -257,17 +256,19 @@
                     
             @endif
             @endif
-            @if ($submission->style_feedback)
-                <div class=" bg-white w-full shadow rounded-md px-4 py-4">
-                    <div class="text-center text-2xl font-bold mb-5">
-                        Style Feedback <i class="fas fa-palette"></i>
+            @foreach ($assignment->questions as $question)
+                @php
+                    $submission = $question->submissions->last() ?? null;
+                @endphp
+                @if ($submission)
+                    <div class=" bg-white w-full shadow rounded-md px-4 py-4">
+                        <div class="text-center text-2xl font-bold mb-5">
+                            Style Feedback <i class="fas fa-palette"></i>
+                        </div>
+                        <pre>{{ str_replace(public_path($submission->submitted_code), '', $submission->style_feedback)  ?? "No Style Feedback"  }}</pre>
                     </div>
-                    <pre>{{ str_replace(public_path($submission->submitted_code), '', $submission->style_feedback)  ?? "No Style Feedback"  }}</pre>
-                </div>
-
-                
-                    
-            @endif
+                @endif
+            @endforeach
             @if(count($question->submissions)<$assignment->submissions && $submission_allowed)
             @php
                 $lang = " ";
