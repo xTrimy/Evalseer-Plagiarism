@@ -253,7 +253,6 @@
                     @endif
                 </div>
                 @endif
-                    
             @endif
             @endif
             @foreach ($assignment->questions as $question)
