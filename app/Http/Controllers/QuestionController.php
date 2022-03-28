@@ -40,6 +40,7 @@ class QuestionController extends Controller
             'input' => "nullable|array",
             'output' => "nullable|array",
             'programming_language' => "required|exists:programming_languages,id",
+            'base_skeleton' => "nullable|string",
         ]);
         $total_grading_criteria=0;
         foreach($this->grading_criterias as $grading_criteria){
@@ -54,6 +55,9 @@ class QuestionController extends Controller
         $question->description = $request->description;
         $question->grade = $request->grade;
         $question->programming_language_id = $request->programming_language;
+        if(strlen($request->base_skeleton) > 5 ){
+            $question->skeleton = $request->base_skeleton;
+        }
         $question->save();
         $i = 0;
         foreach($request->input as $input){

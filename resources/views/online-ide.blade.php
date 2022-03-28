@@ -4,18 +4,16 @@ IDE
 @endsection
 @section('content')
     <canvas id="confetti" class="hidden z-50 w-full h-full fixed top-0 left-0"></canvas>
-   <div class="flex pb-12" style="min-height: 500px;">
-    <div class="w-1/3">
-        {!! $question->description !!}
+   <div class="flex pb-12" style="min-height: 500px;max-height: 700px;">
+    <div class="w-1/3 px-8 overflow-y-auto ">
+        <h1 class="text-2xl font-bold">{!! $question->name !!}</h1>
+        <p>{!! $question->description !!}</p>
     </div>
         <div class="w-2/3 relative ">
 
             <div class="w-full h-full">
                 <div id="editor" class=" w-full h-5/6">
-function foo(items) {
-    var x = "All this is syntax highlighted";
-    return x;
-}
+{{$question->skeleton}}
                 </div>
                 <div id="bottom_bar" class="h-1/6  overflow-hidden">
                     <div class=" w-full py-2 bg-gray-500 left-0 flex px-4 justify-end items-center">
