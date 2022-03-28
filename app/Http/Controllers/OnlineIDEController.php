@@ -19,6 +19,7 @@ class OnlineIDEController extends Controller
         file_put_contents($file_name,$request->code);
         $compiler = new QuestionController();
         $submission = new Submission();
+        $submission->submitted_code = $file_name;
         $question = Questions::with('test_cases')->find($request->id);
 
         $output = $compiler->compile_file('c++', $file_name, "tmp", true);
@@ -30,7 +31,9 @@ class OnlineIDEController extends Controller
         if($test_cases == count($question->test_cases)){
             $full_marks = true;
         }
+        $style_feedback = $compiler->style_check($submission,"tmp" , 'c++' ,true);
+
         unlink($file_name);
-        return ["full_marks"=> $full_marks,"output"=>$output,"test_cases_passed"=>$test_cases."/".count($question->test_cases)];
+        return ["style_feedback"=>$style_feedback,"full_marks"=> $full_marks,"output"=>$output,"test_cases_passed"=>$test_cases."/".count($question->test_cases)];
     }
 }

@@ -50,7 +50,12 @@ function foo(items) {
              ace_editor = ace.edit("editor");
             ace_editor.setTheme("ace/theme/monokai");
             ace_editor.session.setMode("ace/mode/c_cpp");
-            
+            // ace_editor.getSession().setAnnotations([{
+            //     row: 1,
+            //     column: 0,
+            //     text: "Error Message", 
+            //     type: "warning" //This would give a red x on the gutter
+            // }]);
        }
 
         var editor = document.getElementById('editor');
@@ -95,6 +100,7 @@ function foo(items) {
                         show_close_output(output_window_button);
                     }
                     response = JSON.parse(JSON.stringify(response));
+                    
                     $("#results").html("<span class='font-bold'>Test Cases Passed: " + response["test_cases_passed"] + "</span>" + "\n\n" + response["output"] );
                     if(response["full_marks"]){
                     document.getElementById('test_cases').parentElement.classList.remove('hidden');
@@ -109,7 +115,23 @@ function foo(items) {
                     setTimeout(() => {
                         myCanvas.classList.add('hidden');
                     }, 2000);
+
+                   
                     }
+                     var style_feedback = response["style_feedback"].split("\n:");
+                     var annotations = [];
+                     for(let i =0; i<style_feedback.length;i++){
+                        let feedback = style_feedback[i].split(":");
+                        let annotation = {
+                            row: parseInt((feedback[0] == "")?feedback[1]:feedback[0])-1,
+                            column: 0,
+                            text: (feedback[0] == "")?feedback[2].split('[')[0]:feedback[1].split('[')[0], 
+                            type: "warning" //This would give a yellow x on the gutter
+                        };
+                        annotations.push(annotation);
+                     }
+                     ace_editor.getSession().setAnnotations(annotations);
+                     console.log(style_feedback);
                 },
             });
         }

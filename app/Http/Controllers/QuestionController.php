@@ -395,6 +395,34 @@ class QuestionController extends Controller
             }
         }
     }
+
+    public function style_check(Submission &$submission, $assignment_submission_path, $lang="c++", $filter_file_name = false){
+        $python = env("PYTHON_EXE_PATH");
+        if ($lang == "java") {
+            $javafb = shell_exec("java -jar " . env("CHECKSTYLE_PATH") . " -c" . env("SUNCHECKS_PATH") . " \"" . public_path(str_replace('/', '/', $submission->submitted_code)) . "\" 2>&1");
+            $javafb = str_replace(public_path(), '', $javafb);
+            $javafb = str_replace('\\', '/', $javafb);
+            $javafb = str_replace($submission->submitted_code, '', $javafb);
+            $javafb = str_replace('[ERROR] ', '', $javafb);
+            $javafb = str_replace('Starting audit...', '', $javafb);
+            $javafb = str_replace('Audit done.', '', $javafb);
+            $javafb = str_replace('Checkstyle ends with ', '', $javafb);
+            $submission->style_feedback = $javafb;
+            return $javafb;
+        } else if ($lang == "c++") {
+            $stylefb = shell_exec($python . " " . public_path('/cpplint-file/cpplint.py') . " \"" . public_path(str_replace('/', '/', $submission->submitted_code)) . "\" 2>&1");
+            if(!$filter_file_name)
+                $stylefb = str_replace(public_path(str_replace("/", "\\", $assignment_submission_path)), '', $stylefb);
+            $submission->style_feedback = $stylefb;
+            $stylefb = str_replace(public_path($submission->submitted_code), '', $stylefb);
+            $stylefb = str_replace('Done processing', '', $stylefb);
+            $submission->style_feedback = $stylefb;
+            return $stylefb;
+        } else {
+            $submission->style_feedback = "No Style Feedback";
+            return redirect()->back()->with('error', "This question has not been configured correctly, please refer to your instructor");
+        }
+    }
     public function student_submit(Request $request){
         $request->validate([
             'question_id'=>'required|exists:questions,id',
@@ -446,36 +474,9 @@ class QuestionController extends Controller
             }
             $submission->compile_feedback = json_encode($compiler_feedback);
         }
-        $python = env("PYTHON_EXE_PATH");
-        $stylefb = shell_exec("python ". public_path('/cpplint-file/cpplint.py') . " \"" . public_path(str_replace('/', '/', $submission->submitted_code))."\" 2>&1");
-		
-		$stylefb = str_replace(public_path(str_replace("/", "\\", $assignment_submission_path)), '', $stylefb);
-        $submission->style_feedback = $stylefb;
-        $stylefb = str_replace(public_path($submission->submitted_code), '', $stylefb);
-        $stylefb = str_replace('Done processing', '', $stylefb);
-
-
-        if($lang == "java") {
-            $javafb = shell_exec("java -jar ".env("CHECKSTYLE_PATH")." -c".env("SUNCHECKS_PATH")." \"".public_path(str_replace('/', '/', $submission->submitted_code))."\" 2>&1");
-            $javafb = str_replace(public_path(), '', $javafb);
-            $javafb = str_replace('\\', '/', $javafb);
-            $javafb = str_replace($submission->submitted_code, '', $javafb);
-            $javafb = str_replace('[ERROR] ', '', $javafb);
-            $javafb = str_replace('Starting audit...', '', $javafb);
-            $javafb = str_replace('Audit done.', '', $javafb);
-            $javafb = str_replace('Checkstyle ends with ', '', $javafb);
-            $submission->style_feedback = $javafb;
-        } else if($lang == "c++") {
-            $stylefb = shell_exec($python ." ". public_path('/cpplint-file/cpplint.py') . " \"" . public_path(str_replace('/', '/', $submission->submitted_code))."\" 2>&1");
-            $stylefb = str_replace(public_path(str_replace("/", "\\", $assignment_submission_path)), '', $stylefb);
-            $submission->style_feedback = $stylefb;
-            $stylefb = str_replace(public_path($submission->submitted_code), '', $stylefb);
-            $stylefb = str_replace('Done processing', '', $stylefb);
-            $submission->style_feedback = $stylefb;
-        } else {
-            $submission->style_feedback = "No Style Feedback";
-            return redirect()->back()->with('error', "This question has not been configured correctly, please refer to your instructor");
-        }
+        
+        //style_feedback
+        $this->style_check($submission, $assignment_submission_path, $lang);
 
         //If no compiler error (The output file won't exist unless no errors found)
         if($compiler_feedback == false || empty($compiler_feedback)){
