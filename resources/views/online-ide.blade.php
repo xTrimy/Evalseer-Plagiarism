@@ -13,7 +13,7 @@ IDE
 
             <div class="w-full h-full">
                 <div id="editor" class=" w-full h-5/6">
-{{$question->skeleton}}
+{!! $question->skeleton!!}
                 </div>
                 <div id="bottom_bar" class="h-1/6  overflow-hidden">
                     <div class=" w-full py-2 bg-gray-500 left-0 flex px-4 justify-end items-center">
