@@ -103,7 +103,7 @@ class PlagiarismController extends Controller
                     $filesInside[$i] = str_replace($ext,"", $filesInside[$i]);
                     $report_path = str_replace("/", "\\", $report_path);
                     $report_path = str_replace(public_path(),"",$report_path);
-                    
+                    $report_path = $submission_folder."-results";
                     DB::table('plagiarism_reports')->insert([
                         'id' => null,
                         'question_id' => $question_id,
@@ -136,6 +136,7 @@ class PlagiarismController extends Controller
     }
 
     public function report($report) {
+        $report = $report;
         return view('admin.report',['report'=>$report]);
     }
 }
