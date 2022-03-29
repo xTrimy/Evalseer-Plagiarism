@@ -64,7 +64,7 @@ class PlagiarismController extends Controller
         // copy();
         // File::copyDirectory($submission_dir,$destination_dir.'/'.$submission_folder);
 
-        $subs = Submission::latest()->get()->unique('user_id');
+        $subs = Submission::latest()->where('question_id',$question_id)->get()->unique('user_id');
 
         foreach($subs as $sub) {
             File::copy(public_path($sub->submitted_code), $destination_dir.'/'.$submission_folder.'/'.$sub->id.'.'.$type);
