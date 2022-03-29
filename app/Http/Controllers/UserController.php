@@ -115,7 +115,7 @@ class UserController extends Controller
                         ->get();
 
                         // dd($submissions);
-        return view('admin.view-question-submissions',['users'=>$users,'submissions'=>$submissions]);
+        return view('admin.view-question-submissions',['users'=>$users,'submissions'=>$submissions,'question_id'=>$question_id]);
     }
 
     public function view_submission($submission_id) {

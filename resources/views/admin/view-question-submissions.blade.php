@@ -32,7 +32,7 @@ users
                   Assignments
                 </h2>
                 <a
-                href="{{ route('dashboard.users.instructors.run_plag',['zipPath'=>'1','type'=>'1','question_id'=>11]) }}"
+                href="{{ route('dashboard.users.instructors.run_plag',['zipPath'=>'1','type'=>'cpp','question_id'=>$question_id]) }}" 
                     class="flex items-center justify-between px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange"
                 >
                     Check Plagiarism
@@ -81,8 +81,11 @@ users
                         {{ $submission->execution_time.' Sec' ?? 'Error Compiling' }}
                       </td>
                       <td class="px-4 py-3" id="plagValue">
-                        
-                        {{-- {{ $submission->plagiarism }}% --}}
+                        @if ($submission->plagiarism != null)
+                          <a href="{{ route('dashboard.users.instructors.report',['report'=>$submission->plagiarism]) }}" class=" font-thin text-green-800">View Report</a>
+                        @else
+                          N/A
+                        @endif
                       </td>
                       <td class="px-4 py-3">
                         {{ $submission->total_grade  }}
