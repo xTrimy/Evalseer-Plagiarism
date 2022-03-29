@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Assignments;
 use App\Models\Course;
 use App\Models\User;
+use App\Models\Submission;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -136,6 +137,13 @@ class AssignmentController extends Controller
     public function delete(Request $request){
         $assignment = Assignments::find($request->assignment_id);
         $assignment->delete();
+
+        return redirect()->route('dashboard.users.instructors.view_assignments');
+    }
+
+    public function delete_submission($submission_id) {
+        $submission = Submission::find($submission_id);
+        $submission->delete();
 
         return redirect()->route('dashboard.users.instructors.view_assignments');
     }
