@@ -93,11 +93,18 @@ snippet ns\n\
 ##\n\
 ## Input/Output\n\
 # std::cout\n\
-snippet cout\n\
-	std::cout << ${1} << std::endl;${2}\n\
+snippet std::cout\n\
+	std::cout << ${1};${2}\n\
 # std::cin\n\
-snippet cin\n\
+snippet std::cin\n\
 	std::cin >> ${1};${2}\n\
+##\n\
+# cout\n\
+snippet cout\n\
+	cout << ${1};${2}\n\
+# cin\n\
+snippet cin\n\
+	cin >> ${1};${2}\n\
 ##\n\
 ## Iteration\n\
 # for i \n\

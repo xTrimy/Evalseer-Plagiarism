@@ -256,7 +256,7 @@ class QuestionController extends Controller
      * @return int $number_of_test_cases_passed
      *
      */
-    public function run_test_cases_on_submission($test_cases,string $file_directory, Submission &$submission, $language = 'c++'){
+    public function run_test_cases_on_submission($test_cases,string $file_directory, Submission &$submission, $language = 'c++', $testing = false){
         if (count($test_cases) <= 0) {
             return 0;
         }
@@ -267,10 +267,16 @@ class QuestionController extends Controller
         foreach ($test_cases as $test_case) {
             //Calculating runtime of the submitted program
             $start_time = microtime(true);
-            $test_case_file = public_path($file_directory . "/test_case_" . $test_case->id);
-            file_put_contents($test_case_file, $test_case->inputs);
+            if($testing){
+                $test_case_file = public_path($file_directory . "/test_case_" . time());
+                file_put_contents($test_case_file, $test_case["inputs"]);
+            } else {
+                $test_case_file = public_path($file_directory . "/test_case_" . $test_case->id);
+                file_put_contents($test_case_file, $test_case->inputs);
+            }
             if($language == "c++"){
                 $output = shell_exec("\"" . public_path($file_directory) . "/output\" < \"" . $test_case_file . "\"");
+                
             }else if($language == "java"){
                 $filesInside = scandir(public_path($file_directory), 1);
                 for($i=0;$i<count($filesInside);$i++) {
@@ -289,8 +295,14 @@ class QuestionController extends Controller
                     $output = shell_exec("cd \"".public_path($file_directory)."\" && $java_exe " . @end(explode('/', str_replace('.java','',$submission->submitted_code)))." < \"" . $test_case_file . "\"");
                 }
             }
-            if ($output == $test_case->output) {
-                $number_of_test_cases_passed += 1;
+            if($testing) {
+                if ($output == $test_case["output"]) {
+                    $number_of_test_cases_passed += 1;
+                }
+            }else{
+                if ($output == $test_case->output) {
+                    $number_of_test_cases_passed += 1;
+                }
             }
             $submission->meta .= "\n" . $output;
             $end_time = microtime(true);
@@ -298,6 +310,7 @@ class QuestionController extends Controller
             $execution_time = number_format((float)$execution_time, 4, '.', '');
             $total_excectution_time += $execution_time;
         }
+        
         $avg_execution_time = $total_excectution_time / count($test_cases);
         $submission->execution_time = $avg_execution_time;
         return $number_of_test_cases_passed;
