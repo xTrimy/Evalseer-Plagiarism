@@ -123,6 +123,7 @@ class AssignmentController extends Controller
             return $query->where('user_id',Auth::user()->id);
         }])->find($id);
         $submission_allowed = (strtotime($assignment->start_time) <= time() && strtotime($assignment->end_time) >= time())?true:false;
+        // dd($assignment);
         return view('submission',["assignment"=>$assignment,'submission_allowed'=>$submission_allowed]);
     }
 
