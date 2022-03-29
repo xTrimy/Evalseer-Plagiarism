@@ -147,4 +147,11 @@ class AssignmentController extends Controller
 
         return redirect()->route('dashboard.users.instructors.view_assignments');
     }
+
+    public function delete_assignment($assignment_id) {
+        $assignment = Assignments::find($assignment_id);
+        $assignment->delete();
+
+        return redirect()->route('dashboard.users.instructors.view_assignments');
+    }
 }
