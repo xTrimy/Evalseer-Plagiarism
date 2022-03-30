@@ -312,11 +312,44 @@
                 @csrf
                 <input type="hidden" name="question_id" value="{{ $question->id }}">
                     <div class="w-full text-center block py-4">
+                        <div class="flex justify-center relative">
+                            <div 
+                            onclick="this.remove()"
+                            class="absolute cursor-pointer bottom-full mb-4 w-auto left-1/2 transform -translate-x-1/2
+                                    py-4 px-8 bg-orange-500 text-white -ml-8 text-left "
+                                    style="--tw-bg-opacity:0.8"
+                            >
+                                <div style="--tw-bg-opacity:0.8;--tw-border-opacity:0.8"  class="absolute top-full right-1/2 w-0 h-0 border-8 border-t-orange-500 "></div>
+                                <div  class="absolute top-2 right-2 w-4 h-4">
+                                    <i class="las la-times text-xl text-white"></i>
+                                </div>
+                                <p class="font-bold">Introducing our new Online IDE</p>
+                                You can use this tool to test your submission before actually submitting <br>
+                                with the same instant feedback.
+                            </div>
+                          
+                            <a href="{{ route('ide',$question->id) }}">
+                                <button type="button" class="table relative mb-4 hover:bg-blue-700 active:bg-blue-600 bg-blue-500 text-white px-10 py-4 @if($question->skeleton != null && strlen($question->skeleton) > 0) rounded-l-lg @else rounded-lg @endif font-bold text-sm cursor-pointer">
+                                    
+                                Launch IDE <i class="las la-code text-lg"></i>
+                                </button>
+                            </a>
+                           
+                            @if($question->skeleton != null && strlen($question->skeleton) > 0)
+                            <a href="{{ route('skeleton',$question->id) }}" download>
+                                <button type="button" class="table mb-4 hover:bg-gray-50 active:bg-gray-300 bg-gray-100 text-blue-500 px-10 py-4 rounded-r-lg font-bold text-sm cursor-pointer">
+                                Download Skeleton <i class="las la-download text-lg"></i>
+                                </button>
+                            </a>
+                            @endif
+                        </div>
+                        
+                        <div id="question_filename_{{ $question->id }}" class="text-gray-500 "></div>
                         <div class=" justify-center items-center">
                             <label class="table mx-auto bg-text text-white px-10 py-4 rounded-lg font-bold text-sm cursor-pointer">
                             Add Submission for {{ $question->name }}
                             <input accept="{{ $lang }}" id="question_file_{{ $question->id }}" type="file" class="hidden" name="submission" >
-                        </label>
+                            </label>
                             <div id="question_filename_{{ $question->id }}" class="text-gray-500 "></div>
                         </div>
                         

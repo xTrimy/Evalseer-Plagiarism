@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PlagiarismController;
 use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\OnlineIDEController;
+use App\Models\Questions;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -75,6 +76,15 @@ Route::middleware('auth')->group(function (){
 
     Route::get('/assignment/ide/{id}', [OnlineIDEController::class, "view"])->name('ide');
     Route::post('/assignment/ide/{id}', [OnlineIDEController::class, "run"]);
+
+    Route::get('/assignment/skeleton/{id}', function($id){
+        $question = Questions::with('programming_language')->findOrFail($id);
+        $file_name = $question->name . "." .explode(',', $question->programming_language->extensions)[0];
+        header('Content-Type: application/octet-stream');
+        header("Content-disposition: attachment; filename=\"" . $file_name . "\""); 
+        echo $question->skeleton;
+    })->name('skeleton');
+
     Route::get('/assignment/{id}', [AssignmentController::class, "view"])->name('assignment');
     Route::post('/assignment/{id}', [QuestionController::class, "student_submit"]);
 
