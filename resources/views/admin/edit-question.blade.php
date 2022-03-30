@@ -88,13 +88,13 @@ Edit Question to {{ $assignment->name }}
               <h1 class="text-xl text-black font-bold mt-4">
                 Grading Criteria %
               </h1>
-              {{-- @foreach ($grading_criterias as $grading_criteria)
+              @foreach ($grading_criterias as $grading_criteria)
               <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
                 {{ ucwords(str_replace('_', ' ', $grading_criteria)); }}
                 </span>
                 <input
-                value="{{ $grading_criteria }}"
+                value="{{ $grading_crit[$grading_criteria."_weight"] }}"
                 type="number"
                 name="{{ $grading_criteria }}"
                   required
@@ -103,46 +103,8 @@ Edit Question to {{ $assignment->name }}
                   placeholder="30"
                 />
               </label>                
-              @endforeach --}}
-              <label class="block text-sm">
-                <span class="text-gray-700 dark:text-gray-400">
-                  Compiling
-                </span>
-                <input
-                value="{{ $grading_criterias->compiling_weight }}"
-                type="number"
-                name="compiling_weight"
-                  required
-                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder="30"
-                />
-              </label>
-              <label class="block text-sm">
-                <span class="text-gray-700 dark:text-gray-400">
-                  Styling
-                </span>
-                <input
-                value="{{ $grading_criterias->styling_weight }}"
-                type="number"
-                name="styling_weight"
-                  required
-                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder="30"
-                />
-              </label>
-              <label class="block text-sm">
-                <span class="text-gray-700 dark:text-gray-400">
-                  Test Cases
-                </span>
-                <input
-                value="{{ $grading_criterias->not_hidden_test_cases_weight }}"
-                type="number"
-                name="not_hidden_test_cases_weight"
-                  required
-                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                  placeholder="30"
-                />
-              </label>
+              @endforeach
+            
               <h2 class="font-bold text-xl mt-8">Test Cases</h2>
               <div class="mb-8">
                 <div class="flex flex-col">
@@ -172,20 +134,25 @@ Edit Question to {{ $assignment->name }}
                             @endphp
                             @foreach ($test_cases as $test_case)
                             <tr class="bg-white border-b">
-                              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">@php
-                                  echo $i;
-                              @endphp</td>
-                              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                <input type="text" id="input{{$i}}" class="outline-none outline-0 text-center focus:outline-0 rounded-sm" value="{{ $test_case->inputs }}">
-                                
-                              </td>
-                              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                {{ $test_case->output }}
-                              </td>
-                              <td class="text-sm text-gray-900 font-light px-2 py-4 whitespace-nowrap">
-                                <button type="button" id="save{{$i}}" class="px-12 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out"><i class="fas fa-check"></i> Save</button>
-                                <button type="button" class="inline-block px-4 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out"><i class="fas fa-trash"></i> Delete</button>
-                              </td>
+                                <input type="hidden" name="tc_id" value="{{ $test_case->id }}">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">@php
+                                    echo $i;
+                                @endphp</td>
+                                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                  <input  type="text" id="input{{$i}}" name="input" class="outline-none outline-0 text-center focus:outline-0 rounded-sm" value="{{ $test_case->inputs }}">
+                                  
+                                </td>
+                                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                  
+                                  <input type="text" id="output{{$i}}" name="output" class="outline-none outline-0 text-center focus:outline-0 rounded-sm" value="{{ $test_case->output }}">
+                                </td>
+                                <td class="text-sm text-gray-900 font-light px-2 py-4 whitespace-nowrap">
+                                  {{-- <a id="inputRef" href="{{ route('dashboard.users.instructors.edit_test_cases',['question_id'=>$test_case->id,'inputs'=>$inputs,'output'=>$test_case->output]) }}"> --}}
+                                    <button type="button" id="save{{$i}}" class="px-12 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out"><i class="fas fa-check"></i> Save</button>
+                                  {{-- </a> --}}
+                                  <button type="button" class="inline-block px-4 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out"><i class="fas fa-trash"></i> Delete</button>
+                                </td>
+                              </form>
                             </tr class="bg-white border-b">
                               @php
                                 $i++;
@@ -201,7 +168,7 @@ Edit Question to {{ $assignment->name }}
               
               <div class="form-group">
                 <label>Test Cases Number</label>
-                <input type="number" name="features" id="count" class="form-control" placeholder="Number of Test Cases">
+                <input type="number" id="count" class="form-control" placeholder="Number of Test Cases">
                 <input type="button" name="addd" class="px-4 py-2 rounded bg-green-500 text-white" onclick="addField()" placeholder="" value="Add">
               </div>
               <div id="test_cases" class="hidden">
@@ -236,7 +203,7 @@ Edit Question to {{ $assignment->name }}
               </h1>
               <div class="form-group">
                 <label>Features Count</label>
-                <input type="number" name="features" id="count_features" class="form-control" placeholder="Number of Features to check">
+                <input type="number"  id="count_features" class="form-control" placeholder="Number of Features to check">
                 <input type="button" name="addd" class="px-4 py-2 rounded bg-green-500 text-white" onclick="addFeatureField()" placeholder="" value="Add">
               </div>
               

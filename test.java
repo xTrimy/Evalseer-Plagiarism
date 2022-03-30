@@ -8,7 +8,11 @@ public class test {
          for(i=1;i<=number;i++){    
              fact=fact*i;    
          }    
-         System.out.println(fact)
+<<<<<<< HEAD
+         System.out.print(fact);
+=======
+         System.out.println(fact);
+>>>>>>> 377dde19d370d625f7716738fde57fa2f0b1f5e9
     }  
     
 }

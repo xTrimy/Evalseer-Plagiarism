@@ -1,4 +1,5 @@
 from cgi import test
+from tabnanny import check
 import app.predict_next_token as predict_next_token
 import app.tokenize_script as tokenize_script
 import sys
@@ -66,10 +67,48 @@ def test_solution(test_array, index, token, method, original_token=False):
                      "token": token, "line": line_number, "method":method}
         
         print(json.dumps(json_data))
+        exit(0)
         # print("Solution worked \"tests/test.cpp\"")
         return True
     # os.remove(str(main_directory)+"/tests/test.cpp")
     return False
+
+def token_checker(check_for):
+    file = ""
+    try:
+        file = file_path
+    except NameError:
+        file = input("Enter file name:")
+    text = tokenize_script.__main__(path=file_path, return_original=True)
+
+    tokenized_text = text[0].split()
+    original_text = text[1].split()
+    #Check for a default return in main function
+    if(check_for == "return in main"):
+        found_main = False
+        in_main = False
+        brace_count = 0
+        for i,token in enumerate(tokenized_text):
+            if(token == "START_OF_FILE" or token == "END_OF_FILE"):
+                continue
+            if(found_main == False and token == "int" and tokenized_text[i+1] == "IDENTIFIER" and original_text[i] == "main"):
+                found_main = True
+            elif(found_main == True and in_main == False and token == "{"):
+                in_main = True
+            elif(brace_count == 0 and in_main and token == "return"):
+                return True
+            elif(in_main == True):
+                if(token == "{"):
+                    brace_count += 1
+                elif(token == "}"):
+                    if(brace_count > 0):
+                        brace_count -= 1
+                    else:
+                        return False
+
+
+    
+
 
 def main(file):
     file_path = ""

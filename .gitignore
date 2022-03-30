@@ -15,4 +15,15 @@ yarn-error.log
 /.vscode
 /app/Python
 /public/assignment_submissions
+/public/PlagiarismZipped
+/public/uploadedimages
+/app/Python/next_word.py
+/app/Python/next_words.h5
+/app/Python/token.pkl
+/app/Python/Pride and Prejudice.txt
+/app/Python/syntax_error_correction/old_model
+/app/Python/syntax_error_correction/.env
+/app/Python/syntax_error_correction/next_words.h5
+/app/Python/syntax_error_correction/token.pkl
+/public/assignment_submissions
 /public/submissions
