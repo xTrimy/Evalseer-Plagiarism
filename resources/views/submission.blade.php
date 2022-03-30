@@ -287,7 +287,7 @@
                             @endphp
                             <pre class="fixed_output bg-gray-200 my-5 rounded shadow ">{!! $solution !!}</pre>
                         @endif
-                        @if($data->basic_checking)
+                        @if(isset($data->basic_checking))
                         @foreach($data->basic_checking as $feedback)
                             @php
                                 $feedback_type = $feedback->status
