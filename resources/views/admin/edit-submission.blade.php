@@ -170,7 +170,11 @@ Edit Submission
               </label>
               <div class="flex mt-3">
                 <div class="form-check form-switch">
-                  <input class="form-check-input appearance-none w-9 rounded-full float-left outline-none h-6 align-top bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm outline-0 mr-2" type="checkbox" name="active" role="switch" id="flexSwitchCheckDefault" 
+                  <input class="form-check-input appearance-none w-9 rounded-full float-left outline-none h-6 align-top bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm outline-0 mr-2" type="checkbox" name="is_blocked" role="switch" id="flexSwitchCheckDefault"
+                  @php
+                    if($submissions->is_blocked == 1) { echo 'checked'; }
+                  @endphp
+                  >
                   <label class="form-check-label inline-block text-gray-800 outline-none" for="flexSwitchCheckDefault">Block Grade</label>
                 </div>
               </div>

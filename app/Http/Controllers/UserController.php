@@ -125,9 +125,11 @@ class UserController extends Controller
         $submissions = DB::table('submissions')
                         ->where('submissions.id', $submission_id)
                         ->leftJoin('users', 'submissions.user_id', '=', 'users.id')
+                        ->select('submissions.*', 'users.name')
                         ->distinct('user_id')
                         ->take(1)
                         ->get();
+
         return view('admin.view-submission',['users'=>$users,'submissions'=>$submissions]);
     }
     //User Views END
@@ -252,6 +254,11 @@ class UserController extends Controller
         $submission->execution_time = $request->execution_time;
         $submission->plagiarism = $request->plagiarism;
         $submission->total_grade = $request->total_grade;
+        if($request->is_blocked == "on") {
+            $submission->is_blocked = true;
+        } else {
+            $submission->is_blocked = false;
+        }
 
         $submission->save();
         return redirect()->back()->with('success','Submission Edited Successfully!');

@@ -124,15 +124,26 @@
                 </div>
                 <div class="flex bg-white flex-row shadow-md border border-gray-100 rounded-lg overflow-hidden md:w-5/12 mx-2">
                     <div class="flex w-3 bg-gradient-to-t 
-                    @if( $question->submissions->last()->total_grade/$question->grade >= 0.5 )
-                    from-green-500 to-green-400
+                    @if( $question->submissions->last()->total_grade/$question->grade >= 0.5)
+                        @if ($question->submissions->last()->is_blocked == 1)
+                            from-red-500 to-red-400
+                        @else
+                            from-green-500 to-green-400
+                        @endif
+                    
                     @else
                     from-red-500 to-red-400
                     @endif
                     "></div>
                     <div class="flex-1 p-3">
                       <h1 class="md:text-xl text-gray-600">Grade</h1>
-                      <p class="text-gray-400 text-xs md:text-sm font-light">{{ $question->submissions->last()->total_grade }}/{{ $question->grade }}</p>
+                      <p class="text-gray-400 text-xs md:text-sm font-light">
+                          @if($question->submissions->last()->is_blocked == 0)
+                          {{ $question->submissions->last()->total_grade }}/{{ $question->grade }}
+                          @else
+                          Grade Blocked
+                          @endif
+                        </p>
                     </div>
                     <div class="border-l border-gray-100 px-8 flex place-items-center">
                       <p class="text-gray-400 text-xs"><i class="fas fa-percent"></i></p>

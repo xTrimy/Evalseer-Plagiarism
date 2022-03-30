@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PlagiarismController;
 use App\Http\Controllers\BadgeController;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -202,6 +203,22 @@ Route::get('/assign_all_users_to_computer_science_course', function () {
             continue;
         $user->assignRole('student');
         $user->courses()->attach(1);
+    }
+});
+
+Route::get('/give_early_bird_badge_to_all_students', function () {
+    $users = User::all();
+    foreach ($users as $user) {
+        $date = date('Y/m/d h:i:s', time());
+        for($i=0;$i<3;$i++) {
+            DB::table('user_badges')->insert([
+            'id' => null,
+            'user_id' => $user->id,
+            'badge_id' => 3,
+            'created_at' => $date,
+            'updated_at' => $date
+            ]);
+        }
     }
 });
 
