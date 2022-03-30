@@ -448,6 +448,7 @@ class QuestionController extends Controller
             $evalseer_feedback = json_decode($evalseer_feedback, true);
             if($evalseer_feedback["status"] == "success"){
                 return true;
+                $compiler_feedback["basic_checking"] = false;
             } else {
                 $compiler_feedback["basic_checking"][] = $evalseer_feedback;
                 return false;
