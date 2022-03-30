@@ -14,17 +14,34 @@ class BadgeController extends Controller
 
         $badges = $users = DB::table('badges_criterias')->distinct()->get();
 
+        $badgeo = 0;
+        $count_badge = 0;
+
         $badges_opened = DB::table('user_badges')
                         ->where('user_id',$user->id)
                         ->select('user_badges.badge_id')
                         ->get();
+
+        for ($i=1;$i<=6;$i++) {
+            $bdg = DB::table('user_badges')
+                        ->where('user_id',$user->id)
+                        ->where('badge_id',$i)
+                        ->select('user_badges.badge_id')
+                        ->get();
+            $count_badge = count($bdg);
+
+            if($count_badge >= 5) {
+                $badgeo++;
+            }
+        }
+
         $user = Auth::user();
         $all_badges = Badge::with(['user_badges'=>function($query) use($user){
             return $query->where('user_id',$user->id);
         }])->get();
      
         $badgec = count($badges);
-        $badgeo = count($badges_opened);
+
         $badges_closed = $badgec - $badgeo;
 
         $rank = DB::table('user_ranks')
