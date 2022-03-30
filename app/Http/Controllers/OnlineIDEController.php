@@ -53,7 +53,7 @@ class OnlineIDEController extends Controller
                 $test_case_object[] = $t;
                 $i++;
             }
-            $test_cases = $compiler->run_test_cases_on_submission($question, 'tmp', $submission, 'c++', true);
+            $test_cases = $compiler->run_test_cases_on_submission($question, $test_case_object, 'tmp', $submission, 'c++', true);
         }else if($request->submitting == "true"){
 
             // TODO: Save submission to submissions directory instead of tmp
@@ -61,7 +61,7 @@ class OnlineIDEController extends Controller
 
             if($submissions_left > 0 ){
                 $count_features_passed = $compiler->run_feature_checking_on_submission($question, $submission);
-                $test_cases = $compiler->run_test_cases_on_submission($question, 'tmp', $submission, 'c++');
+                $test_cases = $compiler->run_test_cases_on_submission($question, $question->test_cases, 'tmp', $submission, 'c++');
                 $submission->user_id = Auth::user()->id;
                 $submission->question_id = $question->id;
                 $submission->logic_feedback = "Number of Test Cases Passed: $test_cases/$question_test_cases_count";

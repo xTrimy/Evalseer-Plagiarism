@@ -14,7 +14,7 @@ class AddIsBlockedToSubmissions extends Migration
     public function up()
     {
         Schema::table('submissions', function (Blueprint $table) {
-            $table->boolean('is_blocked');
+            $table->boolean('is_blocked')->default(0);
         });
     }
 

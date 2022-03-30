@@ -286,8 +286,7 @@ class QuestionController extends Controller
      * @return int $number_of_test_cases_passed
      *
      */
-    public function run_test_cases_on_submission($question,string $file_directory, Submission &$submission, $language = 'c++', $testing = false){
-        $test_cases = $question->test_cases;
+    public function run_test_cases_on_submission($question, $test_cases,string $file_directory, Submission &$submission, $language = 'c++', $testing = false){
         if (count($test_cases) <= 0) {
             return 0;
         }
@@ -567,7 +566,7 @@ class QuestionController extends Controller
 
         //Calculating feature grade
         $count_features_passed = $this->run_feature_checking_on_submission($question,$submission);
-        $number_of_test_cases_passed = $this->run_test_cases_on_submission($question, $assignment_submission_path,$submission, $lang);
+        $number_of_test_cases_passed = $this->run_test_cases_on_submission($question, $question->test_cases, $assignment_submission_path,$submission, $lang);
         $number_of_test_cases = count($question->test_cases);
         $submission->logic_feedback = "Number of Test Cases Passed: $number_of_test_cases_passed/$number_of_test_cases";
        
