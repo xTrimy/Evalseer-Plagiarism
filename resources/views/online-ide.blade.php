@@ -191,7 +191,8 @@ IDE
                     $("#results").html(response["output"] );
 
                     if(response["testing"] == "true"){
-                        if(response["submitting"] == "false"){
+                        console.log(response["no_submissions_left"]);
+                        if(response["submitting"] == "false" || response["no_submissions_left"] == "true"){
                             document.getElementById('not_submitted_pop_up').classList.remove('hidden');
                             setTimeout(function(){
                                 document.getElementById('not_submitted_pop_up').classList.add('hidden');

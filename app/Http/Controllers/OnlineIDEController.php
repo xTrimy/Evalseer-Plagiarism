@@ -30,9 +30,18 @@ class OnlineIDEController extends Controller
             return $query->where('user_id', Auth::user()->id);
         }])->find($request->id);
 
-        $output = $compiler->compile_file('c++', $file_name, "tmp", true);
-        $output = str_replace($file_name,'',$output);
+        $question_test_cases_count = count($question->test_cases);
 
+        $count_submissions = count($question->submissions);
+        $submissions_left = $question->assignment->submissions - $count_submissions;
+        $no_submissions_left = "false";
+        $test_cases = 0;
+        // TODO: Give each compiled output file a unique name
+        // !High priority todo; May cause conflicts while multiple students are submitting
+        $output = $compiler->compile_file('c++', $file_name, "tmp", true, $question, $submission);
+        $output = str_replace($file_name,'',$output);
+        
+        $style_feedback = $compiler->style_check($submission, "tmp", 'c++', true);
         if($request->testing == "true" && $request->submitting == "false"){
             $test_cases_ = $request->only('inputs','output');
             $i= 0;
@@ -44,9 +53,24 @@ class OnlineIDEController extends Controller
                 $test_case_object[] = $t;
                 $i++;
             }
-            $test_cases = $compiler->run_test_cases_on_submission($test_case_object, 'tmp', $submission, 'c++', true);
-        }else{
-            $test_cases = $compiler->run_test_cases_on_submission($question->test_cases, 'tmp', $submission, 'c++');
+            $test_cases = $compiler->run_test_cases_on_submission($question, 'tmp', $submission, 'c++', true);
+        }else if($request->submitting == "true"){
+
+            // TODO: Save submission to submissions directory instead of tmp
+            $assignment_submission_path = $compiler->save_submission_file($request->code, $question, $submission, true, $extension = "cpp");
+
+            if($submissions_left > 0 ){
+                $count_features_passed = $compiler->run_feature_checking_on_submission($question, $submission);
+                $test_cases = $compiler->run_test_cases_on_submission($question, 'tmp', $submission, 'c++');
+                $submission->user_id = Auth::user()->id;
+                $submission->question_id = $question->id;
+                $submission->logic_feedback = "Number of Test Cases Passed: $test_cases/$question_test_cases_count";
+                $submission->save();
+                $submissions_left--;
+            }else{
+                $no_submissions_left = "true";
+            }
+          
         }
         $full_marks = false;
         $some_test_cases_failed = false;
@@ -58,18 +82,16 @@ class OnlineIDEController extends Controller
         }else{
             $some_test_cases_failed = true;
         }
-        $style_feedback = $compiler->style_check($submission,"tmp" , 'c++' ,true);
         if (file_exists("tmp/output.exe"))
             unlink("tmp/output.exe");
         if (file_exists("tmp/output"))
             unlink("tmp/output");
 
         unlink($file_name);
-
-        $submissions_left = $question->assignment->submissions - count($question->submissions);
         if($output == "0" || $output == "Segmentation fault (core dumped)\n"){
             $output .= "<br><div class='text-yellow-500'>*You can't enter an input here. To test inputs add it to your code or test it through \"Test\" Button</div>";
         }
-        return ["style_feedback"=>$style_feedback, "submissions_left" => $submissions_left, "submitting" => $request->submitting,"testing"=>$request->testing, "some_test_cases_failed"=>$some_test_cases_failed,"all_test_cases_failed"=>$all_test_cases_failed,"full_marks"=> $full_marks,"output"=>$output,"test_cases_passed"=>$test_cases."/".count($question->test_cases)];
+        
+        return ["no_submissions_left" => $no_submissions_left, "style_feedback"=>$style_feedback, "submissions_left" => $submissions_left, "submitting" => $request->submitting,"testing"=>$request->testing, "some_test_cases_failed"=>$some_test_cases_failed,"all_test_cases_failed"=>$all_test_cases_failed,"full_marks"=> $full_marks,"output"=>$output,"test_cases_passed"=>$test_cases."/". $question_test_cases_count];
     }
 }
