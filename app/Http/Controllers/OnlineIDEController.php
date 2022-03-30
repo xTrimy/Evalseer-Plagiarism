@@ -67,7 +67,7 @@ class OnlineIDEController extends Controller
         unlink($file_name);
 
         $submissions_left = $question->assignment->submissions - count($question->submissions);
-        if($output == "0" || $output == "Segmentation fault (core dumped)"){
+        if($output == "0" || $output == "Segmentation fault (core dumped)\n"){
             $output .= "<br><div class='text-yellow-500'>*You can't enter an input here. To test inputs add it to your code or test it through \"Test\" Button</div>";
         }
         return ["style_feedback"=>$style_feedback, "submissions_left" => $submissions_left, "submitting" => $request->submitting,"testing"=>$request->testing, "some_test_cases_failed"=>$some_test_cases_failed,"all_test_cases_failed"=>$all_test_cases_failed,"full_marks"=> $full_marks,"output"=>$output,"test_cases_passed"=>$test_cases."/".count($question->test_cases)];
