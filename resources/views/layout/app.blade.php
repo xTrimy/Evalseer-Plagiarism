@@ -82,8 +82,7 @@
         </div>
     </div>
     @yield('content')
-    </body>
-    <footer class="text-center lg:text-left bg-gray-100 text-gray-600">
+     <footer class="text-center lg:text-left bg-gray-100 text-gray-600">
   <div class="flex justify-center items-center lg:justify-between p-6 border-b border-gray-300">
     <div class="mr-12 hidden lg:block">
       <span>Get connected with us on social networks:</span>
@@ -245,4 +244,6 @@
     <a class="text-gray-600 font-semibold" href="http://www.evalseer.com/">Evalseer: All rights reserved.</a>
   </div>
 </footer>
+    </body>
+   
 </html>

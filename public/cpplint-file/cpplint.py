@@ -6511,14 +6511,14 @@ def ProcessConfigOverrides(filename):
   """
 
   abs_filename = os.path.abspath(filename)
-  cfg_filters = []
+  cfg_filters = ["-whitespace/tab", "-build/namespaces"]
   keep_looking = True
   while keep_looking:
     abs_path, base_name = os.path.split(abs_filename)
     if not base_name:
       break  # Reached the root directory.
 
-    cfg_file = os.path.join(abs_path, "CPPLINT.cfg")
+    cfg_file = os.path.join("./", "CPPLINT.cfg")
     abs_filename = abs_path
     if not os.path.isfile(cfg_file):
       continue

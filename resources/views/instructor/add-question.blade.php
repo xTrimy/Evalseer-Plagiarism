@@ -198,8 +198,15 @@ Add Question to {{ $assignment->name }}
                   </optgroup>
                 </select>
               </label>
-
-              <button type="submit" class="table items-center mt-4 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange">
+              <label class="block text-sm">
+                <span class="text-gray-700 dark:text-gray-400">
+                  <i class="las la-font text-xl"></i>
+                  Base Skeleton
+                </span>
+                <input type="hidden" id="base_skeleton_input" name="base_skeleton">
+                <div  id="ace_editor" class="w-full h-64"></div>
+              </label>
+              <button id="submit_button" type="submit" class="table items-center mt-4 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange">
               Add
               <span class="ml-2" aria-hidden="true">
                   <i class='las la-arrow-right'></i>
@@ -210,6 +217,8 @@ Add Question to {{ $assignment->name }}
           </div>
         </main>
         <script type='text/javascript'>
+            
+
             function addField()
             {
                 var number = document.getElementById("count").value;
@@ -246,4 +255,23 @@ Add Question to {{ $assignment->name }}
             $('#summernote').summernote();
           });
         </script>
+   <script src="{{ asset('ace/build/src/ace.js') }}" type="text/javascript" charset="utf-8"></script>
+      <script>
+        var ace_editor;
+       window.onload=function(){
+             ace_editor = ace.edit("ace_editor");
+            ace_editor.setTheme("ace/theme/monokai");
+            ace_editor.session.setMode("ace/mode/c_cpp");
+            ace_editor.session.setValue(`{{ old('base_skeleton') }}`);
+       }
+       var submit_button = document.getElementById('submit_button');
+       let base_skeleton_input = document.getElementById('base_skeleton_input');
+       let form = document.querySelector('form');
+       submit_button.addEventListener('click',function(e){
+              e.preventDefault();
+              let base_skeleton = ace_editor.getSession().getValue();
+              base_skeleton_input.value = base_skeleton;
+              form.submit();
+        });
+      </script>
 @endsection

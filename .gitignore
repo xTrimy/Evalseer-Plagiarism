@@ -27,4 +27,5 @@ yarn-error.log
 /app/Python/syntax_error_correction/token.pkl
 /public/assignment_submissions
 /public/submissions
+/public/tmp
 test.java
