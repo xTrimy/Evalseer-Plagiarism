@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Badge;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,11 @@ class BadgeController extends Controller
                         ->where('user_id',$user->id)
                         ->select('user_badges.badge_id')
                         ->get();
-
+        $user = Auth::user();
+        $all_badges = Badge::with(['user_badges'=>function($query) use($user){
+            return $query->where('user_id',$user->id);
+        }])->get();
+     
         $badgec = count($badges);
         $badgeo = count($badges_opened);
         $badges_closed = $badgec - $badgeo;
@@ -33,6 +38,6 @@ class BadgeController extends Controller
                 ->select('ranks.name')
                 ->first();
 
-        return view('badges',['user'=>$user,'rank_name'=>$rank_name,'badges_closed'=>$badges_closed,'badges_opened'=>$badgeo]);
+        return view('badges',['user'=>$user,'all_badges'=>$all_badges,'rank_name'=>$rank_name,'badges_closed'=>$badges_closed,'badges_opened'=>$badgeo]);
     }
 }

@@ -37,9 +37,9 @@ class CreateGamifyTables extends Migration
 
         // user_badges pivot
         Schema::create('user_badges', function (Blueprint $table) {
-            $table->primary(['user_id', 'badge_id']);
-            $table->unsignedInteger('user_id');
-            $table->unsignedInteger('badge_id');
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('badge_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
