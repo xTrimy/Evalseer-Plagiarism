@@ -18,7 +18,6 @@ class BadgeController extends Controller
                         ->select('user_badges.badge_id')
                         ->get();
 
-        
         $badgec = count($badges);
         $badgeo = count($badges_opened);
         $badges_closed = $badgec - $badgeo;
