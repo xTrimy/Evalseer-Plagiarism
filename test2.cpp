@@ -9,5 +9,5 @@ int multiply(int x){
 int main(){
     int x;
     cin >> x;
-    ct << multiply(x);
+    cout << multiply(x);
 }

@@ -143,6 +143,8 @@ Route::middleware('auth')->group(function (){
             Route::prefix('/instructors')->as('instructors.')->group(function ($assignment_id) {
                 Route::get('/view-assignments', [UserController::class, "dashboard_view_assignments"])->name('view_assignments');
                 Route::post('/delete', [AssignmentController::class, "delete"]);
+
+                Route::get('/delete-assignments/{assignment_id}', [AssignmentController::class, "delete_assignment"])->name('delete_assignment');
             });
             Route::prefix('/instructors')->as('instructors.')->group(function ($assignment_id) {
                 Route::get('/view-assignments-questions/{assignment_id}', [UserController::class, "view_assignment_questions"])->name('view_assignment_questions');
@@ -161,6 +163,8 @@ Route::middleware('auth')->group(function (){
             });
             Route::prefix('/instructors')->as('instructors.')->group(function ($question_id) {
                 Route::get('/view-question-submission/{question_id}', [UserController::class, "view_question_submission"])->name('view_question_submission');
+
+                Route::get('/delete-submission/{submission_id}', [AssignmentController::class, "delete_submission"])->name('delete_submission');
             });
 
             Route::prefix('/instructors')->as('instructors.')->group(function ($submission_id) {
@@ -174,6 +178,8 @@ Route::middleware('auth')->group(function (){
                 Route::get('/run-plag/{zipPath}/{type}/{question_id}', [PlagiarismController::class, "run_plag"])->name('run_plag');
 
                 Route::get('/plagiarism-report', [PlagiarismController::class, "plagiarism_report"])->name('plagiarism_report');
+
+                Route::get('/report/{report}', [PlagiarismController::class, "report"])->name('report');
             });
 
             Route::prefix('/instructors')->as('instructors.')->group(function ($user_id) {

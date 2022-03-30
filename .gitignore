@@ -13,6 +13,10 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+/app/Python
+/public/assignment_submissions
+/public/PlagiarismZipped
+/public/uploadedimages
 /app/Python/next_word.py
 /app/Python/next_words.h5
 /app/Python/token.pkl
@@ -24,3 +28,4 @@ yarn-error.log
 /public/assignment_submissions
 /public/submissions
 /public/tmp
+test.java

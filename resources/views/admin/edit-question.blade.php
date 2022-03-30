@@ -134,20 +134,25 @@ Edit Question to {{ $assignment->name }}
                             @endphp
                             @foreach ($test_cases as $test_case)
                             <tr class="bg-white border-b">
-                              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">@php
-                                  echo $i;
-                              @endphp</td>
-                              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                <input type="text" id="input{{$i}}" class="outline-none outline-0 text-center focus:outline-0 rounded-sm" value="{{ $test_case->inputs }}">
-                                
-                              </td>
-                              <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                                {{ $test_case->output }}
-                              </td>
-                              <td class="text-sm text-gray-900 font-light px-2 py-4 whitespace-nowrap">
-                                <button type="button" id="save{{$i}}" class="px-12 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out"><i class="fas fa-check"></i> Save</button>
-                                <button type="button" class="inline-block px-4 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out"><i class="fas fa-trash"></i> Delete</button>
-                              </td>
+                                <input type="hidden" name="tc_id" value="{{ $test_case->id }}">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">@php
+                                    echo $i;
+                                @endphp</td>
+                                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                  <input  type="text" id="input{{$i}}" name="input" class="outline-none outline-0 text-center focus:outline-0 rounded-sm" value="{{ $test_case->inputs }}">
+                                  
+                                </td>
+                                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                  
+                                  <input type="text" id="output{{$i}}" name="output" class="outline-none outline-0 text-center focus:outline-0 rounded-sm" value="{{ $test_case->output }}">
+                                </td>
+                                <td class="text-sm text-gray-900 font-light px-2 py-4 whitespace-nowrap">
+                                  {{-- <a id="inputRef" href="{{ route('dashboard.users.instructors.edit_test_cases',['question_id'=>$test_case->id,'inputs'=>$inputs,'output'=>$test_case->output]) }}"> --}}
+                                    <button type="button" id="save{{$i}}" class="px-12 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out"><i class="fas fa-check"></i> Save</button>
+                                  {{-- </a> --}}
+                                  <button type="button" class="inline-block px-4 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out"><i class="fas fa-trash"></i> Delete</button>
+                                </td>
+                              </form>
                             </tr class="bg-white border-b">
                               @php
                                 $i++;

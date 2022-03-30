@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 session_start();
 use App\Models\Assignments;

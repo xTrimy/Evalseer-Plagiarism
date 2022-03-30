@@ -296,15 +296,25 @@
                     @endif
                 </div>
                 @endif
-                    
             @endif
+            @endif
+            @php
+                $submission = $question->submissions->last() ?? null;
+            @endphp
+            @if ($submission)
+                <div class=" bg-white w-full shadow rounded-md px-4 py-4">
+                    <div class="text-center text-2xl font-bold mb-5">
+                        Style Feedback <i class="fas fa-palette"></i>
+                    </div>
+                    <pre>{{ str_replace(public_path($submission->submitted_code), '', $submission->style_feedback)  ?? "No Style Feedback"  }}</pre>
+                </div>
             @endif
             @if(count($question->submissions)<$assignment->submissions && $submission_allowed)
             @php
                 $lang = " ";
-                if($question->programming_language_id == 1) {
+                if($question->programming_language_id == 2) {
                     $lang = ".cpp";
-                } else if ($question->programming_language_id == 2) {
+                } else if ($question->programming_language_id == 1) {
                     $lang = ".java";
                 }
             @endphp
