@@ -112,7 +112,7 @@ class QuestionController extends Controller
         if ($from_ide) {
             $assignment_submission_path = "/assignment_submissions/{$question->assignment->name}/{$question->name}/$user_name/$submission_number";
             $assignment_p = [];
-            foreach(explode(',', $assignment_submission_path) as $directory){
+            foreach(explode('/', $assignment_submission_path) as $directory){
                 $assignment_p[] = $directory;
                 if($directory != ""){
                     $directory_name = implode('/',$assignment_p);
