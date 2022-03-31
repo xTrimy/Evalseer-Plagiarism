@@ -329,6 +329,7 @@
                     $lang = ".java";
                 }
             @endphp
+            @if($question->submissions->last()->is_blocked == 0)
             <form method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="question_id" value="{{ $question->id }}">
@@ -386,6 +387,7 @@
                         <input type="submit" class=" bg-green-700 hover:bg-green-600 py-4 text-white px-10 rounded-lg font-bold text-sm cursor-pointer"name="submission[]" >
                     </div>
                 </form>
+                @endif
             @endif
             </div>
         </div>
