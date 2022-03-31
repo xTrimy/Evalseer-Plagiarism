@@ -139,7 +139,15 @@
                       <h1 class="md:text-xl text-gray-600">Grade</h1>
                       <p class="text-gray-400 text-xs md:text-sm font-light">
                           @if($question->submissions->last()->is_blocked == 0)
-                          {{ $question->submissions->last()->total_grade }}/{{ $question->grade }}
+                            {{ $question->submissions->last()->total_grade }}/{{ $question->grade }}
+                            @if($question->submissions->last()->feature_feedback != NULL)
+                            <p>
+                                <div class="hidden modal_contains">
+                                    {{ $question->submissions->last()->feature_feedback }}
+                                </div>
+                                <div data-modal-title="Failed code features" data-modal-close-button="Got It!" class="modal_open mt-2 bg-orange-500 p-1 rounded-md table text-white cursor-pointer">View feedback</div>
+                            </p>
+                            @endif
                           @else
                           Grade Blocked
                           @endif

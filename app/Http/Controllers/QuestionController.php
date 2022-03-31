@@ -502,6 +502,9 @@ class QuestionController extends Controller
             $number_of_features = count($question->features);
             $feature_passed_grade = ($count_features_passed / $number_of_features) * $question->grading_criteria->last()->features_weight;
             $total_features_grade_total = $feature_passed_grade / 100 * $question->grade;
+            if($total_features_grade_total < 100){
+                $submission->feature_feedback = "You didn't get the code features full grades. Please follow the question description and try again";
+            }
             $submission->features_grade = $total_features_grade_total;
             $submission->total_grade += $submission->features_grade;
         }
@@ -567,6 +570,7 @@ class QuestionController extends Controller
 
         //Calculating feature grade
         $count_features_passed = $this->run_feature_checking_on_submission($question,$submission);
+        
         $number_of_test_cases_passed = $this->run_test_cases_on_submission($question, $question->test_cases, $assignment_submission_path,$submission, $lang);
         $number_of_test_cases = count($question->test_cases);
         $submission->logic_feedback = "Number of Test Cases Passed: $number_of_test_cases_passed/$number_of_test_cases";
