@@ -320,7 +320,7 @@
                     <pre>{{ str_replace(public_path($submission->submitted_code), '', $submission->style_feedback)  ?? "No Style Feedback"  }}</pre>
                 </div>
             @endif
-            @if(count($question->submissions)<$assignment->submissions && $submission_allowed)
+            @if(count($question->submissions)<$assignment->submissions && $submission_allowed && $question->submissions->last()->is_blocked != 0)
             @php
                 $lang = " ";
                 if($question->programming_language_id == 2) {
@@ -329,7 +329,6 @@
                     $lang = ".java";
                 }
             @endphp
-            @if(count($question->submissions)==0 && $question->submissions->last()->is_blocked == 0)
             <form method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="question_id" value="{{ $question->id }}">
@@ -387,7 +386,6 @@
                         <input type="submit" class=" bg-green-700 hover:bg-green-600 py-4 text-white px-10 rounded-lg font-bold text-sm cursor-pointer"name="submission[]" >
                     </div>
                 </form>
-                @endif
             @endif
             </div>
         </div>
