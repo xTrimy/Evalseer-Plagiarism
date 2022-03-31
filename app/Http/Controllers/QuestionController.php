@@ -502,7 +502,7 @@ class QuestionController extends Controller
             $number_of_features = count($question->features);
             $feature_passed_grade = ($count_features_passed / $number_of_features) * $question->grading_criteria->last()->features_weight;
             $total_features_grade_total = $feature_passed_grade / 100 * $question->grade;
-            if($total_features_grade_total < 100){
+            if($count_features_passed != $number_of_features){
                 $submission->feature_feedback = "You didn't get the code features full grades. Please follow the question description and try again";
             }
             $submission->features_grade = $total_features_grade_total;
