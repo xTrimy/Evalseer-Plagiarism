@@ -311,6 +311,9 @@
             @endif
             @php
                 $submission = $question->submissions->last() ?? null;
+                $block_assignment = 0;
+                if($submission)
+                    $block_assignment = $question->submissions->last()->is_blocked ?? 0;
             @endphp
             @if ($submission)
                 <div class=" bg-white w-full shadow rounded-md px-4 py-4">
@@ -320,7 +323,7 @@
                     <pre>{{ str_replace(public_path($submission->submitted_code), '', $submission->style_feedback)  ?? "No Style Feedback"  }}</pre>
                 </div>
             @endif
-            @if(count($question->submissions)<$assignment->submissions && $submission_allowed && $question->submissions->last()->is_blocked != 0)
+            @if(count($question->submissions)<$assignment->submissions && $submission_allowed && $block_assignment == 0)
             @php
                 $lang = " ";
                 if($question->programming_language_id == 2) {
