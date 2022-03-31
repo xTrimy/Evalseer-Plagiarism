@@ -329,7 +329,7 @@
                     $lang = ".java";
                 }
             @endphp
-            @if(count($question->submissions)>0 && $question->submissions->last()->is_blocked == 0)
+            @if(count($question->submissions)==0 && $question->submissions->last()->is_blocked == 0)
             <form method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="question_id" value="{{ $question->id }}">
