@@ -60,5 +60,7 @@ def __main__(path, return_original=False):
     string = ' '.join(data[0])
     if(return_original):
         original_string = ' '.join(data[1])
+  
         return [string,original_string]
+   
     return string

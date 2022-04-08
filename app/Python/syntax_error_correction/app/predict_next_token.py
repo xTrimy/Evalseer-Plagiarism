@@ -1,6 +1,7 @@
 import pathlib
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+from keras import backend as K
 from tensorflow.keras.models import load_model
 from silence_tensorflow import silence_tensorflow
 silence_tensorflow()
@@ -8,6 +9,7 @@ import numpy as np
 import pickle
 # Load the model and tokenizer
 main_directory=pathlib.Path(__file__).resolve().parent.parent
+K.clear_session()
 model = load_model(str(main_directory)+'/next_words.h5')
 tokenizer = pickle.load(open(str(main_directory)+'/token.pkl', 'rb'))
 
@@ -16,7 +18,7 @@ def Predict_Next_Word(model, tokenizer, text):
 
   sequence = tokenizer.texts_to_sequences([text])
   sequence = np.array(sequence)
-  preds = np.argsort(model.predict(sequence))[:, -5:][0]
+  preds = np.argsort(model.predict(sequence))[:, -3:][0]
   predicted_word = []
 
   for u in preds:
@@ -43,10 +45,11 @@ def __main__(text):
                     ):
                     predicted_l = []
                     # Get top 2 predictions (index 4 and 3)
-                    predicted_l.append([i+3, predicted_tokens[4].lower()])
-                    predicted_l.append([i+3, predicted_tokens[3].lower()])
+                    predicted_l.append([i+3, predicted_tokens[2].lower()])
+                    predicted_l.append([i+3, predicted_tokens[1].lower()])
                     prediction_list.append(predicted_l)
-                    exit
+                    
+
             except Exception as e:
                 continue
                 # print("Error occurred: ",e)

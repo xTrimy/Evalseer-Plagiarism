@@ -13,7 +13,7 @@ IDE
             
             <div class="w-full h-full">
                 <div id="editor" class=" w-full h-5/6">
-{{ $question->skeleton }}
+{!! $question->skeleton !!}
                 </div>
                 <div id="bottom_bar" class="h-1/6">
                     <div class=" w-full py-2 bg-gray-500 left-0 flex px-4 justify-end items-center">
@@ -89,13 +89,7 @@ IDE
        window.onload=function(){
              ace_editor = ace.edit("editor");
             ace_editor.setTheme("ace/theme/monokai");
-            @if ($question->programming_language->acronym == "HTML")
-                ace_editor.session.setMode("ace/mode/html");
-            @elseif ($question->programming_language->acronym == "c++")
-                ace_editor.session.setMode("ace/mode/c_cpp");
-            @elseif ($question->programming_language->acronym == "java")
-                ace_editor.session.setMode("ace/mode/java");
-            @endif
+            ace_editor.session.setMode("ace/mode/c_cpp");
             ace_editor.setOptions({
                 
                 enableBasicAutocompletion: true,
@@ -184,7 +178,6 @@ IDE
                     code: ace_editor.getSession().getValue(),
                 },
                 success: function(response){
-                    
                     e.disabled = false;
                     if(output_window_button.getAttribute('data-active') == "false"){
                         show_close_output(output_window_button);
@@ -195,11 +188,7 @@ IDE
                     document.getElementById('test_cases').classList.remove('text-green-500');
                     document.getElementById('test_cases').classList.remove('text-yellow-500');
                     document.getElementById('test_cases').classList.remove('text-red-500');
-                    if(response["html"] == "true"){
-                        $('#results').html('<iframe src="{{ asset("") }}'+response["html_file"]+'" width="100%" height="100%" scrolling="yes" id="myFrame"></iframe>');
-                    }else{
-                        $("#results").html(response["output"] );
-                    }
+                    $("#results").html(response["output"] );
 
                     if(response["testing"] == "true"){
                         console.log(response["no_submissions_left"]);

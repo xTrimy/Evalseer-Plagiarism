@@ -1,6 +1,5 @@
 from cgi import test
 from tabnanny import check
-import app.predict_next_token as predict_next_token
 import app.tokenize_script as tokenize_script
 import sys
 import os
@@ -30,9 +29,8 @@ def test_solution(test_array, index, token, method, original_token=False):
     test_array = re.sub(
         "(<[\w\s]+?>)", r'\1\n', test_array, flags=re.S)
     test_array = re.sub(
-        "(<\s)(?![^\"]*\"|[^\"\"]*\")(?![ ^ ']*'|[^''] *')", r'<', test_array, flags=re.S)
-    test_array = re.sub(
-        "(\s>)(?![^\"]*\"|[^\"\"]*\")(?![ ^ ']*'|[^''] *')", r'>', test_array, flags=re.S)
+        "<\s([\w\s]+?)\s>", r'<\1>', test_array, flags=re.S)
+ 
     f = open(str(main_directory)+"/tests/test.cpp", "w")
  
     f.write(test_array)
@@ -107,10 +105,8 @@ def token_checker(check_for):
                         return False
 
 
-    
-
-
 def main(file):
+    import app.predict_next_token as predict_next_token
     file_path = ""
     try:
         file_path = file
@@ -123,6 +119,7 @@ def main(file):
         text = tokenize_script.__main__(path=file_path,return_original=True)
         tokenized_text = text[0]
         original_text = text[1]
+        
         original_text_array = original_text.split()
         predicted_tokenz = predict_next_token.__main__(tokenized_text)
         # Primary predictions
@@ -134,7 +131,6 @@ def main(file):
             # print("Testing the solution...")
             test_array = original_text_array.copy()
             test_array.insert(primary_prediction[0]-1, primary_prediction[1])
-            
             result = test_solution(test_array, primary_prediction[0],primary_prediction[1], 1)
             if(result == True):
                 return [primary_prediction[1],primary_prediction[0],0]

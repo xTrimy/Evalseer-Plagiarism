@@ -1,50 +1,37 @@
-# include < iostream >
+# include <iostream>
  using namespace std ; 
-void swap ( int * a , int * b ) { int t = * a ; 
-* a = * b ; 
-* b = t ; 
-} void printArray ( int array [ ] , int size ) { int i ; 
-for ( i = 0 ; 
-i < size ; 
-i ++ ) cout << array [ i ] << " " ;
- cout <<endl ;
+template <typename T>
+ void merge ( T * ar , T * ar2 , int low , int mid , int high ) { int i = low ; 
+int j = low ; 
+int z = mid + 1 ; 
+while ( ( i <= mid ) && ( z <= high ) ) { if ( ar [ i ] <= ar [ z ] ) { ar2 [ j ] = ar [ i ] ; 
+i ++ ; 
+} else { ar2 [ j ] = ar [ z ] ; 
+z ++ ; 
+} j ++ ; 
+} if ( i > mid ) { for ( int k = z ; 
+k <= high ; 
+k ++ ) { ar2 [ j ] = ar [ k ] ; 
+j ++ ; 
+} } else { for ( int k = i ; 
+k <= mid ; 
+k ++ ) { ar2 [ j ] = ar [ k ] ; 
+j ++ ; 
+} } for ( int k = low ; 
+k <= high ; 
+k ++ ) { ar [ k ] = ar2 [ k ] ; 
+} } template <typename T>
+ void mergeSort ( T * a , T * b , int low , int high ) { int mid ; 
+if ( low < high ) { mid = ( low + high ) / 2 ; 
+mergeSort ( a , b , low , mid ) ; 
+mergeSort ( a , b , mid + 1 , high ) ; 
+merge ( a , b , low , mid , high ) ; 
+} } int main ( ) { int a [ ] = { 2 , 6 , 5 , 7 , 11 , 4 } ; 
+int b [ 6 ] = { 0 } ; 
+mergeSort ( a , b , 0 , 5 ) ; 
+for ( int i = 0 ; 
+i < 6 ; 
+i ++ ) { cout << a [ i ] << " " ;
  }
- int partition ( int array [ ] , int low , int high ) {
- int pivot = array [ high ] ;
- int i = ( low - 1 ) ;
- for ( int j = low ;
- j <high ;
- j ++ ) {
- if ( array [ j ] <= pivot ) {
- i ++ ;
- swap ( & array [ i ] , & array [ j ] ) ;
- }
- }
- swap ( & array [ i + 1 ] , & array [ high ] ) ;
- return ( i + 1 ) ;
- }
- void quickSort ( int array [ ] , int low , int high ) {
- if ( low <high ) {
- int pi = partition ( array , low , high ) ;
- quickSort ( array , low , pi - 1 ) ;
- quickSort ( array , pi + 1 , high ) ;
- }
- }
- int binarySearch ( int array [ ] , int x , int low , int high ) {
- quickSort ( array , low , high ) ;
- while ( low <= high ) {
- int mid = low + ( high - low ) 2 ;
- if ( array [ mid ] == x ) return mid ;
- if ( array [ mid ] <x ) low = mid + 1 ;
- else high = mid - 1 ;
- }
- return - 1 }
- int main ( ) {
- int arr [ ] = {
- 2 , 6 , 5 , 7 , 11 , 4 }
- ;
- int n ;
- cin>> n ;
- cout <<binarySearch ( arr , n , 0 , 4 ) ;
- & 0 ;
+ return 0 ;
  }

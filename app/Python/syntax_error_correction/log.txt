@@ -1,4 +1,0 @@
-C:\xampp\htdocs\Evalseer-Plagiarism\app\Python\syntax_error_correction/tests/test.cpp:1:23: fatal error:  iostream : No such file or directory
- # include < iostream >
-                       ^
-compilation terminated.

@@ -21,15 +21,20 @@ class OnlineIDEController extends Controller
     public function run(Request $request)
     {
         
-        $file_name = "tmp/".time().".cpp";
-        file_put_contents($file_name,$request->code);
+        
+        $question = Questions::with(['programming_language','assignment', 'test_cases', 'submissions' => function (HasMany $query) {
+            return $query->where('user_id', Auth::user()->id);
+        }])->find($request->id);
+        $file_name = "tmp/" . time() . explode(',',$question->programming_language->extensions)[0];
+        $lang = $question->programming_language->acronym;
+        file_put_contents($file_name, $request->code);
+        if($lang == "HTML"){
+            return ["html_file"=> $file_name,"html"=>"true","no_submissions_left" => "true", "style_feedback" => "", "submissions_left" => 0, "submitting" => $request->submitting, "testing" => $request->testing, "some_test_cases_failed" => "false", "all_test_cases_failed" => "false", "full_marks" => "false", "output" => "test", "test_cases_passed" => "0" . "/" . "0"];
+        }
+
         $compiler = new QuestionController();
         $submission = new Submission();
         $submission->submitted_code = $file_name;
-        $question = Questions::with(['assignment', 'test_cases', 'submissions' => function (HasMany $query) {
-            return $query->where('user_id', Auth::user()->id);
-        }])->find($request->id);
-
         $question_test_cases_count = count($question->test_cases);
 
         $count_submissions = count($question->submissions);
@@ -38,10 +43,10 @@ class OnlineIDEController extends Controller
         $test_cases = 0;
         // TODO: Give each compiled output file a unique name
         // !High priority todo; May cause conflicts while multiple students are submitting
-        $output = $compiler->compile_file('c++', $file_name, "tmp", true, $question, $submission);
+        $output = $compiler->compile_file($lang, $file_name, "tmp", true, $question, $submission);
         $output = str_replace($file_name,'',$output);
         
-        $style_feedback = $compiler->style_check($submission, "tmp", 'c++', true);
+        $style_feedback = $compiler->style_check($submission, "tmp", $lang, true);
         if($request->testing == "true" && $request->submitting == "false"){
             $test_cases_ = $request->only('inputs','output');
             $i= 0;
@@ -53,7 +58,7 @@ class OnlineIDEController extends Controller
                 $test_case_object[] = $t;
                 $i++;
             }
-            $test_cases = $compiler->run_test_cases_on_submission($question, $test_case_object, 'tmp', $submission, 'c++', true);
+            $test_cases = $compiler->run_test_cases_on_submission($question, $test_case_object, 'tmp', $submission, $lang, true);
         }else if($request->submitting == "true"){
 
             // TODO: Save submission to submissions directory instead of tmp
@@ -61,7 +66,7 @@ class OnlineIDEController extends Controller
 
             if($submissions_left > 0 ){
                 $count_features_passed = $compiler->run_feature_checking_on_submission($question, $submission);
-                $test_cases = $compiler->run_test_cases_on_submission($question, $question->test_cases, 'tmp', $submission, 'c++');
+                $test_cases = $compiler->run_test_cases_on_submission($question, $question->test_cases, 'tmp', $submission, $lang);
                 $submission->user_id = Auth::user()->id;
                 $submission->question_id = $question->id;
                 $submission->logic_feedback = "Number of Test Cases Passed: $test_cases/$question_test_cases_count";

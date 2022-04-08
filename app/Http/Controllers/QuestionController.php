@@ -544,7 +544,7 @@ class QuestionController extends Controller
             
             $basic_syntax_checking = $this->run_basic_compiling_error_checker($compiler_feedback,$submission, $lang);
 
-            if($basic_syntax_checking){
+            // if($basic_syntax_checking){
                 $evalseer_feedback = shell_exec(env('SYNTAX_CORRECTION_PY')." \"". public_path($submission->submitted_code) . "\" 2>&1");
                 $evalseer_feedback = json_decode($evalseer_feedback,true);
                 foreach ($evalseer_feedback as $key => $value){
@@ -558,7 +558,7 @@ class QuestionController extends Controller
                     $cpp_executable = env('CPP_EXE_PATH');
                     $output_1 = shell_exec("$cpp_executable \"" . $corrected_code_path . "\" -o \"" . public_path($assignment_submission_path) . "/output\" 2>&1");
                 }
-            }
+            // }
             $submission->compile_feedback = json_encode($compiler_feedback);
         }
         
