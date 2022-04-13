@@ -2,8 +2,6 @@ import main as tokenizer
 import sys
 import json
 
-
-
 check_for_array = ["return in main"]
 for feature in check_for_array:
     check_for_return = tokenizer.token_checker(check_for=feature)
