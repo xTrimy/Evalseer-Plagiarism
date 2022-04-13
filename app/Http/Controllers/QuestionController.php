@@ -445,7 +445,7 @@ class QuestionController extends Controller
     private function run_basic_compiling_error_checker(&$compiler_feedback, Submission &$submission, $language = 'c++' ){
         if($language == "c++"){
             $evalseer_feedback = shell_exec(env('BASIC_SYNTAX_PY') . " \"" . public_path($submission->submitted_code) . "\" 2>&1");
-			dd($evalseer_feedback);
+			
 			$evalseer_feedback = json_decode($evalseer_feedback, true);
 			
 			if($evalseer_feedback["status"] == "success"){
@@ -548,7 +548,8 @@ class QuestionController extends Controller
 
             // if($basic_syntax_checking){
                 $evalseer_feedback = shell_exec(env('SYNTAX_CORRECTION_PY')." \"". public_path($submission->submitted_code) . "\" 2>&1");
-                $evalseer_feedback = json_decode($evalseer_feedback,true);
+				
+				$evalseer_feedback = json_decode($evalseer_feedback,true);
                 foreach ($evalseer_feedback as $key => $value){
                     $compiler_feedback[$key] =$value;
                 }
