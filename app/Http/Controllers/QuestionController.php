@@ -271,6 +271,13 @@ class QuestionController extends Controller
                 $this->give_compiling_grade_to_submission($question, $submission, $output);
                 return $output;
             }
+        }else if($language == "PHP"){ //PHP code isn't compiled but at least we can check for syntax errors here
+            $output = shell_exec("php -l \"" . $file_path . "\" 2>&1");
+            if(strpos($output, "No syntax") !== false){
+                $output = "";
+            }
+            $this->give_compiling_grade_to_submission($question, $submission, $output);
+            return $output;
         }
         else{
             throw new RuntimeException('Language '.$language.' is undefiened');
@@ -306,6 +313,9 @@ class QuestionController extends Controller
             }
             if($language == "c++"){
                 $output = shell_exec("\"" . public_path($file_directory) . "/output\" < \"" . $test_case_file . "\"");
+                
+            }else if($language == "PHP"){
+                $output = shell_exec("php " . public_path($submission->submitted_code) . " < \"" . $test_case_file . "\"");
                 
             }else if($language == "java"){
                 $filesInside = scandir(public_path($file_directory), 1);
@@ -454,6 +464,8 @@ class QuestionController extends Controller
                 return false;
             }
         }
+        $evalseer_feedback['status'] = "success";
+        return true;
     }
 
     public function style_check(Submission &$submission, $assignment_submission_path, $lang="c++", $filter_file_name = false){
@@ -472,12 +484,20 @@ class QuestionController extends Controller
         } else if ($lang == "c++") {
             $stylefb = shell_exec($python . " " . public_path('/cpplint-file/cpplint.py') . " \"" . public_path(str_replace('/', '/', $submission->submitted_code)) . "\" 2>&1");
             if(!$filter_file_name)
-                $stylefb = str_replace(public_path(str_replace("/", "\\", $assignment_submission_path)), '', $stylefb);
-            $submission->style_feedback = $stylefb;
+            $stylefb = str_replace(public_path(str_replace("/", "\\", $assignment_submission_path)), '', $stylefb);
             $stylefb = str_replace(public_path($submission->submitted_code), '', $stylefb);
             $stylefb = str_replace('Done processing', '', $stylefb);
             $submission->style_feedback = $stylefb;
             return $stylefb;
+        } else if($lang == "PHP"){
+            $stylefb = shell_exec("php" . " " . env("CHECKSTYLE_PHP_PATH") . 
+            " \"" . public_path(str_replace('/', '/', $submission->submitted_code)) 
+            . "\" text cleancode 2>&1");
+            //text & cleancode arguemenets can be changed, refer to `php phpmd.phar --help`
+            $stylefb = str_replace(public_path(), '', $stylefb);
+            $stylefb = str_replace(str_replace('/','\\',strtolower($submission->submitted_code)), '', $stylefb);
+            $stylefb = str_replace(public_path($submission->submitted_code), '', $stylefb);
+            $submission->style_feedback = $stylefb;
         } else {
             $submission->style_feedback = "No Style Feedback";
             return redirect()->back()->with('error', "This question has not been configured correctly, please refer to your instructor");
@@ -544,7 +564,7 @@ class QuestionController extends Controller
             
             $basic_syntax_checking = $this->run_basic_compiling_error_checker($compiler_feedback,$submission, $lang);
 
-            // if($basic_syntax_checking){
+            if($lang == "c++"){
                 $evalseer_feedback = shell_exec(env('SYNTAX_CORRECTION_PY')." \"". public_path($submission->submitted_code) . "\" 2>&1");
                 $evalseer_feedback = json_decode($evalseer_feedback,true);
                 foreach ($evalseer_feedback as $key => $value){
@@ -558,7 +578,7 @@ class QuestionController extends Controller
                     $cpp_executable = env('CPP_EXE_PATH');
                     $output_1 = shell_exec("$cpp_executable \"" . $corrected_code_path . "\" -o \"" . public_path($assignment_submission_path) . "/output\" 2>&1");
                 }
-            // }
+            }
             $submission->compile_feedback = json_encode($compiler_feedback);
         }
         
