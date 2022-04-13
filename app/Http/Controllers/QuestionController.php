@@ -277,6 +277,12 @@ class QuestionController extends Controller
                 $output = "";
             }
             $this->give_compiling_grade_to_submission($question, $submission, $output);
+            if (strlen($output) == 0) {
+                if ($run_file) {
+                    $output = shell_exec("php \"" . $file_path . "\" 2>&1");
+                    return $output;
+                }
+            }
             return $output;
         }
         else{

@@ -1,5 +1,4 @@
-from cgi import test
-from tabnanny import check
+
 import app.tokenize_script as tokenize_script
 import sys
 import os

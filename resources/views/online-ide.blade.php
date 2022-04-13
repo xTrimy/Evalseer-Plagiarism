@@ -12,9 +12,7 @@ IDE
         <div class="w-2/3 relative ">
             
             <div class="w-full h-full">
-                <div id="editor" class=" w-full h-5/6">
-{{ $question->skeleton }}
-                </div>
+                <div id="editor" class=" w-full h-5/6">{{ $question->skeleton }}</div>
                 <div id="bottom_bar" class="h-1/6">
                     <div class=" w-full py-2 bg-gray-500 left-0 flex px-4 justify-end items-center">
                         <div class="flex-1 text-white">
@@ -95,6 +93,8 @@ IDE
                 ace_editor.session.setMode("ace/mode/c_cpp");
             @elseif ($question->programming_language->acronym == "java")
                 ace_editor.session.setMode("ace/mode/java");
+            @elseif ($question->programming_language->acronym == "PHP")
+                ace_editor.session.setMode("ace/mode/php");
             @endif
             ace_editor.setOptions({
                 
@@ -180,7 +180,7 @@ IDE
                     output:output,
                     testing:testing,
                     submitting:submitting,
-                    language:"cpp",
+                    language:"{{ $question->programming_language->acronym }}",
                     code: ace_editor.getSession().getValue(),
                 },
                 success: function(response){

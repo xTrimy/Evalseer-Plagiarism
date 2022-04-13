@@ -196,9 +196,10 @@
                     </div>
                 @endif
             @endif
-            @if ($submission->style_feedback)
-            
+            {{-- @if ($submission->style_feedback) --}}
+                @if(false)
                 @php
+                    $lang = $question->programming_language->acronym;
                     $styling_line = explode("\n",$submission->style_feedback);
                     $styling_comment = [];
                     array_splice($styling_line, count($styling_line)-3, 3); 
@@ -206,7 +207,15 @@
                         $data = explode(":",$styling_line[$i]);
 						if($data[0] != "Error"){
                             if(isset($data[1])){
-						        $styling_comment[$data[1]] = explode(":",$styling_line[$i])[2];
+                                if($lang == "c++"){
+                                    $styling_comment[$data[1]] = explode(":",$styling_line[$i])[2];
+                                }
+                                else if($lang == "PHP"){
+                                    $line = explode(":",$styling_line[$i]);
+                                    $line = explode("\t",$line[1]);
+                                    $styling_comment[$data[1]] = $line[1];
+                                }
+                                    
                             }
                         }
                     }
@@ -270,7 +279,7 @@
                     </div>
                     <h1 class="text-xl font-bold mt-4">Compiler Feedback:</h1>
                     <pre class=" bg-gray-200 my-5 px-3 py-4 rounded shadow">{!! nl2br(e($data->compiler_feedback)) !!}</pre>
-                    @if(isset($data->basic_checking) || $data->status == "success")
+                    @if(isset($data->basic_checking) || (isset($data->status) && $data->status == "success"))
                             <h1 class="text-xl font-bold mt-4 text-green-600">Evalseer Feedback:</h1>
                         @if(isset($data->status))
                             @if(isset($data->original_token))
@@ -333,12 +342,7 @@
             @endif
             @if(count($question->submissions)<$assignment->submissions && $submission_allowed && $block_assignment == 0)
             @php
-                $lang = " ";
-                if($question->programming_language_id == 2) {
-                    $lang = ".cpp";
-                } else if ($question->programming_language_id == 1) {
-                    $lang = ".java";
-                }
+                $lang = $question->programming_language->extensions;
             @endphp
             <form method="POST" enctype="multipart/form-data">
                 @csrf
