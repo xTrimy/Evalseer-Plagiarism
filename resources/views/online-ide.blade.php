@@ -10,9 +10,23 @@ IDE
         <p>{!! $question->description !!}</p>
     </div>
         <div class="w-2/3 relative ">
-            
+            <div class="w-full flex bg-slate-600">
+                <div class="flex overflow-x-auto">
+                    <div data-file-order="1" class="flex items-center relative file_tab py-2 px-4 cursor-pointer bg-slate-800 hover:bg-slate-800 border-b-2 text-white border-b-orange-500">
+                        <div class="icon w-6 h-6 mr-2"></div>
+                        <div class="file_name">Main.php</div>
+                        <input type="text" class="border-0 hidden absolute bg-transparent w-1/2 ml-8 p-0">
+                    </div>
+                </div>
+                
+                <div id="add_file_button" class="flex file_tab py-4 px-4 bg-slate-700 hover:bg-green-800 cursor-pointer  text-white">
+                    <i class="las la-plus"></i>
+                </div>
+            </div>
             <div class="w-full h-full">
-                <div id="editor" class=" w-full h-5/6">{{ $question->skeleton }}</div>
+                <div id="editor" class="w-full h-5/6">
+                    <div id="editor-1" class="current_editor ace_file_editor w-full h-full">{{ $question->skeleton }}</div>
+                </div>
                 <div id="bottom_bar" class="h-1/6">
                     <div class=" w-full py-2 bg-gray-500 left-0 flex px-4 justify-end items-center">
                         <div class="flex-1 text-white">
@@ -85,7 +99,7 @@ IDE
    <script>
         var ace_editor;
        window.onload=function(){
-             ace_editor = ace.edit("editor");
+             ace_editor = ace.edit("editor-1");
             ace_editor.setTheme("ace/theme/monokai");
             @if ($question->programming_language->acronym == "HTML")
                 ace_editor.session.setMode("ace/mode/html");
@@ -264,4 +278,5 @@ IDE
         }
        
 </script>
+
 @endsection
