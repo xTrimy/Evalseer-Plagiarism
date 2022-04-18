@@ -13,7 +13,6 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
-/app/Python
 /public/assignment_submissions
 /public/PlagiarismZipped
 /public/uploadedimages
