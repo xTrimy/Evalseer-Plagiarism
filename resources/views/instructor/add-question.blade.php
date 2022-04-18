@@ -206,6 +206,17 @@ Add Question to {{ $assignment->name }}
                 <input type="hidden" id="base_skeleton_input" name="base_skeleton">
                 <div  id="ace_editor" class="w-full h-64"></div>
               </label>
+              <p class="text-gray-600 mt-4 dark:text-gray-400">Check for plagiarism in external sites?</p>
+              <button type="button" onclick="search_external_sources(this)"
+              class="group table items-center mb-4 justify-between relative overflow-hidden disabled:cursor-not-allowed px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-600 border border-transparent rounded-lg active:bg-green-600 hover:bg-green-700 focus:outline-none focus:shadow-outline-green"
+              >
+              <div class="loading group-disabled:block hidden absolute top-0 left-0 w-full h-full bg-gray-700 ">
+                  <div class="lds-ring small"><div></div><div></div><div></div><div></div></div>
+              </div>
+              Search For External Source Codes</button>
+              <div  id="external_source_codes_container">
+
+              </div>
               <button id="submit_button" type="submit" class="table items-center mt-4 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange">
               Add
               <span class="ml-2" aria-hidden="true">
@@ -273,5 +284,30 @@ Add Question to {{ $assignment->name }}
               base_skeleton_input.value = base_skeleton;
               form.submit();
         });
+      </script>
+
+      <script>
+        function search_external_sources(element){
+          element.disabled = true;
+          $.ajax({
+            url: "{{ route('dashboard.code_searcher.search') }}?keyword=Binary%20Search%20C++",
+            context: document.body
+          }).done(function(data) {
+            element.removeAttribute('disabled');
+            if(data["error"]){
+              console.log("Error while fetching data: "+data["error"]);
+              return;
+            }
+            let response = data["codes"];
+            for(let i = 0; i<response.length; i++){
+              var pre = document.createElement('pre');
+              pre.classList.add('bg-gray-700');
+              pre.classList.add('text-white');
+              pre.classList.add('mb-4');
+              pre.innerHTML = response[i].replace('\n','<br>');
+              document.getElementById('external_source_codes_container').appendChild(pre);
+            }
+          });
+        }
       </script>
 @endsection

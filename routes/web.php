@@ -112,7 +112,9 @@ Route::middleware('auth')->group(function (){
             Route::get('/add', [QuestionController::class, "add"])->name('add_question');
             Route::post('/add', [QuestionController::class, "store"]);
         });
-
+        Route::prefix('/code_searcher')->as('code_searcher.')->group(function () {
+            Route::get('/search', [QuestionController::class, "fetch_external_plagiarism_files"])->name('search');
+        });
         // Admin routes
         Route::prefix('/courses')->as('courses.')->group(function () {
             Route::get('/', [CourseController::class, "dashboard_view"])->name('view');

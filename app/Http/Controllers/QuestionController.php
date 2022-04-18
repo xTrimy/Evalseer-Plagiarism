@@ -623,4 +623,15 @@ class QuestionController extends Controller
 
         return redirect()->back()->with('success',"Question deleted successfully");
     }
+
+    public function fetch_external_plagiarism_files(Request $request){
+        $keyword = $request->only('keyword')["keyword"];
+        $python = env("PYTHON_EXE_PATH");
+        $searcher_path = env("EXTERNAL_SOURCE_CODE_SEARCHER_PY");
+        $files = shell_exec($python . " $searcher_path \"$keyword\" 2>&1");
+        if(json_decode($files) != null){
+            return json_decode($files);
+        }
+        return ["error"=>"Something went wrong"];
+    }
 }
