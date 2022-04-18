@@ -121,12 +121,14 @@ class QuestionController extends Controller
                     }
                 }
             }
-            $fileNameToStore = time() . "." . $extension;
-            $full_path = $assignment_submission_path . "/" . $fileNameToStore;
+            foreach($file as $f){
+                $fileNameToStore = $f[0];
+                $full_path = $assignment_submission_path . "/" . $fileNameToStore;
+                file_put_contents(public_path($full_path), $f[1]);
 
-            file_put_contents(public_path($full_path), $file);
+            }
+            $full_path = $assignment_submission_path . "/" . $file[0][0];
             $submission->submitted_code = $full_path;
-
         }else{
             $extension = $file->file('submission')->getClientOriginalExtension();
             $fileNameToStore = $file->file('submission')->getClientOriginalName();
@@ -252,7 +254,11 @@ class QuestionController extends Controller
         // TODO: Make languages more dynamic
         if($language == 'c++'){
             $cpp_executable = env('CPP_EXE_PATH');
-            $output = shell_exec("$cpp_executable \"" . $file_path . "\" -o \"" . $file_directory . "/output\" 2>&1");
+            $files = [];
+            foreach(glob("$file_directory/*.cpp") as $file){
+                array_push($files, '"'.$file.'"');
+            }
+            $output = shell_exec("$cpp_executable " . implode(" ",$files) . " -o \"" . $file_directory . "/output\" 2>&1");
             $this->give_compiling_grade_to_submission($question,$submission,$output);
             if(strlen($output) == 0){
                 if($run_file){

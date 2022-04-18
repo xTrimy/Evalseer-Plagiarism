@@ -19,12 +19,12 @@ IDE
                     </div>
                 </div>
                 
-                <div id="add_file_button" class="flex file_tab py-4 px-4 bg-slate-700 hover:bg-green-800 cursor-pointer  text-white">
+                <div id="add_file_button" class="current_file_tab flex file_tab py-4 px-4 bg-slate-700 hover:bg-green-800 cursor-pointer  text-white">
                     <i class="las la-plus"></i>
                 </div>
             </div>
             <div class="w-full h-full">
-                <div id="editor" class="w-full h-5/6">
+                <div onkeydown="editor_keyboard_shortcuts(event,this,0)" onkeyup="editor_keyboard_shortcuts(event,this,1)" id="editor" class="w-full h-5/6">
                     <div id="editor-1" class="current_editor ace_file_editor w-full h-full">{{ $question->skeleton }}</div>
                 </div>
                 <div id="bottom_bar" class="h-1/6">
@@ -176,6 +176,7 @@ IDE
         }
         
         function run_code(e, testing=false, submitting=false){
+            console.log(ace_editor);
             e.disabled = true;
             var inputs = $('input[name="input[]"]').map(function(){ 
                     return this.value; 
@@ -184,6 +185,8 @@ IDE
                     return this.value; 
                 }).get();
             console.log(inputs, output);
+            var ace_editors_values = get_ide_editors_values();
+            console.log(ace_editors_values);
             $.ajax({
                 url:"{{ route('ide',$question->id) }}",
                 method:"POST",
@@ -195,7 +198,7 @@ IDE
                     testing:testing,
                     submitting:submitting,
                     language:"{{ $question->programming_language->acronym }}",
-                    code: ace_editor.getSession().getValue(),
+                    code: ace_editors_values,
                 },
                 success: function(response){
                     
@@ -279,4 +282,14 @@ IDE
        
 </script>
 
+<script>
+var message = "Are you sure you want to discard your progress?";
+window.onbeforeunload = function(event) {
+    var e = e || window.event;
+    if (e) {
+        e.returnValue = message;
+    }
+    return message;
+};
+</script>
 @endsection

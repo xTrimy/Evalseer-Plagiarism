@@ -1,3 +1,5 @@
+const { replace } = require('lodash');
+
 // require('./bootstrap');
 files = require('./fileIcons.js');
 hljs = require('highlight.js');
@@ -82,6 +84,7 @@ window.edit_file_tab_names = function(){
 
 window.select_file_tab = function(element){
     remove_file_tabs_selection();
+    element.classList.add('current_file_tab');
     element.classList.add('bg-slate-800');
     element.classList.remove('bg-slate-700');
     element.classList.add('border-b-2');
@@ -126,82 +129,100 @@ window.add_file_icons_to_files = function(){
 window.remove_file_tabs_selection = function(){
     var file_tabs = document.getElementsByClassName('file_tab');
     for(let i = 0; i<file_tabs.length; i++){
+        file_tabs[i].classList.remove('current_file_tab');
         file_tabs[i].classList.remove('bg-slate-800');
         file_tabs[i].classList.add('bg-slate-700');
         file_tabs[i].classList.remove('border-b-2');
         file_tabs[i].classList.remove('border-b-organge-500');
     }
 }
+
+window.add_file_action = function(){
+    tab_file_orders++;
+    let file_tab = document.querySelector('.file_tab');
+    let file_tab_clone = file_tab.cloneNode(true);
+    file_tab_clone.setAttribute('data-file-order',tab_file_orders);
+    file_tab_clone.classList.remove('border-b-2');
+    file_tab.parentElement.append(file_tab_clone);
+    file_tab_clone.querySelector('img').remove();
+    file_tab_clone.querySelector('.file_name').classList.add('opacity-0')
+    file_tab_clone.querySelector('.file_name').innerHTML = "Enter file name";
+    file_tab_clone.querySelector('input').value="";
+    file_tab_clone.querySelector('input').placeholder="Enter name";
+    file_tab_clone.querySelector('input').classList.remove('hidden');
+    file_tab_clone.querySelector('input').focus();
+    let remove_file_button = document.createElement('div');
+    remove_file_button.setAttribute('class','remove_file text-slate-500 hover:text-slate-300');
+    remove_file_button.innerHTML = "<i class='las la-times ml-2'></i>";
+    file_tab_clone.appendChild(remove_file_button);
+    edit_file_tab_names();
+}
 window.add_file_button = function(){
     var add_file_button = document.getElementById('add_file_button');
     add_file_button.addEventListener('click',function(){
-        tab_file_orders++;
-        let file_tab = document.querySelector('.file_tab');
-        let file_tab_clone = file_tab.cloneNode(true);
-        file_tab_clone.setAttribute('data-file-order',tab_file_orders);
-        file_tab_clone.classList.remove('border-b-2');
-        file_tab.parentElement.append(file_tab_clone);
-        file_tab_clone.querySelector('img').remove();
-        file_tab_clone.querySelector('.file_name').classList.add('opacity-0')
-        file_tab_clone.querySelector('.file_name').innerHTML = "Enter file name";
-        file_tab_clone.querySelector('input').value="";
-        file_tab_clone.querySelector('input').placeholder="Enter name";
-        file_tab_clone.querySelector('input').classList.remove('hidden');
-        file_tab_clone.querySelector('input').focus();
-        let remove_file_button = document.createElement('div');
-        remove_file_button.setAttribute('class','remove_file text-slate-500 hover:text-slate-300');
-        remove_file_button.innerHTML = "<i class='las la-times ml-2'></i>";
-        file_tab_clone.appendChild(remove_file_button);
-        edit_file_tab_names();
-
+        add_file_action();
     });
 }
 window.edit_ide_editor_mode = function(lang,file_order){
-    ace_editor = ace.edit("editor-"+file_order);
+    var a_ace_editor = ace.edit("editor-"+file_order);
     if(lang == 'html')
-        ace_editor.session.setMode("ace/mode/html");
+        a_ace_editor.session.setMode("ace/mode/html");
     else if(lang == 'cpp' || lang == "c")
-        ace_editor.session.setMode("ace/mode/c_cpp");
+        a_ace_editor.session.setMode("ace/mode/c_cpp");
     else if(lang == 'java')
-        ace_editor.session.setMode("ace/mode/java");
+        a_ace_editor.session.setMode("ace/mode/java");
     else if(lang == 'php')
-        ace_editor.session.setMode("ace/mode/php");
+        a_ace_editor.session.setMode("ace/mode/php");
     else if(lang == 'css')
-        ace_editor.session.setMode("ace/mode/css");
+        a_ace_editor.session.setMode("ace/mode/css");
     else if(lang == 'python')
-        ace_editor.session.setMode("ace/mode/python");
+        a_ace_editor.session.setMode("ace/mode/python");
 
     else
-        ace_editor.session.setMode("");
+        a_ace_editor.session.setMode("");
 }
 window.select_ide_editor = function(file_order){
-    var ace_editors = document.getElementsByClassName('ace_file_editor');
-    for(let i = 0; i < ace_editors.length; i ++ ){
-        ace_editors[i].classList.add('hidden');
+    var a_ace_editors = document.getElementsByClassName('ace_file_editor');
+    var parent_editor = document.getElementById('editor');
+    for(let i = 0; i < a_ace_editors.length; i ++ ){
+        a_ace_editors[i].style.fontSize = parent_editor.style.fontSize;
+        a_ace_editors[i].classList.add('hidden');
     }
     if(document.getElementById('editor-'+file_order))
     document.getElementById('editor-'+file_order).classList.remove('hidden');
+}
+
+window.get_ide_editors_values = function(){
+    var a_ace_editors = document.getElementsByClassName('ace_file_editor');
+    var editor_values= [];
+    for(let i = 0; i < a_ace_editors.length; i ++ ){
+        let editor_id = a_ace_editors[i].getAttribute('id');
+        var a_ace_editor = ace.edit(editor_id);
+        editor_values.push([document.querySelector("div[data-file-order='"+editor_id.split('-')[1]+"']").innerText,a_ace_editor.getSession().getValue()]);
+    }
+    return editor_values;
 }
 window.remove_ide_editor = function(file_order){
     document.getElementById('editor-'+file_order).remove();
 }
 window.add_ide_editor = function(lang,file_order){
-    var ace_editors = document.getElementsByClassName('ace_file_editor');
-    for(let i = 0; i < ace_editors.length; i ++ ){
-        ace_editors[i].classList.add('hidden');
+    var a_ace_editors = document.getElementsByClassName('ace_file_editor');
+    for(let i = 0; i < a_ace_editors.length; i ++ ){
+        a_ace_editors[i].classList.add('hidden');
     }
     var new_editor = document.createElement('div');
     new_editor.setAttribute('class','ace_file_editor w-full h-full');
     new_editor.setAttribute('id','editor-'+file_order);
     document.getElementById('editor').append(new_editor);
-    ace_editor = ace.edit("editor-"+file_order);
-    ace_editor.setTheme("ace/theme/monokai");
+    a_ace_editor = ace.edit("editor-"+file_order);
+    a_ace_editor.setTheme("ace/theme/monokai");
     edit_ide_editor_mode(lang,file_order);
-    ace_editor.setOptions({
+    a_ace_editor.setOptions({
         enableBasicAutocompletion: true,
         enableSnippets: true,
         enableLiveAutocompletion: true
     });
+    a_ace_editor.focus();
 }
 document.addEventListener("DOMContentLoaded", function(){
     var modal_close = document.getElementsByClassName('close_this_modal');
@@ -227,4 +248,62 @@ document.addEventListener("DOMContentLoaded", function(){
     add_file_button();
 });
 
+window.keyboardListener = [];
+// Online IDE Keyboard shortcuts
+window.editor_keyboard_shortcuts = function(e,element,event_type){
 
+    if(event_type == 0 && e.keyCode != 18){ //Key Down
+        keyboardListener.push(e.keyCode);
+    }else{
+        keyboardListener = keyboardListener.filter(x => x !== e.keyCode);
+        return;
+    }
+    e = e || window.event;
+    var code = e.keyCode;
+    console.log(keyboardListener[0], keyboardListener[1]);
+    if(keyboardListener[0] == 17 && keyboardListener[1] == 187){
+        e.preventDefault();
+        if(parseInt(replace(element.style.fontSize,"px","")) > 30){
+            return;
+        }
+        if(element.style.fontSize.length == 0){
+            element.style.fontSize="18px";
+        }
+        element.style.fontSize = (parseInt(replace(element.style.fontSize,"px",""))+1) + "px";
+
+         var a_ace_editors = document.getElementsByClassName('ace_file_editor');
+        for(let i = 0; i < a_ace_editors.length; i ++ ){
+            a_ace_editors[i].style.fontSize = element.style.fontSize;
+        }
+        keyboardListener = [17];
+    }
+    else if(keyboardListener[0] == 17 && keyboardListener[1] == 189){
+        e.preventDefault();
+        if(parseInt(replace(element.style.fontSize,"px","")) < 5){
+            return;
+        }
+        if(element.style.fontSize.length == 0){
+            element.style.fontSize="18px";
+        }
+        element.style.fontSize = (parseInt(replace(element.style.fontSize,"px",""))-1) + "px";
+        var a_ace_editors = document.getElementsByClassName('ace_file_editor');
+        for(let i = 0; i < a_ace_editors.length; i ++ ){
+            a_ace_editors[i].style.fontSize = element.style.fontSize;
+        }
+        keyboardListener = [17];
+    }
+    else if(keyboardListener[0] == 17 && keyboardListener[1] == 79 ){
+        e.preventDefault();
+        console.log('x');
+        add_file_action();
+        keyboardListener = [];
+    }else if(keyboardListener[0] == 17 && keyboardListener[1] == 81 ){
+        e.preventDefault();
+        let current_tab = document.querySelector('.current_file_tab');
+        if(current_tab.querySelector('.remove_file '))
+            current_tab.querySelector('.remove_file ').dispatchEvent( new MouseEvent( 'click' ) );
+        keyboardListener = [];
+    }
+    
+    console.log(code, element);
+}
