@@ -31,13 +31,23 @@ users
                 >
                   Assignments
                 </h2>
-                <a
+                 <div class="flex">
+                   <a
+                href="{{ route('dashboard.plagiarism_checker.question',$question_id) }}"
+                    class="mr-4 flex items-center justify-between px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-600 border border-transparent rounded-lg active:bg-green-600 hover:bg-green-700 focus:outline-none focus:shadow-outline-green"
+                >
+                    Check Plagiarism Using SCOSS
+                    <i class="ml-2 fas fa-play text-xl"></i>
+                </a>
+                 <a
                 href="{{ route('dashboard.users.instructors.run_plag',['zipPath'=>'1','type'=>'cpp','question_id'=>$question_id]) }}" 
                     class="flex items-center justify-between px-2 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange"
                 >
                     Check Plagiarism
                     <i class="ml-2 fas fa-play text-xl"></i>
                 </a>
+                 </div>
+               
             </div>
             
             <div class="w-full overflow-hidden rounded-lg shadow-xs">
@@ -67,7 +77,7 @@ users
                           <!-- Avatar with inset shadow -->
                           </div>
                           <div>
-                            <p class="font-semibold">{{ $submission->name }}</p>
+                            <p class="font-semibold">{{ $submission->user->name }}</p>
                           </div>
                         </div>
                       </td>
@@ -83,6 +93,15 @@ users
                       <td class="px-4 py-3" id="plagValue">
                         @if ($submission->plagiarism != null)
                           <a href="{{ route('dashboard.users.instructors.report',['report'=>$submission->plagiarism]) }}" class=" font-thin text-green-800">View Report</a>
+                        @elseif($submission->plagiarism_report->first())
+                        @php
+                          $report = unserialize($submission->plagiarism_report->first()->score);
+                          $count_operator = $report->count_operator * 100;
+                          $set_operator = $report->set_operator * 100;
+                          $hash_operator = $report->hash_operator * 100;
+                          $token_based = $report->token_based * 100;
+                        @endphp
+                        <a href="{{ route('dashboard.plagiarism_checker.compare',$submission->plagiarism_report->first()->id) }}">{{ $count_operator."%" }}</a>
                         @else
                           N/A
                         @endif

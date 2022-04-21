@@ -101,7 +101,7 @@ class OnlineIDEController extends Controller
         foreach($files as $file){
             unlink($file);
         }
-        rmdir($directory_name);
+        // rmdir($directory_name);
         if($output == "0" || $output == "Segmentation fault (core dumped)\n"){
             $output .= "<br><div class='text-yellow-500'>*You can't enter an input here. To test inputs add it to your code or test it through \"Test\" Button</div>";
         }

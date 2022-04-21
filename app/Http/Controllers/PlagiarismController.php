@@ -3,6 +3,8 @@
 
 namespace App\Http\Controllers;
 session_start();
+
+use App\Models\PlagiarismReport;
 use Illuminate\Http\Request;
 use File;
 use ZipArchive;
@@ -10,6 +12,7 @@ use Illuminate\Filesystem\Filesystem;
 use App\Models\Questions;
 use App\Models\Submission;
 use Illuminate\Support\Facades\DB;
+
 class PlagiarismController extends Controller
 {
     // ? To Do
@@ -138,5 +141,73 @@ class PlagiarismController extends Controller
     public function report($report) {
         $report = $report;
         return view('admin.report',['report'=>$report]);
+    }
+
+    public function check_submissions_plagiarism($id){
+        $question = Questions::with(['assignment','programming_language'])->findOrFail($id);
+        $lang = $question->programming_language->acronym;
+        if($lang == "c++"){
+            $lang = "cpp";
+        }
+        $lang = strtolower($lang);
+
+        $directory = public_path('assignment_submissions/'.$question->assignment->name.'/'.$question->name);
+        $python = env('PYTHON_EXE_PATH');
+        $plagiarism_checker = env('SCOSS_PLAGIARISM_CHECKER');
+        $results = shell_exec($python." ". $plagiarism_checker. " -l $lang -p $directory 2>&1");
+        $results = json_decode($results);
+        foreach($results as $result){
+            $source1 = $result->source1;
+            $source2 = $result->source2;
+            $source1 = str_replace(public_path(),'',$source1);
+            $source2 = str_replace(public_path(), '', $source2);
+            $source1 = str_replace('\\', '/', $source1);
+            $source2 = str_replace('\\', '/', $source2);
+            $submission1 = Submission::where('submitted_code',$source1)->first();
+            $submission2 = Submission::where('submitted_code', $source2)->first();
+            if($submission1){
+                $check_plagiarism_report_exists = PlagiarismReport::where('source_1',$source1)->where('source_2',$source2)->first();
+                if(!$check_plagiarism_report_exists){
+                    $plagiarism_report = new PlagiarismReport();
+                    $plagiarism_report->submission_id = $submission1->id;
+                    $plagiarism_report->question_id = $question->id;
+                    $plagiarism_report->report = "";
+                    $plagiarism_report->source_1 = $source1;
+                    $plagiarism_report->source_2 = $source2;
+                    $plagiarism_report->score = serialize($result->scores);
+                    $plagiarism_report->save();
+                }
+            }
+            if ($submission2) {
+                $check_plagiarism_report_exists = PlagiarismReport::where('source_1', $source2)->where('source_2', $source1)->first();
+                if (!$check_plagiarism_report_exists) {
+                    $plagiarism_report = new PlagiarismReport();
+                    $plagiarism_report->submission_id = $submission2->id;
+                    $plagiarism_report->question_id = $question->id;
+                    $plagiarism_report->report = "";
+                    $plagiarism_report->source_1 = $source2;
+                    $plagiarism_report->source_2 = $source1;
+                    $plagiarism_report->score = serialize($result->scores);
+                    $plagiarism_report->save();
+                }
+            }
+        }
+        return redirect()->back()->with('success',"Plagiarism reports generated");
+    }
+
+    public function compare_files($id){
+        $plagiarism_report = PlagiarismReport::with('question.programming_language')->findOrFail($id);
+        $source1 = public_path($plagiarism_report->source_1);
+        $source2 = public_path($plagiarism_report->source_2);
+        $lang = $plagiarism_report->question->programming_language->acronym;
+        $lang = strtolower($lang);
+        if($lang == "c++"){
+            $lang = "cpp";
+        }
+        $python = env('PYTHON_EXE_PATH');
+        $compare_files = env("FILES_COMPARER");
+        $result = shell_exec("$python $compare_files -l \"$lang\" -f \"$source1\" -s \"$source2\" 2>&1");
+        $data = json_decode($result);
+        return view('instructor.compare-code',["data"=>$data,'s1'=> $plagiarism_report->source_1,'s2'=> $plagiarism_report->source_2,'scores'=> $plagiarism_report->score]);
     }
 }

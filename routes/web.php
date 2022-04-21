@@ -115,6 +115,10 @@ Route::middleware('auth')->group(function (){
         Route::prefix('/code_searcher')->as('code_searcher.')->group(function () {
             Route::get('/search', [QuestionController::class, "fetch_external_plagiarism_files"])->name('search');
         });
+        Route::prefix('/plagiarism-checker')->as('plagiarism_checker.')->group(function(){
+            Route::get('/question/{id}',[PlagiarismController::class,'check_submissions_plagiarism'])->name('question');
+            Route::get('/compare/report/{id}',[PlagiarismController::class, 'compare_files'])->name('compare');
+        });
         // Admin routes
         Route::prefix('/courses')->as('courses.')->group(function () {
             Route::get('/', [CourseController::class, "dashboard_view"])->name('view');

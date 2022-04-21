@@ -107,13 +107,8 @@ class UserController extends Controller
         // dd($assignment_id);
         $users = User::role('instructor')->paginate(15);
 
-        $submissions = DB::table('submissions')
-                        ->where('submissions.question_id', $question_id)
-                        ->leftJoin('users', 'submissions.user_id', '=', 'users.id')
-                        ->select('submissions.*', 'users.name')
-                        // ->distinct('user_id')
-                        ->get();
-
+    
+        $submissions = Submission::where('question_id',$question_id)->with(['user','plagiarism_report'])->get();
                         // dd($submissions);
         return view('admin.view-question-submissions',['users'=>$users,'submissions'=>$submissions,'question_id'=>$question_id]);
     }
