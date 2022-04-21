@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use RuntimeException;
 use Illuminate\Support\Facades\DB;
 use stdClass;
+use File;
 
 class QuestionController extends Controller
 {
@@ -39,6 +40,7 @@ class QuestionController extends Controller
             'input' => "nullable|array",
             'output' => "nullable|array",
             'programming_language' => "required|exists:programming_languages,id",
+            'main_file' => "nullable",
             'base_skeleton' => "nullable|string",
         ]);
         $total_grading_criteria=0;
@@ -54,6 +56,19 @@ class QuestionController extends Controller
         $question->description = $request->description;
         $question->grade = $request->grade;
         $question->programming_language_id = $request->programming_language;
+        if($request->hasFile('main_file')){
+            $filenameWithExt = $request->file('main_file')->getClientOriginalName();
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            $extension = $request->file('main_file')->getClientOriginalExtension();
+            $fileNameToStore = $filename . '.' . $extension;
+            $path = $request->file('main_file')->storeAs('public/file', $fileNameToStore);
+            $path = public_path('main_files/'. time());
+            $request->file('main_file')->move($path , $fileNameToStore);
+            $NameToStore = $path.'/'.$fileNameToStore;
+            $NameToStore = str_replace(public_path(), '', $NameToStore);
+            $NameToStore = str_replace('\main_files', '', $NameToStore);
+            $question->main_file = $NameToStore;
+        }
         if(strlen($request->base_skeleton) > 5 ){
             $question->skeleton = $request->base_skeleton;
         }
@@ -134,6 +149,16 @@ class QuestionController extends Controller
             $fileNameToStore = $file->file('submission')->getClientOriginalName();
             $assignment_submission_path = "/assignment_submissions/{$question->assignment->name}/{$question->name}/$user_name/$submission_number";
             $file->submission->move(public_path($assignment_submission_path), $fileNameToStore);
+
+            if($question->main_file != null) {
+                $main_file = $question->main_file;
+                $main_file = public_path('main_files'.$main_file);
+                // $main_file = str_replace("\\","/", $main_file);
+                $main_to_file_path = public_path($assignment_submission_path)."";
+                $file = basename($main_file); 
+                // dd($main_file);
+                File::copy($main_file, public_path($assignment_submission_path)."/".$file);
+            }
             if ($extension != "zip") {
                 $submission->submitted_code = $assignment_submission_path . '/' . $fileNameToStore;
                 $submission->question_id = $question->id;
@@ -269,13 +294,39 @@ class QuestionController extends Controller
             return $output;
         }else if($language == 'java'){
             if($ext == ".zip") {
+                if($question->main_file != null) {
+
+                } else {
+                    
+                }
                 $output = $this->compile_zip_file($language,$file_path,$file_directory);
                 return $output;
             } else {
-                $java_executable = env('JAVA_COMPILER_PATH');
-                $output = shell_exec("$java_executable \"". $file_path . "\" 2>&1 ");
-                $this->give_compiling_grade_to_submission($question, $submission, $output);
-                return $output;
+                if($question->main_file != null) {
+                    $java_executable = env('JAVA_COMPILER_PATH');
+                    $main_file = $question->main_file;
+                    $main_file = public_path('main_files'.$main_file);
+                    $main_file_name = basename($main_file); 
+
+                    $main_file_path = dirname($main_file);
+                    $file_path_path = dirname($file_path);
+
+                    $main_file = $file_path_path."/".$main_file_name;
+                    $main_file = str_replace("\\", "/", $main_file);
+                    // dd($main_file);
+                    $output = shell_exec("javac ".$main_file);
+                    
+                    // $output = shell_exec("$java_executable \"". $file_path . "\" 2>&1 ");
+                    // dd($output);
+                    $this->give_compiling_grade_to_submission($question, $submission, $output);
+                    // dd($output);
+                    return $output;
+                } else {
+                    $java_executable = env('JAVA_COMPILER_PATH');
+                    $output = shell_exec("$java_executable \"". $file_path . "\" 2>&1 ");
+                    $this->give_compiling_grade_to_submission($question, $submission, $output);
+                    return $output;
+                }
             }
         }else if($language == "PHP"){ //PHP code isn't compiled but at least we can check for syntax errors here
             $output = shell_exec("php -l \"" . $file_path . "\" 2>&1");
@@ -334,13 +385,13 @@ class QuestionController extends Controller
                 for($i=0;$i<count($filesInside);$i++) {
                     $ext = substr($filesInside[$i], -3);
                     if($ext == "zip") {
-                        $isZip = true;
+                        $isZip = false;
                     }
                 }
 
                 if($isZip) {
                     $java_exe = env('JAVA_EXE_PATH');
-                    $commandd = "cd \"".public_path($file_directory)."\" && $java_exe " . "main.java"." < \"" . $test_case_file . "\"";
+                    $commandd = "cd \"".public_path($file_directory)."\" && $java_exe " . "javaapp.java"." < \"" . $test_case_file . "\"";
                     $output = shell_exec($commandd);
                 } else {
                     $java_exe = env('JAVA_EXE_PATH');
@@ -612,6 +663,7 @@ class QuestionController extends Controller
        
 
         $submission->user_id = Auth::user()->id;
+        $submission->is_blocked = false;
         $submission->save();
         
         return redirect()->back()->with('question_'.$request->question_id,"Answer Submitted for {$question->name}");

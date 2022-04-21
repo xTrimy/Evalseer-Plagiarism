@@ -179,7 +179,7 @@ Add Question to {{ $assignment->name }}
 
               <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
-                <i class="las la-font text-xl"></i>
+                <i class="las la-language text-xl"></i>
                 Programming Language
                 </span>
                 <select name="programming_language"
@@ -198,9 +198,21 @@ Add Question to {{ $assignment->name }}
                   </optgroup>
                 </select>
               </label>
+              <label class="block text-sm mt-2">
+                <span class="text-gray-700 dark:text-gray-400">
+                <i class="las la-file text-xl"></i>
+                Main File (Optional)
+                </span>
+                <input
+                    accept=""
+                    type="file"
+                    name="main_file"
+                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                />
+              </label>
               <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
-                  <i class="las la-font text-xl"></i>
+                  <i class="las la-code text-xl"></i>
                   Base Skeleton
                 </span>
                 <input type="hidden" id="base_skeleton_input" name="base_skeleton">
