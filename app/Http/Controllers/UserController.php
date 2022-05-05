@@ -12,6 +12,7 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Filesystem\Filesystem;
+use App\Models\Questions;
 use File;
 
 class UserController extends Controller
@@ -279,14 +280,35 @@ class UserController extends Controller
         $users = User::role('student')->get();
         $users = count($users);
 
-        $assignments = Assignments::get();
-        $assignments = count($assignments);
+        $assignmentss = Assignments::get();
+        $assignments = count($assignmentss);
 
-        $submissions = Submission::get();
-        $submissions = count($submissions);
+        $submissionss = Submission::get();
+        $submissions = count($submissionss);
 
+        $cs104_assignments = Assignments::where('course_id', '1')->get();
+        $oop_assignments = Assignments::where('course_id', '2')->get();
 
-        return view('instructor.index',["users"=>$users,"assignments"=>$assignments,"submissions"=>$submissions]);
+        $cs104 = 0;
+        $csc210 = 0;
+
+        foreach ($submissionss as $submission) {
+
+            $question = Questions::find($submission->question_id);
+            foreach ($cs104_assignments as $assignment) {
+                if($question->assignment_id == $assignment->id) {
+                    $cs104++;
+                }
+            }
+
+            foreach ($oop_assignments as $assignment) {
+                if($question->assignment_id == $assignment->id) {
+                    $csc210++;
+                }
+            }
+        }
+
+        return view('instructor.index',["users"=>$users,"assignments"=>$assignments,"submissions"=>$submissions,"csc104"=>$cs104,"csc210"=>$csc210]);
     }
 
     public function check_for_badge($user_id) {
