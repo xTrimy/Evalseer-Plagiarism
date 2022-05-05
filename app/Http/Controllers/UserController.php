@@ -72,7 +72,7 @@ class UserController extends Controller
 
     public function dashboard_view_students(){
         // $users = User::role('student')->paginate(15);
-        $users = User::role('student')->paginate(15);
+        $users = User::role('student')->sortable()->paginate(15);
         return $this->dashboard_users($users,"Student");
     }
 

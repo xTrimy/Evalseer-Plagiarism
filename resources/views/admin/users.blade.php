@@ -7,7 +7,17 @@ users
 @endsection
 @section('content')
         <main class="h-full pb-16 overflow-y-auto">
+          
           <div class="container grid px-6 mx-auto">
+            <div class=" mt-8 ">
+              <input
+              id="search_input"
+              class="w-full shadow pl-8 py-3 pr-2 text-sm text-gray-700 placeholder-gray-600 bg-gray-100 border-0 rounded-md dark:placeholder-gray-500 dark:focus:shadow-outline-gray dark:focus:placeholder-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:placeholder-gray-500 focus:bg-white focus:border-orange-300 focus:outline-none focus:shadow-outline-orange form-input"
+              type="text"
+              placeholder="Search here"
+              aria-label="Search"
+              />
+            </div>
             <div class="flex justify-between mt-8 items-center">
                 <h2
                 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
@@ -33,11 +43,10 @@ users
                     <tr
                       class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
                     >
-
-                      <th class="px-4 py-3">Name</th>
+                      <th>@sortablelink('name', 'Name')</th>
                       <th class="px-4 py-3">Role</th>
-                      <th class="px-4 py-3">Username</th>
-                      <th class="px-4 py-3">Email</th>
+                      <th>@sortablelink('username', 'Username')</th>
+                      <th>@sortablelink('email', 'Email')</th>
                       <th class="px-4 py-3">University ID</th>
                       <th class="px-4 py-3">Reputation</th>
                       <th class="px-4 py-3">Actions</th>
