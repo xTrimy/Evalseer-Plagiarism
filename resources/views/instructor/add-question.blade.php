@@ -210,14 +210,32 @@ Add Question to {{ $assignment->name }}
                   class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                 />
               </label>
-              <label class="block text-sm">
+              
+              <div class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
                   <i class="las la-code text-xl"></i>
                   Base Skeleton
                 </span>
                 <input type="hidden" id="base_skeleton_input" name="base_skeleton">
-                <div  id="ace_editor" class="w-full h-64"></div>
-              </label>
+                <div class="w-full flex bg-slate-600">
+                <div class="flex overflow-x-auto">
+                    <div data-file-order="1" class="flex items-center relative file_tab py-2 px-4 cursor-pointer bg-slate-800 hover:bg-slate-800 border-b-2 text-white border-b-orange-500">
+                        <div class="icon w-6 h-6 mr-2"></div>
+                        <div class="file_name">Main.php</div>
+                        <input type="text" class="border-0 hidden absolute bg-transparent w-1/2 ml-8 p-0">
+                    </div>
+                </div>
+                <div id="add_file_button" class="current_file_tab flex file_tab py-4 px-4 bg-slate-700 hover:bg-green-800 cursor-pointer  text-white">
+                    <i class="las la-plus"></i>
+                </div>
+              </div>
+              <div class="w-full h-56">
+                <div onkeydown="editor_keyboard_shortcuts(event,this,0)" onkeyup="editor_keyboard_shortcuts(event,this,1)" id="editor" class="w-full h-full">
+                    <div id="editor-1" class="current_editor ace_file_editor w-full h-full"></div>
+                    <input type="hidden" name="base_skeleton_file[]" id="editor-1">
+                </div>              
+              </div>
+              </div>
               <p class="text-gray-600 mt-4 dark:text-gray-400">Check for plagiarism in external sites?</p>
               <button type="button" onclick="search_external_sources(this)"
               class="group table items-center mb-4 justify-between relative overflow-hidden disabled:cursor-not-allowed px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-600 border border-transparent rounded-lg active:bg-green-600 hover:bg-green-700 focus:outline-none focus:shadow-outline-green"
@@ -278,14 +296,25 @@ Add Question to {{ $assignment->name }}
             $('#summernote').summernote();
           });
         </script>
+   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
    <script src="{{ asset('ace/build/src/ace.js') }}" type="text/javascript" charset="utf-8"></script>
-      <script>
-        var ace_editor;
+   <script src="{{ asset('ace/build/src/ext-language_tools.js') }}" type="text/javascript" charset="utf-8"></script>
+   <script src="{{ asset('ace/build/src/ext-error_marker.js') }}" type="text/javascript" charset="utf-8"></script>      <script>
+         var ace_editor;
        window.onload=function(){
-             ace_editor = ace.edit("ace_editor");
+             ace_editor = ace.edit("editor-1");
             ace_editor.setTheme("ace/theme/monokai");
-            ace_editor.session.setMode("ace/mode/c_cpp");
-            ace_editor.session.setValue(`{{ old('base_skeleton') }}`);
+            ace_editor.setOptions({
+                enableBasicAutocompletion: true,
+                enableSnippets: true,
+                enableLiveAutocompletion: true
+            });
+            // ace_editor.getSession().setAnnotations([{
+            //     row: 1,
+            //     column: 0,
+            //     text: "Error Message", 
+            //     type: "warning" //This would give a red x on the gutter
+            // }]);
        }
        var submit_button = document.getElementById('submit_button');
        let base_skeleton_input = document.getElementById('base_skeleton_input');
@@ -316,7 +345,7 @@ Add Question to {{ $assignment->name }}
               pre.classList.add('bg-gray-700');
               pre.classList.add('text-white');
               pre.classList.add('mb-4');
-              pre.innerHTML = response[i].replace('\n','<br>');
+              pre.innerHTML = response[i][1].replace('\n','<br>');
               document.getElementById('external_source_codes_container').appendChild(pre);
             }
           });
