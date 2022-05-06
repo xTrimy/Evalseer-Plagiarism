@@ -3,7 +3,7 @@
 add-question
 @endsection
 @section('title')
-Add Question to {{ $assignment->name }}
+Add Question xto {{ $assignment->name }}
 @endsection
 @section('content')
 
