@@ -11,7 +11,8 @@ users
           <div class="container grid px-6 mx-auto">
             <div class=" mt-8 ">
               <input
-              id="search_input"
+              id="search"
+              name="search"
               class="w-full shadow pl-8 py-3 pr-2 text-sm text-gray-700 placeholder-gray-600 bg-gray-100 border-0 rounded-md dark:placeholder-gray-500 dark:focus:shadow-outline-gray dark:focus:placeholder-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:placeholder-gray-500 focus:bg-white focus:border-orange-300 focus:outline-none focus:shadow-outline-orange form-input"
               type="text"
               placeholder="Search here"
@@ -211,6 +212,27 @@ users
             </div>
           </div>
         </main>
+        <script type="text/javascript">
+        $('#search').on('keyup',function(){
+        $value=$(this).val();
+        $.ajax({
+        type : 'get',
+        url : '{{URL::to('dashboard/users/students/search')}}',
+        data:{'search':$value},
+        success:function(data){
+        $('tbody').html(data);
+        $('tbody').addClass("bg-white");
+        $('tbody').addClass("divide-y");
+        $('tbody').addClass("dark:divide-gray-700");
+        $('tbody').addClass("dark:bg-gray-800");
+        console.log(data);
+        }
+        });
+        })
+        </script>
+        <script type="text/javascript">
+        $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
+        </script>
         <script type="text/javascript">
           function openModal(modalId) {
             modal = document.getElementById(modalId)
