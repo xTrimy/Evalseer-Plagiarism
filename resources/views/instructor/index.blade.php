@@ -79,7 +79,7 @@
             label: "Course Submissions",
             backgroundColor: "hsl(252, 82.9%, 67.8%)",
             borderColor: "hsl(252, 82.9%, 67.8%)",
-            data: [0, {{ $csc104 }}, {{ $csc210 }},],
+            data: [{{ $swe211 }}, {{ $swe212 }}, {{ $se305 }},],
           },
         ],
       };

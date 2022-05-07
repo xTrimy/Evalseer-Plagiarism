@@ -286,28 +286,36 @@ class UserController extends Controller
         $submissionss = Submission::get();
         $submissions = count($submissionss);
 
-        $cs104_assignments = Assignments::where('course_id', '1')->get();
-        $oop_assignments = Assignments::where('course_id', '2')->get();
+        $swe211_assignment = Assignments::where('course_id', '1')->get();
+        $swe212_assignment = Assignments::where('course_id', '2')->get();
+        $se305_assignment = Assignments::where('course_id', '3')->get();
 
-        $cs104 = 0;
-        $csc210 = 0;
+        $swe211 = 0;
+        $swe212 = 0;
+        $se305 = 0;
 
         foreach ($submissionss as $submission) {
             $question = Questions::find($submission->question_id);
-            foreach ($cs104_assignments as $assignment) {
+            foreach ($swe211_assignment as $assignment) {
                 if($question->assignment_id == $assignment->id) {
-                    $cs104++;
+                    $swe211++;
                 }
             }
 
-            foreach ($oop_assignments as $assignment) {
+            foreach ($swe212_assignment as $assignment) {
                 if($question->assignment_id == $assignment->id) {
-                    $csc210++;
+                    $swe212++;
+                }
+            }
+
+            foreach ($se305_assignment as $assignment) {
+                if($question->assignment_id == $assignment->id) {
+                    $se305++;
                 }
             }
         }
 
-        return view('instructor.index',["users"=>$users,"assignments"=>$assignments,"submissions"=>$submissions,"csc104"=>$cs104,"csc210"=>$csc210]);
+        return view('instructor.index',["users"=>$users,"assignments"=>$assignments,"submissions"=>$submissions,"swe211"=>$swe211,"swe212"=>$swe212,"se305"=>$se305]);
     }
 
     public function search (Request $request) {
