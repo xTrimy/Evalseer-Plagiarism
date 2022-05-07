@@ -140,6 +140,7 @@ Route::middleware('auth')->group(function (){
                 Route::get('/enroll', [CourseController::class, "enroll_user"])->name('enroll');
                 Route::post('/enroll', [CourseController::class, "enroll_user_store"]);
 
+                Route:: get('/search', [UserController::class, "search"])->name('search');
 
                 Route::get('/assign-to-course/{user_id}/{course_id}', [CourseController::class, "assign_to_course"])->name('assign-to-course');
                 Route::get('/remove-from-course/{user_id}/{course_id}', [CourseController::class, "remove_from_course"])->name('remove-from-course');
