@@ -102,8 +102,6 @@ class UserController extends Controller
         return view('admin.view-assignments-questions',['users'=>$users,'questions'=>$questions]);
     }
 
-    
-
     public function view_question_submission($question_id) {
         // dd($assignment_id);
         $users = User::role('instructor')->paginate(15);
@@ -115,8 +113,32 @@ class UserController extends Controller
                         // ->distinct('user_id')
                         ->get();
 
+        $submissions_grades = DB::table('submissions')
+                        ->where('submissions.question_id', $question_id)
+                        ->select('submissions.total_grade', 'submissions.id')
+                        ->get();
+
+
+        $data = [];
+ 
+        foreach($submissions_grades as $row) {
+            // dd($row);
+            $data['label'][] = $row->id;
+            $data['data'][] = (int) $row->total_grade;
+        }
+    
+        $data['chart_data'] = json_encode($data);
+
                         // dd($submissions);
-        return view('admin.view-question-submissions',['users'=>$users,'submissions'=>$submissions,'question_id'=>$question_id]);
+        return view('admin.view-question-submissions',['users'=>$users,'submissions'=>$submissions,'question_id'=>$question_id,'data'=>$data]);
+    }
+
+    public function all_courses() {
+        $user = Auth::user();
+
+        $user_courses = $user->courses;
+
+        return view('all-courses',['courses'=>Course::all(),'user_courses'=>$user_courses]);
     }
 
     public function view_submission($submission_id) {
