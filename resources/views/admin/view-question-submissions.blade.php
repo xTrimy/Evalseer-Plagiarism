@@ -20,16 +20,20 @@ users
                 aria-label="Search"
                 />
               </div>
+              <div class="shadow-lg rounded-lg overflow-hidden">
+                <canvas class="p-3 h-full" id="chartBar"></canvas>
+              </div>
               @if(Session::has('success'))
               <div class="flex items-center justify-between px-4 p-2 mb-8 text-sm font-semibold text-green-600 bg-green-100 rounded-lg focus:outline-none focus:shadow-outline-orange">
                 <div class="flex items-center"> <i class="fas fa-check mr-2"></i> <span>{{ Session::get('success') }}</span> </div>
               </div> @endif
+
             <div class="flex justify-between mt-8 items-center">
                 
                 <h2
                 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
                 >
-                  Assignments
+                  Question Submissions
                 </h2>
                 <a
                 href="{{ route('dashboard.users.instructors.run_plag',['zipPath'=>'1','type'=>'cpp','question_id'=>$question_id]) }}" 
@@ -218,6 +222,8 @@ users
             modal.classList.add('hidden')
           }
 
+          
+
           // var content = document.getElementById('plagg').innerHTML;
 
           // var str = content; // your HTML string
@@ -229,6 +235,59 @@ users
           // var plagValue = document.getElementById('plagValue').innerHTML = doc.getElementById("rounded_percent").innerHTML;
 
           
+        </script>
+
+        <!-- Required chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <!-- Chart bar -->
+        <script>
+          var cData = JSON.parse(`<?php echo $data['chart_data']; ?>`);
+
+          const counts = {};
+
+          for (const num of cData.data) {
+            counts[num] = counts[num] ? counts[num] + 1 : 1;
+          }
+
+          const labelsBarChart = [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+          ];
+          const dataBarChart = {
+            labels: labelsBarChart,
+            datasets: [
+              {
+                label: "Students Scores",
+                backgroundColor: "hsl(252, 82.9%, 67.8%)",
+                borderColor: "hsl(252, 82.9%, 67.8%)",
+                data: counts,
+              },
+            ],
+          };
+
+          const configBarChart = {
+            type: "bar",
+            data: dataBarChart,
+            options: {
+              responsive: true,
+              grouped: true,
+            },
+          };
+
+          var chartBar = new Chart(
+            document.getElementById("chartBar"),
+            configBarChart
+          );
         </script>
 
 @endsection
