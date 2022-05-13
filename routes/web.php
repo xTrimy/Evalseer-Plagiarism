@@ -67,6 +67,8 @@ Route::middleware('auth')->group(function (){
     })->name('my-courses');
 
     Route::get('/badges', [BadgeController::class, "view"])->name('view_badges');
+
+    Route::get('/all-courses', [UserController::class, "all_courses"])->name('all_courses');
     
     Route::get('/logout', [UserController::class, "logout"])->name('logout');
 
