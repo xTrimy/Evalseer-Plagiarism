@@ -6,7 +6,32 @@ add-question
 Add Question to {{ $assignment->name }}
 @endsection
 @section('content')
+<div onclick="if(event.target == this){this.classList.add('hidden')}" id="external_search_popup" class="hidden fixed flex justify-center items-center py-8 px-2 md:px-4 lg:px-8 xl:px-12 top-0 left-0 w-full h-full bg-black z-50 backdrop-blur-sm" style="--tw-bg-opacity:0.5">
+  <div class="w-full relative max-h-full overflow-y-auto lg:w-2/3 py-8 px-4 bg-white rounded-md">
+    <div onclick="this.parentElement.parentElement.classList.add('hidden')" class=" absolute cursor-pointer top-4 right-4">
+      <i class="las la-times text-black text-xl"></i>
+    </div>
+    <h1 class="text-xl font-bold">Please enter search keywords  </h1>
+    <label class="mt-4 block">
+      Keyword
+      <input type="text" name="external_search_keyword" class="w-full rounded-md" placeholder="Binary Search" required>
+    </label>
+    <label class="mt-4 block">
+      Programming Language
+      <input type="text" name="external_search_language" class="w-full rounded-md" placeholder="C++" required>
+    </label>
+    <button type="button" onclick="search_external_sources(this)"
+      class="group table items-center mt-4 justify-between relative overflow-hidden disabled:cursor-not-allowed px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-600 border border-transparent rounded-lg active:bg-green-600 hover:bg-green-700 focus:outline-none focus:shadow-outline-green"
+      >
+      <div class="loading group-disabled:block hidden absolute top-0 left-0 w-full h-full bg-gray-700 ">
+          <div class="lds-ring small"><div></div><div></div><div></div><div></div></div>
+      </div>
+      Search For External Source Codes</button>
 
+      <div id="external_source_codes_container">
+      </div>
+  </div>
+</div>
 <main class="h-full pb-16 overflow-y-auto">
           <div class="container px-6 mx-auto grid">
             <h2
@@ -237,16 +262,14 @@ Add Question to {{ $assignment->name }}
               </div>
               </div>
               <p class="text-gray-600 mt-4 dark:text-gray-400">Check for plagiarism in external sites?</p>
-              <button type="button" onclick="search_external_sources(this)"
+              <button type="button" onclick="external_source_code_keyword_popup()"
               class="group table items-center mb-4 justify-between relative overflow-hidden disabled:cursor-not-allowed px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-600 border border-transparent rounded-lg active:bg-green-600 hover:bg-green-700 focus:outline-none focus:shadow-outline-green"
               >
               <div class="loading group-disabled:block hidden absolute top-0 left-0 w-full h-full bg-gray-700 ">
                   <div class="lds-ring small"><div></div><div></div><div></div><div></div></div>
               </div>
               Search For External Source Codes</button>
-              <div  id="external_source_codes_container">
-
-              </div>
+             
               <button id="submit_button" type="submit" class="table items-center mt-4 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange">
               Add
               <span class="ml-2" aria-hidden="true">
@@ -328,6 +351,10 @@ Add Question to {{ $assignment->name }}
       </script>
 
       <script>
+        var external_search_popup = document.getElementById('external_search_popup')
+        function external_source_code_keyword_popup(){
+          external_search_popup.classList.remove('hidden');
+        }
         function search_external_sources(element){
           element.disabled = true;
           $.ajax({
@@ -340,15 +367,67 @@ Add Question to {{ $assignment->name }}
               return;
             }
             let response = data["codes"];
+            document.getElementById('external_source_codes_container').innerHTML = "Please Select From Below Results: <br>";
             for(let i = 0; i<response.length; i++){
+              var div = document.createElement('div');
               var pre = document.createElement('pre');
-              pre.classList.add('bg-gray-700');
-              pre.classList.add('text-white');
-              pre.classList.add('mb-4');
+              div.classList.add('external_source_code_result');
+              div.classList.add('relative');
+              div.classList.add('p-4');
+              div.classList.add('rounded-lg');
+              div.classList.add('rounded-lg');
+              div.classList.add('border-2');
+              div.classList.add('cursor-pointer');
+              div.classList.add('hover:border-blue-500');
+              div.classList.add('border-transparent');
+              div.classList.add('mt-4');
+              pre.classList.add('bg-gray-200');
+              pre.classList.add('text-black');
               pre.innerHTML = response[i][1].replace('\n','<br>');
-              document.getElementById('external_source_codes_container').appendChild(pre);
+              div.appendChild(pre);
+              document.getElementById('external_source_codes_container').appendChild(div);
             }
+              external_source_code_results_handler();
+
           });
+        }
+
+        function external_source_code_results_handler(){
+          var results = document.querySelectorAll('.external_source_code_result');
+          for(let i = 0; i<results.length; i++){
+            console.log(results[i]);
+            results[i].addEventListener('click',function(){
+              console.log(i);
+            if(!results[i].hasAttribute('data-selected')){
+              results[i].setAttribute('data-selected',"false");
+            }
+            if(results[i].getAttribute('data-selected') == "false"){
+              results[i].classList.remove('border-transparent');
+              results[i].classList.add('border-blue-500');
+              var checkbox = document.createElement('div');
+              checkbox.classList.add('checkbox');
+              checkbox.classList.add('absolute');
+              checkbox.classList.add('p-2');
+              checkbox.classList.add('-top-2');
+              checkbox.classList.add('-right-2');
+              checkbox.classList.add('rounded-full');
+              checkbox.classList.add('flex');
+              checkbox.classList.add('justify-center');
+              checkbox.classList.add('items-center');
+              checkbox.classList.add('bg-blue-500');
+              checkbox.classList.add('text-white');
+              checkbox.innerHTML = "<i class='las la-check'></i>";
+              results[i].appendChild(checkbox);
+              results[i].setAttribute('data-selected',"true");
+            }else if(results[i].getAttribute('data-selected') == "true"){
+              results[i].classList.add('border-transparent');
+              results[i].classList.remove('border-blue-500');
+              results[i].querySelector('.checkbox').remove();
+              results[i].setAttribute('data-selected',false);
+            }
+            });
+            
+          }
         }
       </script>
 @endsection

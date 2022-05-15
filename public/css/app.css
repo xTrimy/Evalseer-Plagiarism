@@ -484,7 +484,7 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-transform: translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
-.divide-y > *, .border, .border-2, .border-0, .border-8, .border-b-2, .border-l, .border-t, .border-b, .border-r-4, .border-l-4, .border-l-2, .hover\:border-4, .md\:border-t-0, .md\:border-l {
+.divide-y > *, .border, .border-2, .border-0, .border-8, .border-b-2, .border-l, .border-t, .border-b, .border-r-4, .border-l-4, .border-l-2, .hover\:border-4, .hover\:border-2, .md\:border-t-0, .md\:border-l {
   --tw-border-opacity: 1;
   border-color: rgb(229 231 235 / var(--tw-border-opacity));
 }
@@ -507,7 +507,7 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-shadow-colored: 0 0 #0000;
 }
 
-.grayscale, .filter {
+.blur-lg, .grayscale, .filter {
   --tw-blur: var(--tw-empty,/*!*/ /*!*/);
   --tw-brightness: var(--tw-empty,/*!*/ /*!*/);
   --tw-contrast: var(--tw-empty,/*!*/ /*!*/);
@@ -518,6 +518,19 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-sepia: var(--tw-empty,/*!*/ /*!*/);
   --tw-drop-shadow: var(--tw-empty,/*!*/ /*!*/);
   --tw-filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.backdrop-blur-md, .backdrop-blur-sm {
+  --tw-backdrop-blur: var(--tw-empty,/*!*/ /*!*/);
+  --tw-backdrop-brightness: var(--tw-empty,/*!*/ /*!*/);
+  --tw-backdrop-contrast: var(--tw-empty,/*!*/ /*!*/);
+  --tw-backdrop-grayscale: var(--tw-empty,/*!*/ /*!*/);
+  --tw-backdrop-hue-rotate: var(--tw-empty,/*!*/ /*!*/);
+  --tw-backdrop-invert: var(--tw-empty,/*!*/ /*!*/);
+  --tw-backdrop-opacity: var(--tw-empty,/*!*/ /*!*/);
+  --tw-backdrop-saturate: var(--tw-empty,/*!*/ /*!*/);
+  --tw-backdrop-sepia: var(--tw-empty,/*!*/ /*!*/);
+  --tw-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
 }
 
 [type='text'],[type='email'],[type='url'],[type='password'],[type='number'],[type='date'],[type='datetime-local'],[type='month'],[type='search'],[type='tel'],[type='time'],[type='week'],[multiple],textarea,select {
@@ -785,6 +798,21 @@ select {
 .right-4 {
   right: 1rem;
 }
+.top-4 {
+  top: 1rem;
+}
+.-top-4 {
+  top: -1rem;
+}
+.-right-4 {
+  right: -1rem;
+}
+.-top-2 {
+  top: -0.5rem;
+}
+.-right-2 {
+  right: -0.5rem;
+}
 .z-50 {
   z-index: 50;
 }
@@ -1030,17 +1058,17 @@ select {
 .h-12 {
   height: 3rem;
 }
-.h-64 {
-  height: 16rem;
+.h-56 {
+  height: 14rem;
 }
 .h-screen {
   height: 100vh;
 }
-.h-56 {
-  height: 14rem;
-}
 .max-h-96 {
   max-height: 24rem;
+}
+.max-h-full {
+  max-height: 100%;
 }
 .min-h-screen {
   min-height: 100vh;
@@ -2014,12 +2042,26 @@ select {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(187 247 208 / var(--tw-ring-opacity));
 }
+.blur-lg {
+  --tw-blur: blur(16px);
+  filter: var(--tw-filter);
+}
 .grayscale {
   --tw-grayscale: grayscale(100%);
   filter: var(--tw-filter);
 }
 .filter {
   filter: var(--tw-filter);
+}
+.backdrop-blur-md {
+  --tw-backdrop-blur: blur(12px);
+  -webkit-backdrop-filter: var(--tw-backdrop-filter);
+          backdrop-filter: var(--tw-backdrop-filter);
+}
+.backdrop-blur-sm {
+  --tw-backdrop-blur: blur(4px);
+  -webkit-backdrop-filter: var(--tw-backdrop-filter);
+          backdrop-filter: var(--tw-backdrop-filter);
 }
 .transition-colors {
   transition-property: background-color, border-color, color, fill, stroke;
@@ -2111,6 +2153,15 @@ select {
 
 .hover\:border-4:hover {
   border-width: 4px;
+}
+
+.hover\:border-2:hover {
+  border-width: 2px;
+}
+
+.hover\:border-blue-500:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(59 130 246 / var(--tw-border-opacity));
 }
 
 .hover\:bg-orange-700:hover {
@@ -2625,6 +2676,11 @@ select {
     padding-right: 8rem;
   }
 
+  .md\:px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
   .md\:text-left {
     text-align: left;
   }
@@ -2653,6 +2709,10 @@ select {
 
   .lg\:block {
     display: block;
+  }
+
+  .lg\:w-2\/3 {
+    width: 66.666667%;
   }
 
   .lg\:grid-cols-4 {
@@ -2727,5 +2787,10 @@ select {
 
   .xl\:overflow-hidden {
     overflow: hidden;
+  }
+
+  .xl\:px-12 {
+    padding-left: 3rem;
+    padding-right: 3rem;
   }
 }
