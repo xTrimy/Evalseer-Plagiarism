@@ -322,11 +322,11 @@ class QuestionController extends Controller
                     return $output;
                 } else {
                     $java_executable = env('JAVA_COMPILER_PATH');
-                    $output = shell_exec("cd $file_directory & $java_executable ". @end(explode('/', $file_path)) ." 2>&1 ");
+                    $output = shell_exec("cd $file_directory && $java_executable *.java 2>&1 ");
                     if($output == ""){
                         $file_path = str_replace('\\','/',$file_path);
                         $file_path = str_replace('.java', '', $file_path);
-                        $output = shell_exec("cd $file_directory & java  \"" . @end(explode('/',$file_path))  . "\" 2>&1 ");
+                        $output = shell_exec("cd $file_directory && java  \"" . @end(explode('/',$file_path))  . "\" 2>&1 ");
                         $this->give_compiling_grade_to_submission($question, $submission, $output);
                     }
                     return $output;
