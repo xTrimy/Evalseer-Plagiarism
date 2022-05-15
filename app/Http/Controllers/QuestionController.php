@@ -295,13 +295,13 @@ class QuestionController extends Controller
         }else if($language == 'java'){
             if($ext == ".zip") {
                 if($question->main_file != null) {
-
                 } else {
                     
                 }
                 $output = $this->compile_zip_file($language,$file_path,$file_directory);
                 return $output;
             } else {
+
                 if($question->main_file != null) {
                     $java_executable = env('JAVA_COMPILER_PATH');
                     $main_file = $question->main_file;
@@ -315,7 +315,6 @@ class QuestionController extends Controller
                     $main_file = str_replace("\\", "/", $main_file);
                     // dd($main_file);
                     $output = shell_exec("javac ".$main_file);
-                    
                     // $output = shell_exec("$java_executable \"". $file_path . "\" 2>&1 ");
                     // dd($output);
                     $this->give_compiling_grade_to_submission($question, $submission, $output);
@@ -323,8 +322,13 @@ class QuestionController extends Controller
                     return $output;
                 } else {
                     $java_executable = env('JAVA_COMPILER_PATH');
-                    $output = shell_exec("$java_executable \"". $file_path . "\" 2>&1 ");
-                    $this->give_compiling_grade_to_submission($question, $submission, $output);
+                    $output = shell_exec("cd $file_directory & $java_executable *.java 2>&1 ");
+                    if($output == ""){
+                        $file_path = str_replace('\\','/',$file_path);
+                        $file_path = str_replace('.java', '', $file_path);
+                        $output = shell_exec("cd $file_directory & java  \"" . @end(explode('/',$file_path))  . "\" 2>&1 ");
+                        $this->give_compiling_grade_to_submission($question, $submission, $output);
+                    }
                     return $output;
                 }
             }
@@ -631,8 +635,7 @@ class QuestionController extends Controller
 
             if($lang == "c++"){
                 $evalseer_feedback = shell_exec(env('SYNTAX_CORRECTION_PY')." \"". public_path($submission->submitted_code) . "\" 2>&1");
-				
-				$evalseer_feedback = json_decode($evalseer_feedback,true);
+                $evalseer_feedback = json_decode($evalseer_feedback,true);
                 foreach ($evalseer_feedback as $key => $value){
                     $compiler_feedback[$key] =$value;
                 }
