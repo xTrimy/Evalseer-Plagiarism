@@ -95,7 +95,7 @@ Route::middleware('auth')->group(function (){
         return view('submission');
     });
 
-    Route::prefix('/dashboard')->as('dashboard.')->group(function () {
+    Route::middleware('dashboard-access')->prefix('/dashboard')->as('dashboard.')->group(function () {
 
         Route::get('/form-zip', [PlagiarismController::class, "formZip"]);
         // Instructor routes
@@ -116,6 +116,10 @@ Route::middleware('auth')->group(function (){
         });
         Route::prefix('/code_searcher')->as('code_searcher.')->group(function () {
             Route::get('/search', [QuestionController::class, "fetch_external_plagiarism_files"])->name('search');
+        });
+        Route::prefix('/plagiarism-checker')->as('plagiarism_checker.')->group(function(){
+            Route::get('/question/{id}',[PlagiarismController::class,'check_submissions_plagiarism'])->name('question');
+            Route::get('/compare/report/{id}',[PlagiarismController::class, 'compare_files'])->name('compare');
         });
         // Admin routes
         Route::prefix('/courses')->as('courses.')->group(function () {

@@ -15,6 +15,7 @@ function findId(id, arr) {
 window.tab_file_orders=1;
 
 window.edit_file_tab_names = function(){
+
     var file_tabs = document.getElementsByClassName('file_tab');
     for(let i = 0; i<file_tabs.length; i++){
         if(file_tabs[i].getAttribute("id") == "add_file_button") continue;
@@ -29,6 +30,7 @@ window.edit_file_tab_names = function(){
         }
         file_tabs[i].onclick = function(){
             select_file_tab(this);
+            console.log(this);
         }
         file_tabs[i].ondblclick = function (){
             this.querySelector('input').value = this.querySelector('.file_name').innerHTML;
@@ -45,6 +47,7 @@ window.edit_file_tab_names = function(){
         };
         file_tabs[i].onkeydown = function(e){
             if(e.key == "Enter"){
+                e.preventDefault();
                 if(file_tabs[i].querySelector('input').value !== ""){
                     let new_file = false;
                     if(file_tabs[i].querySelector('.file_name').innerHTML == "Enter file name"){
@@ -204,6 +207,7 @@ window.get_ide_editors_values = function(){
 }
 window.remove_ide_editor = function(file_order){
     document.getElementById('editor-'+file_order).remove();
+    document.getElementById('editor-input-'+file_order).remove();
 }
 window.add_ide_editor = function(lang,file_order){
     var a_ace_editors = document.getElementsByClassName('ace_file_editor');
@@ -211,9 +215,16 @@ window.add_ide_editor = function(lang,file_order){
         a_ace_editors[i].classList.add('hidden');
     }
     var new_editor = document.createElement('div');
+    var new_editor_input = document.createElement('input');
     new_editor.setAttribute('class','ace_file_editor w-full h-full');
     new_editor.setAttribute('id','editor-'+file_order);
     document.getElementById('editor').append(new_editor);
+
+    new_editor_input.setAttribute('type',"hidden");
+    new_editor_input.setAttribute('name',"base_skeleton_file[]");
+    new_editor_input.setAttribute('id','editor-input-'+file_order);
+    document.getElementById('editor').append(new_editor_input);
+    
     a_ace_editor = ace.edit("editor-"+file_order);
     a_ace_editor.setTheme("ace/theme/monokai");
     edit_ide_editor_mode(lang,file_order);

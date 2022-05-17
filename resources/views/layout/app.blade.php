@@ -12,6 +12,16 @@
     <script src="{{ asset('js/app.js') }}"></script>
 </head>
 <body class="relative">
+    @if (Session::has('main-error'))
+      <button
+      onclick="this.remove()"
+      class="absolute top-0 left-1/2 transform -translate-x-1/2 bg-red-200 text-red-700 py-2 pl-8 pr-12">
+      {{ Session::get('main-error') }}
+    <div class="absolute right-4 top-1/2 transform -translate-y-1/2 "> 
+    <i class="las la-times text-xl"></i>
+    </div>
+    </button>
+    @endif
     <x-modal/>
     <div class="flex w-full px-8 py-5">
         <div class="flex-1  text-center flex justify-center">
@@ -33,10 +43,12 @@
             <a href="{{ route('home') }}">
                 <p class="text-white font-bold cursor-pointer mr-6">HOME</p>
             </a>
+            @if(Auth::user()->hasRole('admin') || Auth::user()->hasRole('instructor') || Auth::user()->hasRole('teaching-assistant'))
             <a href="/dashboard/">
                 {{-- {{ Auth::user()->getRoleNames() }} --}}
-                {{-- <p class="text-white font-bold cursor-pointer mr-6">DASHBOARD</p> --}}
+                <p class="text-white font-bold cursor-pointer mr-6">DASHBOARD</p>
             </a>
+            @endif
             {{-- <p class="text-white font-bold cursor-pointer mr-6">EDUCATION</p>
             <p class="text-white font-bold cursor-pointer mr-6">CATALOG</p>
             <p class="text-white font-bold cursor-pointer mr-6">OPPORTUNITIES</p>

@@ -106,6 +106,7 @@ class UserController extends Controller
         // dd($assignment_id);
         $users = User::role('instructor')->paginate(15);
 
+<<<<<<< HEAD
         $submissions = DB::table('submissions')
                         ->where('submissions.question_id', $question_id)
                         ->leftJoin('users', 'submissions.user_id', '=', 'users.id')
@@ -129,6 +130,10 @@ class UserController extends Controller
     
         $data['chart_data'] = json_encode($data);
 
+=======
+    
+        $submissions = Submission::where('question_id',$question_id)->with(['user','plagiarism_report'])->get();
+>>>>>>> 3c474a957c1fb5b2c342253a960fe9dd5d7818da
                         // dd($submissions);
         return view('admin.view-question-submissions',['users'=>$users,'submissions'=>$submissions,'question_id'=>$question_id,'data'=>$data]);
     }

@@ -24,6 +24,8 @@
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
     <script src="{{ asset('js/init-alpine.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
+
   </head>
   <body>
     <div

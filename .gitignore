@@ -28,3 +28,5 @@ yarn-error.log
 /public/submissions
 /public/tmp
 test.java
+/public/main_files
+public/.google-cookie
