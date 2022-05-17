@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\DB;
 use stdClass;
 use File;
 
+use function PHPUnit\Framework\directoryExists;
+use function PHPUnit\Framework\fileExists;
+
 class QuestionController extends Controller
 {
     private $grading_criterias = [
@@ -69,10 +72,19 @@ class QuestionController extends Controller
             $NameToStore = str_replace('\main_files', '', $NameToStore);
             $question->main_file = $NameToStore;
         }
-        if(strlen($request->base_skeleton) > 5 ){
-            $question->skeleton = $request->base_skeleton;
-        }
         $question->save();
+
+        $directory_name = public_path("assignment_files/" . $question->name . "-" . $question->id);
+        if (!directoryExists($directory_name)) {
+            mkdir($directory_name);
+        }
+        $i = 0;
+        foreach ($request->code as $file) {
+            $file_name =  $directory_name . "/" . $file;
+            file_put_contents($file_name, $request->base_skeleton_file[$i]);
+            $i++;
+        }
+        
         $i = 0;
         foreach($request->input as $input){
             //skipping first hidden inputs
@@ -223,12 +235,9 @@ class QuestionController extends Controller
             $filesInside = scandir($extract_dir_path, 1);
             $filesCount = count($filesInside);
             $filesCount -= 3;
-            
             // Check if the folder has a main.java (ToDo)
-            
             // $extract_dir_path = str_replace(" ", "%", $extract_dir_path);
             $compiling_command = "$java_executable"." \"$extract_dir_path"."/main.java\" ";
-            
             
             for($i=0;$i<=$filesCount;$i++) {
                 $ext = substr($filesInside[$i], -4);
@@ -321,13 +330,46 @@ class QuestionController extends Controller
                     // dd($output);
                     return $output;
                 } else {
+                    $files_directory = public_path('assignment_files/' . $question->name . "-" . $question->id);
+                    $output = "";
+                    if (directoryExists()) {
+                        $files = array_diff(scandir($files_directory), array('.', '..'));
+                        if (fileExists($files_directory . '/.hidden')) {
+                            $hidden = preg_split('/\r\n|\n\r|\r|\n/', file_get_contents($files_directory . '/.hidden'));
+                        }
+                    }
+                    foreach($hidden as $hidden_file){
+                        file_put_contents(public_path($file_directory.'/'.$hidden_file),file_get_contents($files_directory.'/'.$hidden_file));
+                    }
                     $java_executable = env('JAVA_COMPILER_PATH');
-                    $output = shell_exec("cd $file_directory && $java_executable *.java 2>&1 ");
+                    $output_tmp = shell_exec("cd $file_directory && $java_executable *.java 2>&1 ");
+                    if (str_contains($output_tmp, "error: cannot find symbol")) {
+                        $output .= "<p class='text-yellow-500'>You may be forgotten to `<b>import java.util.*</b>` </p>\n";
+                    }
+                    if (str_contains($output_tmp, "should be declared in a file named")) {
+                        $output .= "<p class='text-yellow-500'>Class names should be named same as the file name </p>\n";
+                    }
+                    $output .= $output_tmp;
                     if($output == ""){
                         $file_path = str_replace('\\','/',$file_path);
                         $file_path = str_replace('.java', '', $file_path);
-                        $output = shell_exec("cd $file_directory && java  \"" . @end(explode('/',$file_path))  . "\" 2>&1 ");
+                        $files = array_diff(scandir($file_directory), array('.', '..'));
+                        foreach($files as $file){
+                            if(strtolower(explode('.',$file)[0]) == "main"){
+                                $file_path = str_replace('.java', '', $file);
+                            }
+                        }
+                        $output = "";
+                        $output_tmp = shell_exec("cd $file_directory && java  \"" . @end(explode('/',$file_path))  . "\" 2>&1 ");
+                        if (str_contains($output_tmp, "Main method not found in class")) {
+                            $output .= "<p class='text-yellow-500'>You may be forgotten to <b>add a main method</b>\nAdd ` public static void mainx(String[] args) ` to your main class  </p>\n";
+                        }
+                        
+                        $output .= $output_tmp;
                         $this->give_compiling_grade_to_submission($question, $submission, $output);
+                    }
+                    foreach ($hidden as $hidden_file) {
+                        unlink(public_path($file_directory . '/' . $hidden_file));
                     }
                     return $output;
                 }

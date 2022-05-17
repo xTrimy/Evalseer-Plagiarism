@@ -244,10 +244,11 @@ Add Question to {{ $assignment->name }}
                 <input type="hidden" id="base_skeleton_input" name="base_skeleton">
                 <div class="w-full flex bg-slate-600">
                 <div class="flex overflow-x-auto">
-                    <div data-file-order="1" class="flex items-center relative file_tab py-2 px-4 cursor-pointer bg-slate-800 hover:bg-slate-800 border-b-2 text-white border-b-orange-500">
+                    <div data-file-order="1" class="flex hide-option items-center relative file_tab py-2 px-4 cursor-pointer bg-slate-800 hover:bg-slate-800 border-b-2 text-white border-b-orange-500">
                         <div class="icon w-6 h-6 mr-2"></div>
-                        <div class="file_name">Main.php</div>
-                        <input type="text" class="border-0 hidden absolute bg-transparent w-1/2 ml-8 p-0">
+                        <div class="file_name">Main{{ explode(',',$assignment->course->programming_languages->first()->extensions)[0] }}
+                        </div>
+                        <input type="text" name="code[]" value="Main{{ explode(',',$assignment->course->programming_languages->first()->extensions)[0] }}" class="border-0 hidden absolute bg-transparent w-1/2 ml-8 p-0">
                     </div>
                 </div>
                 <div id="add_file_button" class="current_file_tab flex file_tab py-4 px-4 bg-slate-700 hover:bg-green-800 cursor-pointer  text-white">
@@ -344,8 +345,14 @@ Add Question to {{ $assignment->name }}
        let form = document.querySelector('form');
        submit_button.addEventListener('click',function(e){
               e.preventDefault();
-              let base_skeleton = ace_editor.getSession().getValue();
-              base_skeleton_input.value = base_skeleton;
+              var editor_ids = get_ide_editor_ids();
+              console.log(editor_ids);
+              for(let i =0; i<editor_ids.length;i++){
+                let editor = document.getElementById(editor_ids[i]);
+                let ace_editor_ = ace.edit(editor_ids[i]);
+                editor.nextElementSibling.value = ace_editor_.getSession().getValue();
+
+              }
               form.submit();
         });
       </script>
