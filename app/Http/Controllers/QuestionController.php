@@ -283,7 +283,7 @@ class QuestionController extends Controller
         }
     }
     
-    public function compile_file($language,string $file_path,string $file_directory, bool $run_file = false, $question, Submission &$submission) {
+    public function compile_file($language,string $file_path,string $file_directory, bool $run_file = false, $question, Submission &$submission,$test_case_file = null) {
         $ext = substr($file_path, -4);
         // TODO: Make languages more dynamic
         if($language == 'c++'){
@@ -360,7 +360,11 @@ class QuestionController extends Controller
                             }
                         }
                         $output = "";
-                        $output_tmp = shell_exec("cd $file_directory && java  \"" . @end(explode('/',$file_path))  . "\" 2>&1 ");
+                        if($test_case_file == null){
+                            $output_tmp = shell_exec("cd $file_directory && java  \"" . @end(explode('/', $file_path))  . "\" 2>&1 ");
+                        }else{
+                            $output_tmp = shell_exec("cd $file_directory && java  \"" . @end(explode('/', $file_path))  . "\" < $test_case_file 2>&1 ");
+                        }
                         if (str_contains($output_tmp, "Main method not found in class")) {
                             $output .= "<p class='text-yellow-500'>You may be forgotten to <b>add a main method</b>\nAdd ` public static void mainx(String[] args) ` to your main class  </p>\n";
                         }
@@ -416,6 +420,7 @@ class QuestionController extends Controller
             if($testing){
                 $test_case_file = public_path($file_directory . "/test_case_" . time());
                 file_put_contents($test_case_file, $test_case["inputs"]);
+                
             } else {
                 $test_case_file = public_path($file_directory . "/test_case_" . $test_case->id);
                 file_put_contents($test_case_file, $test_case->inputs);
@@ -440,10 +445,11 @@ class QuestionController extends Controller
                     $commandd = "cd \"".public_path($file_directory)."\" && $java_exe " . "javaapp.java"." < \"" . $test_case_file . "\"";
                     $output = shell_exec($commandd);
                 } else {
-                    $java_exe = env('JAVA_EXE_PATH');
-                    $output = shell_exec("cd \"".public_path($file_directory)."\" && $java_exe " . @end(explode('/', str_replace('.java','',$submission->submitted_code)))." < \"" . $test_case_file . "\"");
+                    $output = $this->compile_file('java', $submission->submitted_code,$file_directory,true,$question,$submission, $test_case_file);
                 }
             }
+            $output = trim(str_replace(array("\n", "\r"), ' ', $output));
+            $test_case["output"] = trim(str_replace(array("\n", "\r"), ' ', $test_case["output"]));
             if($testing) {
                 if ($output == $test_case["output"]) {
                     $number_of_test_cases_passed += 1;
