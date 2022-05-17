@@ -9,13 +9,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use stdClass;
 
+use function PHPUnit\Framework\directoryExists;
+use function PHPUnit\Framework\fileExists;
+
 class OnlineIDEController extends Controller
 {
     public function view($id){
         $question = Questions::with(['assignment','test_cases','submissions'=>function(HasMany $query){
             return $query->where('user_id',Auth::user()->id);
         }])->find($id);
-        return view('online-ide', ["question"=>$question]);
+        $files_directory = public_path('assignment_files/' . $question->name . "-" . $question->id);
+        if(directoryExists()){
+            $files = array_diff(scandir($files_directory), array('.', '..'));
+            if(fileExists($files_directory.'/.hidden')){
+                $hidden = preg_split('/\r\n|\n\r|\r|\n/', file_get_contents($files_directory . '/.hidden'));
+                $files =array_diff($files, $hidden, [".hidden"]);
+            }
+        }
+        return view('online-ide', ["question"=>$question,"files"=> $files]);
     }
 
     public function run(Request $request)
