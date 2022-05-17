@@ -1,3 +1,6 @@
+@php
+$user = Auth::user();
+@endphp
 @extends('layout.dashboard.app')
 @section('page')
 add-user
@@ -177,24 +180,45 @@ Add User
                 $i=0;
               @endphp
               @foreach ($roles as $role)
-              <label class="block text-sm py-2">
-                <input
-                @if (old("role.{$i}")==$role->name)
-                  @php
-                    $i++;
-                  @endphp
-                  checked
+                @if($user->hasRole('instructor'))
+                  @if($role->id == 1)
+                    <label class="block text-sm py-2">
+                    <input
+                    @if (old("role.{$i}")==$role->name)
+                      @php
+                        $i++;
+                      @endphp
+                      checked
+                    @endif
+                    type="checkbox"
+                    name="role[]"
+                    value="{{ $role->name }}"
+                    class="text-orange-500"
+                    />
+                    <span class="text-gray-700 dark:text-gray-400">
+                    {{ ucwords(str_replace('_', ' ', $role->name)) }}
+                    </span>
+                  </label>
+                  @endif
+                @else
+                  <label class="block text-sm py-2">
+                    <input
+                    @if (old("role.{$i}")==$role->name)
+                      @php
+                        $i++;
+                      @endphp
+                      checked
+                    @endif
+                    type="checkbox"
+                    name="role[]"
+                    value="{{ $role->name }}"
+                    class="text-orange-500"
+                    />
+                    <span class="text-gray-700 dark:text-gray-400">
+                    {{ ucwords(str_replace('_', ' ', $role->name)) }}
+                    </span>
+                  </label>
                 @endif
-                type="checkbox"
-                name="role[]"
-                value="{{ $role->name }}"
-                class="text-orange-500"
-                />
-                <span class="text-gray-700 dark:text-gray-400">
-                {{ ucwords(str_replace('_', ' ', $role->name)) }}
-                </span>
-              </label>
-             
               @endforeach
               <button type="submit" class="table items-center mt-4 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange">
               Add

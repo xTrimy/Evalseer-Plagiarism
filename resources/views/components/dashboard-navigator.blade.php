@@ -1,3 +1,6 @@
+@php
+$user = Auth::user();
+@endphp
 <div class="py-4 text-gray-500 dark:text-gray-400">
           <a
             class="ml-6 text-lg flex items-center font-bold text-gray-800 dark:text-gray-200"
@@ -54,6 +57,7 @@
                 <span class="ml-4">Students</span>
               </a>
             </li>
+            @if($user->hasRole('admin'))
             <li class="relative px-6 py-3">
               @if($page == 'instructors')
               <span
@@ -69,8 +73,9 @@
                 <span class="ml-4">Instructors</span>
               </a>
             </li>
+            @endif
             <li class="relative px-6 py-3">
-              @if($page == 'belongings')
+              @if($page == 'assignments')
               <span
                 class="absolute inset-y-0 left-0 w-1 bg-orange-600 rounded-tr-lg rounded-br-lg"
                 aria-hidden="true"
@@ -84,8 +89,9 @@
                 <span class="ml-4">Assignments</span>
               </a>
             </li>
+
             <li class="relative px-6 py-3">
-              @if($page == 'courses')
+              @if($page == 'plagiarism_reports')
               <span
                 class="absolute inset-y-0 left-0 w-1 bg-orange-600 rounded-tr-lg rounded-br-lg"
                 aria-hidden="true"
@@ -93,12 +99,30 @@
               @endif
               <a
                 class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
-                href="{{ route('dashboard.courses.view') }}"
+                href="{{ route('dashboard.users.instructors.view_plagiarism_reports') }}"
+              >
+                <i class="fas fa-copy text-xl"></i>
+                <span class="ml-4">Plagiarism Reports</span>
+              </a>
+            </li>
+            
+            @if($user->hasRole('admin'))
+              <li class="relative px-6 py-3">
+              @if($page == 'courses') 
+              <span
+                  class="absolute inset-y-0 left-0 w-1 bg-orange-600 rounded-tr-lg rounded-br-lg"
+                  aria-hidden="true"
+                ></span>
+              @endif
+              <a
+                class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+                href="{{route("dashboard.courses.view") }}"
               >
                 <i class="las la-book text-xl"></i>
                 <span class="ml-4">Courses</span>
               </a>
             </li>
+            @endif
           </ul>
           <div class="px-6 my-6">
             <a
