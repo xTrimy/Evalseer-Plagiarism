@@ -93,41 +93,6 @@
               <div
                 class="relative w-full max-w-xl mr-6 focus-within:text-orange-500"
               >
-                <div class="absolute inset-y-0 flex items-center pl-2">
-                  <svg
-                    class="w-4 h-4"
-                    aria-hidden="true"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                      clip-rule="evenodd"
-                    ></path>
-                  </svg>
-                </div>
-                <input
-                  id="search_input"
-                  class="w-full pl-8 pr-2 text-sm text-gray-700 placeholder-gray-600 bg-gray-100 border-0 rounded-md dark:placeholder-gray-500 dark:focus:shadow-outline-gray dark:focus:placeholder-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:placeholder-gray-500 focus:bg-white focus:border-orange-300 focus:outline-none focus:shadow-outline-orange form-input"
-                  type="text"
-                  placeholder="Search here"
-                  aria-label="Search"
-                />
-                <div id="search_dropdown" class="absolute top-full w-full py-2 bg-white dark:bg-gray-800 shadow-sm px-4">
-                    
-                    <div id="code_search_container"></div>
-                    <div id="person_search_container"></div>
-                    <div id="email_search_container"></div>
-                    <div id="phone_search_container"></div>
-                    <div id="slot_search_container"></div>
-                    <div class="hidden" id="search_element_cloner">
-                        <a class="element block py-2 px-4 text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">
-                            
-                        </a>
-                    </div>
-                    
-                </div>
                 <script>
                     var search_input = document.getElementById('search_input');
                     var search_cloner = document.getElementById('search_element_cloner');
