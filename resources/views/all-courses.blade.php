@@ -17,7 +17,15 @@ My Courses
                         width: 30%;
                     }
                 </style>
+                @php
+                    if(count($user_courses) == 0) {
+                        echo '<div class="w-full text-center">
+                        <p class="text-2xl font-bold">You are not enrolled in any course</p>
+                        </div>';
+                    }
+                @endphp
                 @foreach ($user_courses as $course)
+                    
                     <div class="relative w-30 h-72 text-center mx-3 rounded-xl shadow">
                         <img src="{{ asset('png/23.jpg') }}" class="rounded-xl w-full h-full" alt="">
                         <div class="absolute course w-11/12 mx-4 my-3 m-auto rounded-xl text-center box-border top-0">
@@ -63,7 +71,7 @@ My Courses
                             <div class="w-full text-center">
                                 <a href="{{ route('course.view',$course->id) }}">
                                     <div  class=" bg-text text-white px-10 py-3 rounded-lg font-medium text-sm cursor-pointer mb-6">
-                                        ENTER THE COURSE
+                                        ENROLL IN COURSE
                                     </div>
                                 </a>
                             </div>

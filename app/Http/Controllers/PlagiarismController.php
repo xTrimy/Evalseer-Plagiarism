@@ -201,7 +201,7 @@ class PlagiarismController extends Controller
         $source2 = public_path($plagiarism_report->source_2);
         $lang = $plagiarism_report->question->programming_language->acronym;
         $lang = strtolower($lang);
-        if($lang == "c++"){
+        if($lang == "c++") {
             $lang = "cpp";
         }
         $python = env('PYTHON_EXE_PATH');
@@ -209,5 +209,17 @@ class PlagiarismController extends Controller
         $result = shell_exec("$python $compare_files -l \"$lang\" -f \"$source1\" -s \"$source2\" 2>&1");
         $data = json_decode($result);
         return view('instructor.compare-code',["data"=>$data,'s1'=> $plagiarism_report->source_1,'s2'=> $plagiarism_report->source_2,'scores'=> $plagiarism_report->score]);
+    }
+
+    public function view_plagiarism_reports() {
+        // $plagiarism_reports = PlagiarismReport::with('questions.*')->get();
+
+        $plagiarism_reports = DB::table('plagiarism_reports')
+                            // ->where('id',$question_id)
+                            ->leftJoin('questions', 'plagiarism_reports.question_id', '=', 'questions.id')
+                            ->select('plagiarism_reports.*','questions.name')
+                            ->get();
+        // dd($plagiarism_reports);
+        return view('instructor.view-plagiarism-reports',['plagiarism_reports'=>$plagiarism_reports]);
     }
 }
