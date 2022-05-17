@@ -93,7 +93,7 @@ Route::middleware('auth')->group(function (){
         return view('submission');
     });
 
-    Route::prefix('/dashboard')->as('dashboard.')->group(function () {
+    Route::middleware('dashboard-access')->prefix('/dashboard')->as('dashboard.')->group(function () {
 
         Route::get('/form-zip', [PlagiarismController::class, "formZip"]);
         // Instructor routes
