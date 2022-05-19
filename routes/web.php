@@ -67,6 +67,8 @@ Route::middleware('auth')->group(function (){
     })->name('my-courses');
 
     Route::get('/badges', [BadgeController::class, "view"])->name('view_badges');
+
+    Route::get('/all-courses', [UserController::class, "all_courses"])->name('all_courses');
     
     Route::get('/logout', [UserController::class, "logout"])->name('logout');
 
@@ -93,48 +95,57 @@ Route::middleware('auth')->group(function (){
         return view('submission');
     });
 
-    Route::middleware('dashboard-access')->prefix('/dashboard')->as('dashboard.')->group(function () {
+    // Route::middleware('dashboard-access')->prefix('/dashboardx')->as('dashboard.')->group(function () {
 
-        Route::get('/form-zip', [PlagiarismController::class, "formZip"]);
-        // Instructor routes
-        // Route::get('/', function () {
-        //     return view('instructor.index');
+        
+    //     // Instructor routes
+    //     // Route::get('/', function () {
+    //     //     return view('instructor.index');
             
-        // });
+    //     // });
 
-        Route::get('/', [UserController::class, "home_instructor"]);
+    
+        
+    //     // Admin routes
+        
 
-        Route::prefix('/assignments')->as('assignments.')->group(function () {
-            Route::get('/add', [AssignmentController::class, "add"])->name('add_assignment');
-            Route::post('/add', [AssignmentController::class, "store"]);
-        });
-        Route::prefix('/qestions/{id}')->group(function ($id) {
-            Route::get('/add', [QuestionController::class, "add"])->name('add_question');
-            Route::post('/add', [QuestionController::class, "store"]);
-        });
-        Route::prefix('/code_searcher')->as('code_searcher.')->group(function () {
-            Route::get('/search', [QuestionController::class, "fetch_external_plagiarism_files"])->name('search');
-        });
-        Route::prefix('/plagiarism-checker')->as('plagiarism_checker.')->group(function(){
-            Route::get('/question/{id}',[PlagiarismController::class,'check_submissions_plagiarism'])->name('question');
-            Route::get('/compare/report/{id}',[PlagiarismController::class, 'compare_files'])->name('compare');
-        });
-        // Admin routes
-        Route::prefix('/courses')->as('courses.')->group(function () {
-            Route::get('/', [CourseController::class, "dashboard_view"])->name('view');
-            Route::get('/add', [CourseController::class, "add"])->name('add');
-            Route::post('/add', [CourseController::class, "store"]);
+    //     Route::prefix('/users')->as('users.')->group(function () {
+    //         Route:: get('/', [UserController::class, "dashboard_users"])->name('view');
 
-            Route::get('/view_course/{course_id}', [CourseController::class, "view_course"])->name('view-course');
+    //         Route::prefix('/instructors')->as('instructors.')->group(function () {
+                
+    //         });
 
-            Route::get('/edit-course/{course_id}', [CourseController::class, "edit_course"])->name('edit-course');
-            Route::post('/edit-course/{course_id}', [CourseController::class, "edit"]);
+    //         Route::prefix('/instructors')->as('instructors.')->group(function ($user_id) {
+                
+    //         });
 
-            Route::get('/delete/{course_id}', [CourseController::class, "delete"])->name('delete');
-        });
+            
+    //     });
+    // });
 
-        Route::prefix('/users')->as('users.')->group(function () {
-            Route:: get('/', [UserController::class, "dashboard_users"])->name('view');
+    Route::middleware('dashboard-access')->prefix('/dashboard')->as('dashboard.')->group(function () {
+        Route::get('/', [UserController::class, "home_instructor"])->name('home_instructor');
+        Route::get('/form-zip', [PlagiarismController::class, "formZip"]);
+
+        Route::prefix('/users')->as('users.')->group(function ($user_id) {
+            Route::prefix('/instructors')->as('instructors.')->group(function ($user_id) {
+                Route::get('/view-assignments', [UserController::class, "dashboard_view_assignments"])->name('view_assignments');
+                Route::post('/delete', [AssignmentController::class, "delete"]);
+                Route::get('/delete-assignments/{assignment_id}', [AssignmentController::class, "delete_assignment"])->name('delete_assignment');
+                Route::get('/view-assignments-questions/{assignment_id}', [UserController::class, "view_assignment_questions"])->name('view_assignment_questions');
+                Route::get('/edit-question/{question_id}', [QuestionController::class, "edit"])->name('edit_question');
+                Route::get('/delete-question/{question_id}', [QuestionController::class, "delete_question"])->name('delete_question');
+                Route::post('/edit-question/{question_id}', [QuestionController::class, "edit_question"]);
+                Route::get('/edit-assignment/{assignment_id}', [AssignmentController::class, "edit_assignment"])->name('edit_assignment');
+                Route::post('/edit-assignment/{assignment_id}', [AssignmentController::class, "edit"]);
+                Route::get('/view-question-submission/{question_id}', [UserController::class, "view_question_submission"])->name('view_question_submission');
+                Route::get('/delete-submission/{submission_id}', [AssignmentController::class, "delete_submission"])->name('delete_submission');
+                Route::get('/run-plag/{zipPath}/{type}/{question_id}', [PlagiarismController::class, "run_plag"])->name('run_plag');
+                Route::get('/plagiarism-report', [PlagiarismController::class, "plagiarism_report"])->name('plagiarism_report');
+                Route::get('/report/{report}', [PlagiarismController::class, "report"])->name('report');
+                Route::get('/view-plagiarism-reports', [PlagiarismController::class, "view_plagiarism_reports"])->name('view_plagiarism_reports');
+            });
             Route::prefix('/students')->as('students.')->group(function () {
                 Route:: get('/', [UserController::class, "dashboard_view_students"])->name('view');
                 Route::get('/enroll', [CourseController::class, "enroll_user"])->name('enroll');
@@ -145,62 +156,71 @@ Route::middleware('auth')->group(function (){
                 Route::get('/assign-to-course/{user_id}/{course_id}', [CourseController::class, "assign_to_course"])->name('assign-to-course');
                 Route::get('/remove-from-course/{user_id}/{course_id}', [CourseController::class, "remove_from_course"])->name('remove-from-course');
             });
-            Route::prefix('/instructors')->as('instructors.')->group(function () {
-                Route::get('/', [UserController::class, "dashboard_view_instructors"])->name('view');
-            });
-            Route::prefix('/instructors')->as('instructors.')->group(function ($assignment_id) {
-                Route::get('/view-assignments', [UserController::class, "dashboard_view_assignments"])->name('view_assignments');
-                Route::post('/delete', [AssignmentController::class, "delete"]);
-
-                Route::get('/delete-assignments/{assignment_id}', [AssignmentController::class, "delete_assignment"])->name('delete_assignment');
-            });
-            Route::prefix('/instructors')->as('instructors.')->group(function ($assignment_id) {
-                Route::get('/view-assignments-questions/{assignment_id}', [UserController::class, "view_assignment_questions"])->name('view_assignment_questions');
-            });
-
-            Route::prefix('/instructors')->as('instructors.')->group(function ($question_id) {
-                Route::get('/edit-question/{question_id}', [QuestionController::class, "edit"])->name('edit_question');
-                Route::get('/delete-question/{question_id}', [QuestionController::class, "delete_question"])->name('delete_question');
-                Route::post('/edit-question/{question_id}', [QuestionController::class, "edit_question"]);
-            });
-            
-            Route::prefix('/instructors')->as('instructors.')->group(function ($assignment_id) {
-                Route::get('/edit-assignment/{assignment_id}', [AssignmentController::class, "edit_assignment"])->name('edit_assignment');
-                Route::post('/edit-assignment/{assignment_id}', [AssignmentController::class, "edit"]);
-                // Route::post('/edit-assignment/{assignment_id}', [QuestionController::class, "delete"]);
-            });
-            Route::prefix('/instructors')->as('instructors.')->group(function ($question_id) {
-                Route::get('/view-question-submission/{question_id}', [UserController::class, "view_question_submission"])->name('view_question_submission');
-
-                Route::get('/delete-submission/{submission_id}', [AssignmentController::class, "delete_submission"])->name('delete_submission');
-            });
-
-            Route::prefix('/instructors')->as('instructors.')->group(function ($submission_id) {
-                Route::get('/view-submission/{submission_id}', [UserController::class, "view_submission"])->name('view_submission');
-
-                Route::get('/edit-submission/{submission_id}', [UserController::class, "edit_submission"])->name('edit_submission');
-                Route::post('/edit-submission/{submission_id}', [UserController::class, "edit_sub"]);
-            });
-
-            Route::prefix('/instructors')->as('instructors.')->group(function () {
-                Route::get('/run-plag/{zipPath}/{type}/{question_id}', [PlagiarismController::class, "run_plag"])->name('run_plag');
-
-                Route::get('/plagiarism-report', [PlagiarismController::class, "plagiarism_report"])->name('plagiarism_report');
-
-                Route::get('/report/{report}', [PlagiarismController::class, "report"])->name('report');
-            });
-
-            Route::prefix('/instructors')->as('instructors.')->group(function ($user_id) {
-                Route::get('/edit-user/{user_id}', [UserController::class, "edit_user"])->name('edit-user');
-                Route::post('/edit-user/{user_id}', [UserController::class, "edit"]);
-
-                Route::get('/delete-user/{user_id}', [UserController::class, "delete_user"])->name('delete-user');
-            });
 
             Route::get('/add', [UserController::class, "add"])->name('add');
             Route::post('/add', [UserController::class, "store"]);
         });
+        
+        Route::prefix('/assignments')->as('assignments.')->group(function () {
+            Route::get('/add', [AssignmentController::class, "add"])->name('add_assignment');
+            Route::post('/add', [AssignmentController::class, "store"]);
+        });
+        Route::prefix('/qestions/{id}')->group(function ($id) {
+            Route::get('/add', [QuestionController::class, "add"])->name('add_question');
+            Route::post('/add', [QuestionController::class, "store"]);
+        });
+
+        Route::prefix('/code_searcher')->as('code_searcher.')->group(function () {
+            Route::get('/search', [QuestionController::class, "fetch_external_plagiarism_files"])->name('search');
+        });
+        Route::prefix('/plagiarism-checker')->as('plagiarism_checker.')->group(function(){
+            Route::get('/question/{id}',[PlagiarismController::class,'check_submissions_plagiarism'])->name('question');
+            Route::get('/compare/report/{id}',[PlagiarismController::class, 'compare_files'])->name('compare');
+        });
+
+
+
+        Route::middleware('dashboard-admins')->group(function () {
+            Route::prefix('/users')->as('users.')->group(function ($user_id) {
+                Route::prefix('/admins')->as('admins.')->group(function ($user_id) {
+
+                    
+                });
+                Route::prefix('/instructors')->as('instructors.')->group(function () {
+                    Route::get('/', [UserController::class, "dashboard_view_instructors"])->name('view');
+                    Route::get('/edit-user/{user_id}', [UserController::class, "edit_user"])->name('edit-user');
+                    Route::post('/edit-user/{user_id}', [UserController::class, "edit"]);
+                    Route::get('/delete-user/{user_id}', [UserController::class, "delete_user"])->name('delete-user');
+                });
+                
+            });
+
+            Route::prefix('/courses')->as('courses.')->group(function () {
+                Route::get('/', [CourseController::class, "dashboard_view"])->name('view');
+                Route::get('/add', [CourseController::class, "add"])->name('add');
+                Route::post('/add', [CourseController::class, "store"]);
+
+                Route::get('/view_course/{course_id}', [CourseController::class, "view_course"])->name('view-course');
+
+                Route::get('/edit-course/{course_id}', [CourseController::class, "edit_course"])->name('edit-course');
+                Route::post('/edit-course/{course_id}', [CourseController::class, "edit"]);
+
+                Route::get('/delete/{course_id}', [CourseController::class, "delete"])->name('delete');
+            });
+
+            Route::prefix('/assignments')->as('assignments.')->group(function () {
+                Route::get('/add', [AssignmentController::class, "add"])->name('add_assignment');
+                Route::post('/add', [AssignmentController::class, "store"]);
+            });
+            Route::prefix('/qestions/{id}')->group(function ($id) {
+                Route::get('/add', [QuestionController::class, "add"])->name('add_question');
+                Route::post('/add', [QuestionController::class, "store"]);
+            });
+
+        });
     });
+
+    
 
 });
 

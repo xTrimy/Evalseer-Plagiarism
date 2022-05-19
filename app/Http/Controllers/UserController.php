@@ -88,7 +88,7 @@ class UserController extends Controller
                         ->leftJoin('courses', 'assignments.course_id', '=', 'courses.id')
                         ->select('assignments.*', 'courses.course_id')
                         ->get();
-        return view('admin.view-assignments',['users'=>$users,'assignments'=>$assignments]);
+        return view('instructor.view-assignments',['users'=>$users,'assignments'=>$assignments]);
     }
 
     public function view_assignment_questions($assignment_id) {
@@ -99,19 +99,48 @@ class UserController extends Controller
                         ->where('assignment_id',$assignment_id)
                         ->select('questions.*')
                         ->get();
-        return view('admin.view-assignments-questions',['users'=>$users,'questions'=>$questions]);
+        return view('instructor.view-assignments-questions',['users'=>$users,'questions'=>$questions]);
     }
-
-    
 
     public function view_question_submission($question_id) {
         // dd($assignment_id);
         $users = User::role('instructor')->paginate(15);
 
+        $submissions = DB::table('submissions')
+                        ->where('submissions.question_id', $question_id)
+                        ->leftJoin('users', 'submissions.user_id', '=', 'users.id')
+                        ->select('submissions.*', 'users.name')
+                        // ->distinct('user_id')
+                        ->get();
+
+        $submissions_grades = DB::table('submissions')
+                        ->where('submissions.question_id', $question_id)
+                        ->select('submissions.total_grade', 'submissions.id')
+                        ->get();
+
+
+        $data = [];
+ 
+        foreach($submissions_grades as $row) {
+            // dd($row);
+            $data['label'][] = $row->id;
+            $data['data'][] = (int) $row->total_grade;
+        }
+    
+        $data['chart_data'] = json_encode($data);
+
     
         $submissions = Submission::where('question_id',$question_id)->with(['user','plagiarism_report'])->get();
                         // dd($submissions);
-        return view('admin.view-question-submissions',['users'=>$users,'submissions'=>$submissions,'question_id'=>$question_id]);
+        return view('instructor.view-question-submissions',['users'=>$users,'submissions'=>$submissions,'question_id'=>$question_id,'data'=>$data]);
+    }
+
+    public function all_courses() {
+        $user = Auth::user();
+
+        $user_courses = $user->courses;
+
+        return view('all-courses',['courses'=>Course::all(),'user_courses'=>$user_courses]);
     }
 
     public function view_submission($submission_id) {
@@ -126,7 +155,7 @@ class UserController extends Controller
                         ->take(1)
                         ->get();
 
-        return view('admin.view-submission',['users'=>$users,'submissions'=>$submissions]);
+        return view('instructor.view-submission',['users'=>$users,'submissions'=>$submissions]);
     }
     //User Views END
 
@@ -237,7 +266,7 @@ class UserController extends Controller
                         ->get()
                         ->first();
         // dd($submissions);
-        return view('admin.edit-submission',['users'=>$users,'submissions'=>$submissions]);
+        return view('instructor.edit-submission',['users'=>$users,'submissions'=>$submissions]);
     }
 
     public function edit_sub(Request $request) {

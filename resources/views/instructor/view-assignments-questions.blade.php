@@ -22,7 +22,7 @@ users
                 <h2
                 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
                 >
-                  Assignments
+                  Assignment Questions
                 </h2>
                 <a href="{{ route('dashboard.assignments.add_assignment') }}">
                     <button class="py-2 px-8 text-white rounded-lg bg-orange-600 hover:bg-orange-500 active:bg-orange-400 text-lg ring-0 transition-all active:ring-4 ring-orange-200 dark:ring-orange-800">
