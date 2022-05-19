@@ -145,6 +145,9 @@ Route::middleware('auth')->group(function (){
                 Route::get('/plagiarism-report', [PlagiarismController::class, "plagiarism_report"])->name('plagiarism_report');
                 Route::get('/report/{report}', [PlagiarismController::class, "report"])->name('report');
                 Route::get('/view-plagiarism-reports', [PlagiarismController::class, "view_plagiarism_reports"])->name('view_plagiarism_reports');
+                Route::get('/edit-submission/{submission_id}', [UserController::class, "edit_submission"])->name('edit_submission');
+                Route::post('/edit-submission/{submission_id}', [UserController::class, "edit_sub"]);
+                Route::get('/view-submission/{submission_id}', [UserController::class, "view_submission"])->name('view_submission');
             });
             Route::prefix('/students')->as('students.')->group(function () {
                 Route:: get('/', [UserController::class, "dashboard_view_students"])->name('view');
