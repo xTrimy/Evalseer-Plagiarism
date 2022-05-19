@@ -177,6 +177,7 @@ class UserController extends Controller
         $roles = Role::all();
         return view('admin.add-user',['roles'=>$roles]);
     }
+    
     public function store(Request $request)
     {
         $request->validate([
