@@ -78,7 +78,7 @@ class AssignmentController extends Controller
                     ->select('courses.*')
                     ->first();
 
-        return view('admin.edit-assignment',['users'=>$users,'questions'=>$questions,'assignment'=>$assignment,'courses'=>$courses,'coursesSel'=>$coursesSel]);
+        return view('instructor.edit-assignment',['users'=>$users,'questions'=>$questions,'assignment'=>$assignment,'courses'=>$courses,'coursesSel'=>$coursesSel]);
     }
 
     public function edit(Request $request){

@@ -499,7 +499,7 @@ class QuestionController extends Controller
 
         $grading_criterias = GradingCriteria::where('question_id',$questions->id)->get()->last();
         $programming_languages = ProgrammingLanguage::all();
-        return view('admin.edit-question',["grading_crit"=> $grading_criterias,"test_cases"=>$test_cases,"programming_languages"=>$programming_languages,'questions'=>$questions,'assignment'=>$assignment,'grading_criterias'=>$this->grading_criterias]);
+        return view('instructor.edit-question',["grading_crit"=> $grading_criterias,"test_cases"=>$test_cases,"programming_languages"=>$programming_languages,'questions'=>$questions,'assignment'=>$assignment,'grading_criterias'=>$this->grading_criterias]);
         // return redirect()->back()->with('success',"Question Edited successfully");
     }
 

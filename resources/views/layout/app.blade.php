@@ -63,34 +63,37 @@
     <div class="w-full bg-text py-1"></div>
     <div class="flex w-full">
         <div class="flex w-full px-32 py-2 bg-gray-900">
-            <p class="text-white font-bold cursor-pointer mr-6">Title</p>
+            <p class="text-white font-bold cursor-pointer mr-6 uppercase">@yield('page_title')</p>
         </div>
     </div>
     <div class="flex w-full">
         <div class="flex w-full px-32 py-4 bg-white">
-            <p class="text-gray-900 font-bold cursor-pointer">Home > My Courses > <p class="text-text font-bold">Title</p></p>
+            <p class="text-gray-900 font-bold cursor-pointer"><a href="{{ route('home') }}"> Home </a> > <a href="{{ route('home') }}"> My Courses</a>  > <p class="text-text font-bold">@yield('course_title')</p></p>
         </div>
     </div>
     <div class="flex w-full mb-8">
         <div class="flex w-full px-32 py-4 bg-gray-200">
-            <div class="bg-red-800 rounded-lg px-8 py-5 text-center mr-5 w-40">
+            {{-- <div class="bg-red-800 rounded-lg px-8 py-5 text-center mr-5 w-40">
                 <i class="fab fa-buromobelexperte text-white text-center text-2xl"></i>
                 <p class="font-bold text-white">Dashboard </p>
             </div>
             <div class="bg-green-600 rounded-lg px-8 py-5 text-center mr-5 w-40">
                 <i class="far fa-calendar text-white text-center text-2xl"></i>
                 <p class="font-bold text-white">Calendar</p>
-            </div>
+            </div> --}}
             <a href="/badges">
               <div class="bg-orange-500 rounded-lg px-8 py-5 text-center mr-5 w-40">
                   <i class="fas fa-certificate text-white text-center text-2xl"></i>
                   <p class="font-bold text-white">Badges</p>
               </div>
             </a>
-            <div class="bg-blue-500 rounded-lg px-8 py-5 text-center mr-5 w-40">
-                <i class="fas fa-book text-white text-center text-2xl"></i>
-                <p class="font-bold text-white">All Courses</p>
-            </div>
+            <a href="/all-courses">
+              <div class="bg-blue-500 rounded-lg px-8 py-5 text-center mr-5 w-40">
+                  <i class="fas fa-book text-white text-center text-2xl"></i>
+                  <p class="font-bold text-white">All Courses</p>
+              </div>
+            </a>
+            
         </div>
     </div>
     @yield('content')

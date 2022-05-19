@@ -2,6 +2,12 @@
 @section('title')
 {{ $course->course_id }} Assignments
 @endsection
+@section('course_title')
+{{ $course->name }}
+@endsection
+@section('page_title')
+{{ $course->name }}
+@endsection
 @section('content')
     <div class="flex w-full">
         <div class="w-full px-32 py-4 bg-white">

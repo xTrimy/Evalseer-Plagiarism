@@ -24,7 +24,8 @@ class CourseController extends Controller
     public function index($id)
     {
         $course = Course::find($id);
-        return view('course', ['course' => $course]);
+
+        return view('course', ['course' => $course,'course_title'=>$course->name]);
     }
 
     public function assignments($id)
