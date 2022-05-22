@@ -9,7 +9,7 @@ from functools import partial, total_ordering
 from pathlib import Path
 from typing import Iterable, Set
 
-
+# from tqdm import tqdm
 
 from sensibility._paths import EVALUATION_DIR
 from sensibility.language import language
@@ -144,6 +144,6 @@ def main() -> None:
     # Output structure
     #   {output_dir}/{language}/partitions/{partition_no}/{set}
     stderr('Shuffling writing sets for each partition...')
-    for partition in tqdm(heap):
-        partition.create_sets()
-        partition.save_to(output_dir / language.id / 'partitions')
+    # for partition in tqdm(heap):
+    #     partition.create_sets()
+    #     partition.save_to(output_dir / language.id / 'partitions')
