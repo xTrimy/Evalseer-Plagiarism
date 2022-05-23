@@ -318,26 +318,26 @@ class UserController extends Controller
         $swe212 = 0;
         $se305 = 0;
 
-        foreach ($submissionss as $submission) {
-            $question = Questions::find($submission->question_id);
-            foreach ($swe211_assignment as $assignment) {
-                if($question->assignment_id == $assignment->id) {
-                    $swe211++;
-                }
-            }
+        // foreach ($submissionss as $submission) {
+        //     $question = Questions::find($submission->question_id);
+        //     foreach ($swe211_assignment as $assignment) {
+        //         if($question->assignment_id == $assignment->id) {
+        //             $swe211++;
+        //         }
+        //     }
 
-            foreach ($swe212_assignment as $assignment) {
-                if($question->assignment_id == $assignment->id) {
-                    $swe212++;
-                }
-            }
+        //     foreach ($swe212_assignment as $assignment) {
+        //         if($question->assignment_id == $assignment->id) {
+        //             $swe212++;
+        //         }
+        //     }
 
-            foreach ($se305_assignment as $assignment) {
-                if($question->assignment_id == $assignment->id) {
-                    $se305++;
-                }
-            }
-        }
+        //     foreach ($se305_assignment as $assignment) {
+        //         if($question->assignment_id == $assignment->id) {
+        //             $se305++;
+        //         }
+        //     }
+        // }
 
         return view('instructor.index',["users"=>$users,"assignments"=>$assignments,"submissions"=>$submissions,"swe211"=>$swe211,"swe212"=>$swe212,"se305"=>$se305]);
     }

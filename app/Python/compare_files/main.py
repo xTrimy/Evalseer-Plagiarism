@@ -49,15 +49,17 @@ def tokenize(tokens):
     current_line_original = ""
     current_line = ""
     braces_count=0
-    for index,i in enumerate(tokenz):
+    end_braces = False
+    for index, i in enumerate(tokenz):
         if(i == "=" or i == "<" or i == ">>" or  (i == "IDENTIFIER" and tokenz[index-1] != "<") or i == "<<" or i == "*"):
             current_line += " "
             current_line_original += " "
         current_line += i
         current_line_original += original[index]
-        if(i == "=" or i == ">" or i == "using" or (i == "IDENTIFIER" and tokenz[index+1] != ">") or i == ">>" or i == "<<" or i == "*"):
-            current_line += " "
-            current_line_original += " "
+        if(index+1 < len(tokenz)):
+            if(i == "=" or i == ">" or i == "using" or (i == "IDENTIFIER" and tokenz[index+1] != ">") or i == ">>" or i == "<<" or i == "*"):
+                current_line += " "
+                current_line_original += " "
         if(index+1 < len(tokenz)):
             if(i == ">" or (i == "}" and tokenz[index+1] != ";") or i == "{" or i == ";"):
                 lines.append(current_line)

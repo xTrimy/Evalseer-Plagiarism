@@ -12,8 +12,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RuntimeException;
 use Illuminate\Support\Facades\DB;
+
 use stdClass;
 use File;
+use Illuminate\Support\Facades\File as FacadesFile;
 
 use function PHPUnit\Framework\directoryExists;
 use function PHPUnit\Framework\fileExists;
@@ -53,6 +55,7 @@ class QuestionController extends Controller
         if($total_grading_criteria != 100){
             return redirect()->back()->with('error','Total grading criteria percentage must be "100%"')->withInput();
         }
+        $assignment = Assignments::find($request->assignment_id);
         $question = new Questions();
         $question->name = $request->name;
         $question->assignment_id = $request->assignment_id;
@@ -72,12 +75,19 @@ class QuestionController extends Controller
             $NameToStore = str_replace('\main_files', '', $NameToStore);
             $question->main_file = $NameToStore;
         }
+      
         $question->save();
-
-        $directory_name = public_path("assignment_files/" . $question->name . "-" . $question->id);
-        if (!directoryExists($directory_name)) {
-            mkdir($directory_name);
+        if ($request->has('external_plagiarism')) {
+            $external_files = $request->external_plagiarism;
+            $directory_name = public_path("assignment_submissions/" . $assignment->name . "/" . $question->name . '/' . 'plagiarism_files');
+            FacadesFile::ensureDirectoryExists($directory_name);
+            foreach ($external_files as $key => $external_file) {
+                $file_name = $directory_name . '/' . $key . ".plag";
+                file_put_contents($file_name, $external_file);
+            }
         }
+        $directory_name = public_path("assignment_files/" . $question->name . "-" . $question->id);
+        mkdir($directory_name);
         $i = 0;
         foreach ($request->code as $file) {
             $file_name =  $directory_name . "/" . $file;
@@ -331,12 +341,12 @@ class QuestionController extends Controller
                     return $output;
                 } else {
                     $files_directory = public_path('assignment_files/' . $question->name . "-" . $question->id);
+                    FacadesFile::ensureDirectoryExists($files_directory);
                     $output = "";
-                    if (directoryExists()) {
-                        $files = array_diff(scandir($files_directory), array('.', '..'));
-                        if (fileExists($files_directory . '/.hidden')) {
-                            $hidden = preg_split('/\r\n|\n\r|\r|\n/', file_get_contents($files_directory . '/.hidden'));
-                        }
+                    $hidden = [];
+                    $files = array_diff(scandir($files_directory), array('.', '..'));
+                    if (FacadesFile::exists($files_directory . '/.hidden')) {
+                        $hidden = preg_split('/\r\n|\n\r|\r|\n/', file_get_contents($files_directory . '/.hidden'));
                     }
                     foreach($hidden as $hidden_file){
                         file_put_contents(public_path($file_directory.'/'.$hidden_file),file_get_contents($files_directory.'/'.$hidden_file));

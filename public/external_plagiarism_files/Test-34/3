@@ -1,0 +1,6 @@
+int compareMyType (const void * a, const void * b)
+    {
+      if ( *(MyType*)a <  *(MyType*)b ) return -1;
+      if ( *(MyType*)a == *(MyType*)b ) return 0;
+      if ( *(MyType*)a >  *(MyType*)b ) return 1;
+    }
