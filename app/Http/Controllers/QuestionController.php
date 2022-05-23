@@ -349,7 +349,8 @@ class QuestionController extends Controller
                         $hidden = preg_split('/\r\n|\n\r|\r|\n/', file_get_contents($files_directory . '/.hidden'));
                     }
                     foreach($hidden as $hidden_file){
-                        file_put_contents(public_path($file_directory.'/'.$hidden_file),file_get_contents($files_directory.'/'.$hidden_file));
+						if($hidden_file == "") continue;
+						file_put_contents(public_path($file_directory.'/'.$hidden_file),file_get_contents($files_directory.'/'.$hidden_file));
                     }
                     $java_executable = env('JAVA_COMPILER_PATH');
                     $output_tmp = shell_exec("cd $file_directory && $java_executable *.java 2>&1 ");
@@ -383,7 +384,8 @@ class QuestionController extends Controller
                         $this->give_compiling_grade_to_submission($question, $submission, $output);
                     }
                     foreach ($hidden as $hidden_file) {
-                        unlink(public_path($file_directory . '/' . $hidden_file));
+					if($hidden_file == "") continue;
+						unlink(public_path($file_directory . '/' . $hidden_file));
                     }
                     return $output;
                 }

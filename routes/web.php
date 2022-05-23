@@ -145,6 +145,9 @@ Route::middleware('auth')->group(function (){
                 Route::get('/plagiarism-report', [PlagiarismController::class, "plagiarism_report"])->name('plagiarism_report');
                 Route::get('/report/{report}', [PlagiarismController::class, "report"])->name('report');
                 Route::get('/view-plagiarism-reports', [PlagiarismController::class, "view_plagiarism_reports"])->name('view_plagiarism_reports');
+                Route::get('/edit-submission/{submission_id}', [UserController::class, "edit_submission"])->name('edit_submission');
+                Route::post('/edit-submission/{submission_id}', [UserController::class, "edit_sub"]);
+                Route::get('/view-submission/{submission_id}', [UserController::class, "view_submission"])->name('view_submission');
             });
             Route::prefix('/students')->as('students.')->group(function () {
                 Route:: get('/', [UserController::class, "dashboard_view_students"])->name('view');
@@ -206,15 +209,6 @@ Route::middleware('auth')->group(function (){
                 Route::post('/edit-course/{course_id}', [CourseController::class, "edit"]);
 
                 Route::get('/delete/{course_id}', [CourseController::class, "delete"])->name('delete');
-            });
-
-            Route::prefix('/assignments')->as('assignments.')->group(function () {
-                Route::get('/add', [AssignmentController::class, "add"])->name('add_assignment');
-                Route::post('/add', [AssignmentController::class, "store"]);
-            });
-            Route::prefix('/qestions/{id}')->group(function ($id) {
-                Route::get('/add', [QuestionController::class, "add"])->name('add_question');
-                Route::post('/add', [QuestionController::class, "store"]);
             });
 
         });
