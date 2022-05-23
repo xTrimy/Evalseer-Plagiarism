@@ -211,15 +211,6 @@ Route::middleware('auth')->group(function (){
                 Route::get('/delete/{course_id}', [CourseController::class, "delete"])->name('delete');
             });
 
-            Route::prefix('/assignments')->as('assignments.')->group(function () {
-                Route::get('/add', [AssignmentController::class, "add"])->name('add_assignment');
-                Route::post('/add', [AssignmentController::class, "store"]);
-            });
-            Route::prefix('/qestions/{id}')->group(function ($id) {
-                Route::get('/add', [QuestionController::class, "add"])->name('add_question');
-                Route::post('/add', [QuestionController::class, "store"]);
-            });
-
         });
     });
 
