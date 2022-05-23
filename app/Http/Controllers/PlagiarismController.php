@@ -154,8 +154,9 @@ class PlagiarismController extends Controller
         $directory = public_path('assignment_submissions/'.$question->assignment->name.'/'.$question->name);
         $python = env('PYTHON_EXE_PATH');
         $plagiarism_checker = env('SCOSS_PLAGIARISM_CHECKER');
-        $results = shell_exec($python." ". $plagiarism_checker. " -l $lang -p $directory 2>&1");
+        $results = shell_exec($python." ". $plagiarism_checker. " -l $lang -p \"$directory\" 2>&1");
         $results = json_decode($results);
+        if($results)
         foreach($results as $result){
             $source1 = $result->source1;
             $source2 = $result->source2;
@@ -207,7 +208,9 @@ class PlagiarismController extends Controller
         $python = env('PYTHON_EXE_PATH');
         $compare_files = env("FILES_COMPARER");
         $result = shell_exec("$python $compare_files -l \"$lang\" -f \"$source1\" -s \"$source2\" 2>&1");
-        $data = json_decode($result);
+        $data = ["similarities"=>[]];
+        if($result)
+            $data = json_decode($result);
         return view('instructor.compare-code',["data"=>$data,'s1'=> $plagiarism_report->source_1,'s2'=> $plagiarism_report->source_2,'scores'=> $plagiarism_report->score]);
     }
 

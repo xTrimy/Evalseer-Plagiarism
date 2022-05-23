@@ -18,7 +18,10 @@ sc.add_metric('count_operator', threshold=0.3)
 sc.add_metric('set_operator', threshold=0.3)
 sc.add_metric('hash_operator', threshold=0.3)
 sc.add_metric('token_based', threshold=0.5)
+sc.add_file_by_wildcard(path+'/**/*.java')
+sc.add_file_by_wildcard(path+'/**/*.py')
 sc.add_file_by_wildcard(path+'/**/*.cpp')
+sc.add_file_by_wildcard(path+'/**/*.plag')
 sc.run()
 result = []
 for i in sc.get_matches(or_thresholds=True):
