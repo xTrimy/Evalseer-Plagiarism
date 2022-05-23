@@ -27,8 +27,13 @@ result = []
 for i in sc.get_matches(or_thresholds=True):
     source1 = i["source1"].replace(path,'')
     source2 = i["source2"].replace(path, '')
-    source1_author = source1.split('\\')[1]
-    source2_author = source2.split('\\')[1]
+    try:
+        source1_author = source1.split('\\')[1]
+        source2_author = source2.split('\\')[1]
+    except IndexError:
+        source1_author = source1.split('/')[1]
+        source2_author = source2.split('/')[1]
+
     if(source1_author == source2_author):
         continue
     i["source1_author"] = source1_author
