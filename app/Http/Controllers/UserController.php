@@ -147,15 +147,27 @@ class UserController extends Controller
         // dd($assignment_id);
         $users = User::role('instructor')->paginate(15);
 
-        $submissions = DB::table('submissions')
-                        ->where('submissions.id', $submission_id)
-                        ->leftJoin('users', 'submissions.user_id', '=', 'users.id')
+        // $submissions = collect(DB::table('submissions')
+        //                 ->where('submissions.id', $submission_id)
+        //                 ->leftJoin('users', 'submissions.user_id', '=', 'users.id')
+        //                 ->select('submissions.*', 'users.name')
+        //                 ->distinct('user_id')
+        //                 ->take(1)
+        //                 ->get());
+
+        $submissions = Submission::join('users', 'submissions.user_id', '=', 'users.id')
                         ->select('submissions.*', 'users.name')
+                        ->where('submissions.id',$submission_id)
                         ->distinct('user_id')
-                        ->take(1)
+                        ->limit(1)
                         ->get();
 
-        return view('instructor.view-submission',['users'=>$users,'submissions'=>$submissions]);
+        $submission = $submissions[0];
+
+        $question = Questions::find($submissions[0]->question_id);
+        // dd($submission_id,$submission,$submissions);
+
+        return view('instructor.view-submission',['users'=>$users,'submissions'=>$submissions,'question'=>$question,'submission'=>$submission]);
     }
     //User Views END
 
@@ -165,6 +177,7 @@ class UserController extends Controller
         $roles = Role::all();
         return view('admin.add-user',['roles'=>$roles]);
     }
+    
     public function store(Request $request)
     {
         $request->validate([
@@ -318,26 +331,26 @@ class UserController extends Controller
         $swe212 = 0;
         $se305 = 0;
 
-        foreach ($submissionss as $submission) {
-            $question = Questions::find($submission->question_id);
-            foreach ($swe211_assignment as $assignment) {
-                if($question->assignment_id == $assignment->id) {
-                    $swe211++;
-                }
-            }
+        // foreach ($submissionss as $submission) {
+        //     $question = Questions::find($submission->question_id);
+        //     foreach ($swe211_assignment as $assignment) {
+        //         if($question->assignment_id == $assignment->id) {
+        //             $swe211++;
+        //         }
+        //     }
 
-            foreach ($swe212_assignment as $assignment) {
-                if($question->assignment_id == $assignment->id) {
-                    $swe212++;
-                }
-            }
+        //     foreach ($swe212_assignment as $assignment) {
+        //         if($question->assignment_id == $assignment->id) {
+        //             $swe212++;
+        //         }
+        //     }
 
-            foreach ($se305_assignment as $assignment) {
-                if($question->assignment_id == $assignment->id) {
-                    $se305++;
-                }
-            }
-        }
+        //     foreach ($se305_assignment as $assignment) {
+        //         if($question->assignment_id == $assignment->id) {
+        //             $se305++;
+        //         }
+        //     }
+        // }
 
         return view('instructor.index',["users"=>$users,"assignments"=>$assignments,"submissions"=>$submissions,"swe211"=>$swe211,"swe212"=>$swe212,"se305"=>$se305]);
     }

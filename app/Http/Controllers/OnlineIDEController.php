@@ -7,24 +7,27 @@ use App\Models\Submission;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use stdClass;
 
-use function PHPUnit\Framework\directoryExists;
-use function PHPUnit\Framework\fileExists;
 
 class OnlineIDEController extends Controller
 {
     public function view($id){
-        $question = Questions::with(['assignment','test_cases','submissions'=>function(HasMany $query){
+        $question = Questions::with(['assignment',"programming_language",'test_cases','submissions'=>function(HasMany $query){
             return $query->where('user_id',Auth::user()->id);
         }])->find($id);
         $files_directory = public_path('assignment_files/' . $question->name . "-" . $question->id);
-        if(directoryExists()){
-            $files = array_diff(scandir($files_directory), array('.', '..'));
-            if(fileExists($files_directory.'/.hidden')){
-                $hidden = preg_split('/\r\n|\n\r|\r|\n/', file_get_contents($files_directory . '/.hidden'));
-                $files =array_diff($files, $hidden, [".hidden"]);
-            }
+        File::ensureDirectoryExists($files_directory);
+        $files = array_diff(scandir($files_directory), array('.', '..'));
+        if(File::exists($files_directory.'/.hidden')){
+            $hidden = preg_split('/\r\n|\n\r|\r|\n/', file_get_contents($files_directory . '/.hidden'));
+            $files =array_diff($files, $hidden, [".hidden"]);
+        }
+        if(empty($files)){
+            $file_name = "Main".explode(',',$question->programming_language->extensions)[0];
+            $files = [$file_name];
+            File::put($files_directory .'/'. $file_name, "");
         }
         return view('online-ide', ["question"=>$question,"files"=> $files]);
     }
