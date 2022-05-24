@@ -291,7 +291,7 @@ class QuestionController extends Controller
             if ($question->grading_criteria->last()) {
                 if ($question->grading_criteria->last()->time_execution_weight) {
                     if($time < $time_execution_target*1.5){
-                        $submission->time_execution_weight += $question->grading_criteria->last()->time_execution_weight / 100 * $question->grade;
+                        $submission->time_execution_grade += $question->grading_criteria->last()->time_execution_weight / 100 * $question->grade;
                         $submission->total_grade += $submission->time_execution_weight;
                     }else{
                     $submission->time_execution_feedback = "Your submission execution time was ". $time . ", which is too high compared to another solution. Try optimizing your code and try again";
