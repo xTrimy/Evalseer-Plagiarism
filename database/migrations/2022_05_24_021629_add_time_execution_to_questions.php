@@ -14,7 +14,7 @@ class AddTimeExecutionToQuestions extends Migration
     public function up()
     {
         Schema::table('questions', function (Blueprint $table) {
-            $table->float('time_execution')->nullable();
+            $table->double('time_execution')->nullable();
         });
     }
 
