@@ -29,6 +29,7 @@ class QuestionController extends Controller
         'not_hidden_test_cases',
         // 'hidden_test_cases',
         'features',
+        'time_execution',
     ];
     public function add($id){
 
@@ -279,6 +280,40 @@ class QuestionController extends Controller
      * @throws RuntimeException
      */
 
+    public function give_time_execution_grade($question, Submission &$submission, $time)
+    {
+        $time_execution_target = $question->time_execution;
+        $submission->time_execution_grade = 0;
+        if($time_execution_target == null || $time_execution_target == 0){
+            return ;
+        }
+            // Give grade for time execution if the criteria exists
+            if ($question->grading_criteria->last()) {
+                if ($question->grading_criteria->last()->time_execution_weight) {
+                    if($time < $time_execution_target*1.5){
+                        $submission->time_execution_weight += $question->grading_criteria->last()->time_execution_weight / 100 * $question->grade;
+                        $submission->total_grade += $submission->time_execution_weight;
+                    }else{
+                    $submission->time_execution_feedback = "Your submission execution time was ". $time . ", which is too high compared to another solution. Try optimizing your code and try again";
+
+                    }
+                }
+            }
+    }
+
+    /**
+     * Compile code file
+     * Returns the compilation output
+     *
+     * @param  string  $language
+     * @param  string  $file_path
+     * @param  string  $file_directory
+     * @param  bool    $run_file = false
+     * @return string
+     *
+     * @throws RuntimeException
+     */
+
     public function give_compiling_grade_to_submission($question, Submission &$submission, $compiler_feedback){
         $submission->compiling_grade = 0;
         if ($compiler_feedback == false || empty($compiler_feedback)) {
@@ -480,6 +515,7 @@ class QuestionController extends Controller
         
         $avg_execution_time = $total_excectution_time / count($test_cases);
         $submission->execution_time = $avg_execution_time;
+        $this->give_time_execution_grade($question , $submission , $avg_execution_time);
         if ($question->grading_criteria->last() && count($question->test_cases) > 0) {
             if ($question->grading_criteria->last()->not_hidden_test_cases_weight) {
                 $number_of_test_cases = count($question->test_cases);
