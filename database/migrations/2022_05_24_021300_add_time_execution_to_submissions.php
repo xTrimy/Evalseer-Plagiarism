@@ -15,7 +15,7 @@ class AddTimeExecutionToSubmissions extends Migration
     {
         Schema::table('submissions', function (Blueprint $table) {
             $table->integer('time_execution_grade')->nullable();
-            $table->integer('time_execution_feedback')->nullable();
+            $table->string('time_execution_feedback')->nullable();
         });
     }
 
