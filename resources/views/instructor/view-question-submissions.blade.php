@@ -73,7 +73,7 @@ users
                   <tbody
                     class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800"
                   >
-                  @php $i = 0; @endphp 
+                  @php $i = 0; $x = 1;@endphp
                   @foreach ($submissions as $submission)
                       <tr class="text-gray-700 dark:text-gray-400 text-center">
                       <td class="px-4 py-3">
@@ -217,7 +217,7 @@ users
                         </div>
                       </td>
                     </tr>
-                    @php $i++; @endphp
+                    @php $i++; $x++;@endphp
                   @endforeach
                   </tbody>
                 </table>
@@ -308,5 +308,6 @@ users
             configBarChart
           );
         </script>
+        <script src="https://unpkg.com/flowbite@1.3.3/dist/flowbite.js"></script>
 
 @endsection
