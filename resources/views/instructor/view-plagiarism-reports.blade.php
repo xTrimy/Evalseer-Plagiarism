@@ -60,8 +60,24 @@ users
                       <td class="px-4 py-3 text-sm font-bold" >
                         {{ $plagiarism_report->name ?? 'All Groups' }}
                       </td>
-                      <td class="px-4 py-3 text-center" >
-                        <a href="{{ route('dashboard.users.instructors.report',['report'=>$plagiarism_report->report]) }}" class=" font-thin text-green-800">View Report</a>
+                      <td class="px-4 py-3 text-center" > 
+                        {{-- <a href="{{ route('dashboard.users.instructors.report',['report'=>$plagiarism_report->report]) }}" class=" font-thin text-green-800">View Report</a> --}}
+                        @if ($plagiarism_report->report != null)
+                          <a href="{{ route('dashboard.users.instructors.report',['report'=>$plagiarism_report->report]) }}" class=" font-thin text-green-800">View Report <span class="text-sm px-2 bg-green-100 text-green-600 rounded-full">JPlag</span></a>
+                        @elseif($plagiarism_report->score != null)
+                        @php
+                          $report = unserialize($plagiarism_report->score);
+                          $count_operator = $report->count_operator * 100;
+                          $set_operator = $report->set_operator * 100;
+                          $hash_operator = $report->hash_operator * 100;
+                          $token_based = $report->token_based * 100;
+
+                          $count_operator = round($count_operator,2);
+                        @endphp
+                        <a href="{{ route('dashboard.plagiarism_checker.compare',$plagiarism_report->id) }}">{{ $count_operator."%" }}<span class="text-sm px-2 bg-green-100 text-green-600 rounded-full">SCOSS</span></a>
+                        @else
+                          N/A
+                        @endif
                       </td>
                       <td class="px-4 py-3 " >
                         {{ $plagiarism_report->created_at }}

@@ -11,6 +11,17 @@
     <script src="{{ asset('js/app.js') }}"></script>
 </head>
 <body class="relative">
+  
+    @if (Session::has('main-error'))
+      <button
+      onclick="this.remove()"
+      class="absolute top-0 left-1/2 transform -translate-x-1/2 bg-red-200 text-red-700 py-2 pl-8 pr-12">
+      {{ Session::get('main-error') }}
+    <div class="absolute right-4 top-1/2 transform -translate-y-1/2 "> 
+    <i class="las la-times text-xl"></i>
+    </div>
+    </button>
+    @endif
     <x-modal/>
     <div class="flex w-full px-8 py-5">
         <div class="flex-1  text-center flex justify-center">
