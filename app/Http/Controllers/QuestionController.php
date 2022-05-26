@@ -12,8 +12,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RuntimeException;
 use Illuminate\Support\Facades\DB;
+
 use stdClass;
 use File;
+use Illuminate\Support\Facades\File as FacadesFile;
+
+use function PHPUnit\Framework\directoryExists;
+use function PHPUnit\Framework\fileExists;
 
 class QuestionController extends Controller
 {
@@ -24,6 +29,7 @@ class QuestionController extends Controller
         'not_hidden_test_cases',
         // 'hidden_test_cases',
         'features',
+        'time_execution',
     ];
     public function add($id){
 
@@ -50,6 +56,7 @@ class QuestionController extends Controller
         if($total_grading_criteria != 100){
             return redirect()->back()->with('error','Total grading criteria percentage must be "100%"')->withInput();
         }
+        $assignment = Assignments::find($request->assignment_id);
         $question = new Questions();
         $question->name = $request->name;
         $question->assignment_id = $request->assignment_id;
@@ -69,10 +76,26 @@ class QuestionController extends Controller
             $NameToStore = str_replace('\main_files', '', $NameToStore);
             $question->main_file = $NameToStore;
         }
-        if(strlen($request->base_skeleton) > 5 ){
-            $question->skeleton = $request->base_skeleton;
-        }
+      
         $question->save();
+        if ($request->has('external_plagiarism')) {
+            $external_files = $request->external_plagiarism;
+            $directory_name = public_path("assignment_submissions/" . $assignment->name . "/" . $question->name . '/' . 'plagiarism_files');
+            FacadesFile::ensureDirectoryExists($directory_name);
+            foreach ($external_files as $key => $external_file) {
+                $file_name = $directory_name . '/' . $key . ".plag";
+                file_put_contents($file_name, $external_file);
+            }
+        }
+        $directory_name = public_path("assignment_files/" . $question->name . "-" . $question->id);
+        mkdir($directory_name);
+        $i = 0;
+        foreach ($request->code as $file) {
+            $file_name =  $directory_name . "/" . $file;
+            file_put_contents($file_name, $request->base_skeleton_file[$i]);
+            $i++;
+        }
+        
         $i = 0;
         foreach($request->input as $input){
             //skipping first hidden inputs
@@ -223,12 +246,9 @@ class QuestionController extends Controller
             $filesInside = scandir($extract_dir_path, 1);
             $filesCount = count($filesInside);
             $filesCount -= 3;
-            
             // Check if the folder has a main.java (ToDo)
-            
             // $extract_dir_path = str_replace(" ", "%", $extract_dir_path);
             $compiling_command = "$java_executable"." \"$extract_dir_path"."/main.java\" ";
-            
             
             for($i=0;$i<=$filesCount;$i++) {
                 $ext = substr($filesInside[$i], -4);
@@ -260,6 +280,40 @@ class QuestionController extends Controller
      * @throws RuntimeException
      */
 
+    public function give_time_execution_grade($question, Submission &$submission, $time)
+    {
+        $time_execution_target = $question->time_execution;
+        $submission->time_execution_grade = 0;
+        if($time_execution_target == null || $time_execution_target == 0){
+            return ;
+        }
+            // Give grade for time execution if the criteria exists
+            if ($question->grading_criteria->last()) {
+                if ($question->grading_criteria->last()->time_execution_weight) {
+                    if($time < $time_execution_target*1.5){
+                        $submission->time_execution_grade += $question->grading_criteria->last()->time_execution_weight / 100 * $question->grade;
+                        $submission->total_grade += $submission->time_execution_grade;
+                    }else{
+                    $submission->time_execution_feedback = "Your submission execution time was ". $time . ", which is too high compared to another solution. Try optimizing your code and try again";
+
+                    }
+                }
+            }
+    }
+
+    /**
+     * Compile code file
+     * Returns the compilation output
+     *
+     * @param  string  $language
+     * @param  string  $file_path
+     * @param  string  $file_directory
+     * @param  bool    $run_file = false
+     * @return string
+     *
+     * @throws RuntimeException
+     */
+
     public function give_compiling_grade_to_submission($question, Submission &$submission, $compiler_feedback){
         $submission->compiling_grade = 0;
         if ($compiler_feedback == false || empty($compiler_feedback)) {
@@ -274,7 +328,7 @@ class QuestionController extends Controller
         }
     }
     
-    public function compile_file($language,string $file_path,string $file_directory, bool $run_file = false, $question, Submission &$submission) {
+    public function compile_file($language,string $file_path,string $file_directory, bool $run_file = false, $question, Submission &$submission,$test_case_file = null) {
         $ext = substr($file_path, -4);
         // TODO: Make languages more dynamic
         if($language == 'c++'){
@@ -321,13 +375,52 @@ class QuestionController extends Controller
                     // dd($output);
                     return $output;
                 } else {
+                    $files_directory = public_path('assignment_files/' . $question->name . "-" . $question->id);
+                    FacadesFile::ensureDirectoryExists($files_directory);
+                    $output = "";
+                    $hidden = [];
+                    $files = array_diff(scandir($files_directory), array('.', '..'));
+                    if (FacadesFile::exists($files_directory . '/.hidden')) {
+                        $hidden = preg_split('/\r\n|\n\r|\r|\n/', file_get_contents($files_directory . '/.hidden'));
+                    }
+                    foreach($hidden as $hidden_file){
+						if($hidden_file == "") continue;
+						file_put_contents(public_path($file_directory.'/'.$hidden_file),file_get_contents($files_directory.'/'.$hidden_file));
+                    }
                     $java_executable = env('JAVA_COMPILER_PATH');
-                    $output = shell_exec("cd $file_directory && $java_executable *.java 2>&1 ");
+                    $output_tmp = shell_exec("cd $file_directory && $java_executable *.java 2>&1 ");
+                    if (str_contains($output_tmp, "error: cannot find symbol")) {
+                        $output .= "<p class='text-yellow-500'>You may be forgotten to `<b>import java.util.*</b>` </p>\n";
+                    }
+                    if (str_contains($output_tmp, "should be declared in a file named")) {
+                        $output .= "<p class='text-yellow-500'>Class names should be named same as the file name </p>\n";
+                    }
+                    $output .= $output_tmp;
                     if($output == ""){
                         $file_path = str_replace('\\','/',$file_path);
                         $file_path = str_replace('.java', '', $file_path);
-                        $output = shell_exec("cd $file_directory && java  \"" . @end(explode('/',$file_path))  . "\" 2>&1 ");
+                        $files = array_diff(scandir($file_directory), array('.', '..'));
+                        foreach($files as $file){
+                            if(strtolower(explode('.',$file)[0]) == "main"){
+                                $file_path = str_replace('.java', '', $file);
+                            }
+                        }
+                        $output = "";
+                        if($test_case_file == null){
+                            $output_tmp = shell_exec("cd $file_directory && java  \"" . @end(explode('/', $file_path))  . "\" 2>&1 ");
+                        }else{
+                            $output_tmp = shell_exec("cd $file_directory && java  \"" . @end(explode('/', $file_path))  . "\" < $test_case_file 2>&1 ");
+                        }
+                        if (str_contains($output_tmp, "Main method not found in class")) {
+                            $output .= "<p class='text-yellow-500'>You may be forgotten to <b>add a main method</b>\nAdd ` public static void mainx(String[] args) ` to your main class  </p>\n";
+                        }
+                        
+                        $output .= $output_tmp;
                         $this->give_compiling_grade_to_submission($question, $submission, $output);
+                    }
+                    foreach ($hidden as $hidden_file) {
+					if($hidden_file == "") continue;
+						unlink(public_path($file_directory . '/' . $hidden_file));
                     }
                     return $output;
                 }
@@ -374,6 +467,7 @@ class QuestionController extends Controller
             if($testing){
                 $test_case_file = public_path($file_directory . "/test_case_" . time());
                 file_put_contents($test_case_file, $test_case["inputs"]);
+                
             } else {
                 $test_case_file = public_path($file_directory . "/test_case_" . $test_case->id);
                 file_put_contents($test_case_file, $test_case->inputs);
@@ -398,10 +492,11 @@ class QuestionController extends Controller
                     $commandd = "cd \"".public_path($file_directory)."\" && $java_exe " . "javaapp.java"." < \"" . $test_case_file . "\"";
                     $output = shell_exec($commandd);
                 } else {
-                    $java_exe = env('JAVA_EXE_PATH');
-                    $output = shell_exec("cd \"".public_path($file_directory)."\" && $java_exe " . @end(explode('/', str_replace('.java','',$submission->submitted_code)))." < \"" . $test_case_file . "\"");
+                    $output = $this->compile_file('java', $submission->submitted_code,$file_directory,true,$question,$submission, $test_case_file);
                 }
             }
+            $output = trim(str_replace(array("\n", "\r"), ' ', $output));
+            $test_case["output"] = trim(str_replace(array("\n", "\r"), ' ', $test_case["output"]));
             if($testing) {
                 if ($output == $test_case["output"]) {
                     $number_of_test_cases_passed += 1;
@@ -420,6 +515,7 @@ class QuestionController extends Controller
         
         $avg_execution_time = $total_excectution_time / count($test_cases);
         $submission->execution_time = $avg_execution_time;
+        $this->give_time_execution_grade($question , $submission , $avg_execution_time);
         if ($question->grading_criteria->last() && count($question->test_cases) > 0) {
             if ($question->grading_criteria->last()->not_hidden_test_cases_weight) {
                 $number_of_test_cases = count($question->test_cases);

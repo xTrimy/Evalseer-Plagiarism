@@ -129,6 +129,7 @@ window.add_file_icons_to_files = function(){
         }
     }
 }
+
 window.remove_file_tabs_selection = function(){
     var file_tabs = document.getElementsByClassName('file_tab');
     for(let i = 0; i<file_tabs.length; i++){
@@ -204,6 +205,15 @@ window.get_ide_editors_values = function(){
         editor_values.push([document.querySelector("div[data-file-order='"+editor_id.split('-')[1]+"']").innerText,a_ace_editor.getSession().getValue()]);
     }
     return editor_values;
+}
+window.get_ide_editor_ids = function(){
+    var a_ace_editors = document.getElementsByClassName('ace_file_editor');
+    var editor_ids= [];
+    for(let i = 0; i < a_ace_editors.length; i ++ ){
+        let editor_id = a_ace_editors[i].getAttribute('id');
+        editor_ids.push(editor_id);
+    }
+    return editor_ids;
 }
 window.remove_ide_editor = function(file_order){
     document.getElementById('editor-'+file_order).remove();

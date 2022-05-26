@@ -140,10 +140,16 @@
                       <p class="text-gray-400 text-xs md:text-sm font-light">
                           @if($question->submissions->last()->is_blocked == 0)
                             {{ $question->submissions->last()->total_grade }}/{{ $question->grade }}
-                            @if($question->submissions->last()->feature_feedback != NULL)
+                            @if($question->submissions->last()->feature_feedback != NULL || $question->submissions->last()->time_execution_feedback != NULL )
                             <p>
                                 <div class="hidden modal_contains">
+                                    @if($question->submissions->last()->feature_feedback != NULL)
                                     {{ $question->submissions->last()->feature_feedback }}
+                                    <br>
+                                    @endif
+                                    @if($question->submissions->last()->time_execution_feedback != NULL)
+                                    {{ $question->submissions->last()->time_execution_feedback }}
+                                    @endif
                                 </div>
                                 <div data-modal-title="Failed code features" data-modal-close-button="Got It!" class="modal_open mt-2 bg-orange-500 p-1 rounded-md table text-white cursor-pointer">View feedback</div>
                             </p>

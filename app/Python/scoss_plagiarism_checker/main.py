@@ -18,14 +18,22 @@ sc.add_metric('count_operator', threshold=0.3)
 sc.add_metric('set_operator', threshold=0.3)
 sc.add_metric('hash_operator', threshold=0.3)
 sc.add_metric('token_based', threshold=0.5)
+sc.add_file_by_wildcard(path+'/**/*.java')
+sc.add_file_by_wildcard(path+'/**/*.py')
 sc.add_file_by_wildcard(path+'/**/*.cpp')
+sc.add_file_by_wildcard(path+'/**/*.plag')
 sc.run()
 result = []
 for i in sc.get_matches(or_thresholds=True):
     source1 = i["source1"].replace(path,'')
     source2 = i["source2"].replace(path, '')
-    source1_author = source1.split('\\')[1]
-    source2_author = source2.split('\\')[1]
+    try:
+        source1_author = source1.split('\\')[1]
+        source2_author = source2.split('\\')[1]
+    except IndexError:
+        source1_author = source1.split('/')[1]
+        source2_author = source2.split('/')[1]
+
     if(source1_author == source2_author):
         continue
     i["source1_author"] = source1_author

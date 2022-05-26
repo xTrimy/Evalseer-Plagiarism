@@ -244,10 +244,11 @@ Add Question to {{ $assignment->name }}
                 <input type="hidden" id="base_skeleton_input" name="base_skeleton">
                 <div class="w-full flex bg-slate-600">
                 <div class="flex overflow-x-auto">
-                    <div data-file-order="1" class="flex items-center relative file_tab py-2 px-4 cursor-pointer bg-slate-800 hover:bg-slate-800 border-b-2 text-white border-b-orange-500">
+                    <div data-file-order="1" class="flex hide-option items-center relative file_tab py-2 px-4 cursor-pointer bg-slate-800 hover:bg-slate-800 border-b-2 text-white border-b-orange-500">
                         <div class="icon w-6 h-6 mr-2"></div>
-                        <div class="file_name">Main.php</div>
-                        <input type="text" class="border-0 hidden absolute bg-transparent w-1/2 ml-8 p-0">
+                        <div class="file_name">Main{{ explode(',',$assignment->course->programming_languages->first()->extensions)[0] }}
+                        </div>
+                        <input type="text" name="code[]" value="Main{{ explode(',',$assignment->course->programming_languages->first()->extensions)[0] }}" class="border-0 hidden absolute bg-transparent w-1/2 ml-8 p-0">
                     </div>
                 </div>
                 <div id="add_file_button" class="current_file_tab flex file_tab py-4 px-4 bg-slate-700 hover:bg-green-800 cursor-pointer  text-white">
@@ -269,7 +270,10 @@ Add Question to {{ $assignment->name }}
                   <div class="lds-ring small"><div></div><div></div><div></div><div></div></div>
               </div>
               Search For External Source Codes</button>
-             
+             <div id="external_search_data">
+
+             </div>
+
               <button id="submit_button" type="submit" class="table items-center mt-4 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-orange-600 border border-transparent rounded-lg active:bg-orange-600 hover:bg-orange-700 focus:outline-none focus:shadow-outline-orange">
               Add
               <span class="ml-2" aria-hidden="true">
@@ -344,21 +348,41 @@ Add Question to {{ $assignment->name }}
        let form = document.querySelector('form');
        submit_button.addEventListener('click',function(e){
               e.preventDefault();
-              let base_skeleton = ace_editor.getSession().getValue();
-              base_skeleton_input.value = base_skeleton;
+              var editor_ids = get_ide_editor_ids();
+              console.log(editor_ids);
+              for(let i =0; i<editor_ids.length;i++){
+                let editor = document.getElementById(editor_ids[i]);
+                let ace_editor_ = ace.edit(editor_ids[i]);
+                editor.nextElementSibling.value = ace_editor_.getSession().getValue();
+
+              }
               form.submit();
         });
       </script>
 
       <script>
+        function escapeHtml(unsafe)
+        {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         var external_search_popup = document.getElementById('external_search_popup')
         function external_source_code_keyword_popup(){
           external_search_popup.classList.remove('hidden');
         }
         function search_external_sources(element){
+          var keyword = document.querySelector('input[name="external_search_keyword"]').value;
+          var language = document.querySelector('input[name="external_search_language"]').value;
+          var search_query = keyword + " " + language;
+          search_query = encodeURIComponent(search_query);
           element.disabled = true;
           $.ajax({
-            url: "{{ route('dashboard.code_searcher.search') }}?keyword=Binary%20Search%20C++",
+            url: "{{ route('dashboard.code_searcher.search') }}?keyword="+search_query,
             context: document.body
           }).done(function(data) {
             element.removeAttribute('disabled');
@@ -368,6 +392,7 @@ Add Question to {{ $assignment->name }}
             }
             let response = data["codes"];
             document.getElementById('external_source_codes_container').innerHTML = "Please Select From Below Results: <br>";
+            document.getElementById('external_search_data').innerHTML ="";
             for(let i = 0; i<response.length; i++){
               var div = document.createElement('div');
               var pre = document.createElement('pre');
@@ -383,7 +408,7 @@ Add Question to {{ $assignment->name }}
               div.classList.add('mt-4');
               pre.classList.add('bg-gray-200');
               pre.classList.add('text-black');
-              pre.innerHTML = response[i][1].replace('\n','<br>');
+              pre.innerHTML = escapeHtml(response[i][1]).replace('\n','<br>');
               div.appendChild(pre);
               document.getElementById('external_source_codes_container').appendChild(div);
             }
@@ -402,6 +427,14 @@ Add Question to {{ $assignment->name }}
               results[i].setAttribute('data-selected',"false");
             }
             if(results[i].getAttribute('data-selected') == "false"){
+              console.log(results[i].querySelector('pre'));
+              var code = results[i].querySelector('pre').innerText;
+              var input = document.createElement('input');
+              input.type = "hidden";
+              input.value = code;
+              input.setAttribute('name',"external_plagiarism[]");
+              input.setAttribute('id',"external_input_"+i);
+              document.getElementById('external_search_data').appendChild(input);
               results[i].classList.remove('border-transparent');
               results[i].classList.add('border-blue-500');
               var checkbox = document.createElement('div');
@@ -420,6 +453,7 @@ Add Question to {{ $assignment->name }}
               results[i].appendChild(checkbox);
               results[i].setAttribute('data-selected',"true");
             }else if(results[i].getAttribute('data-selected') == "true"){
+              document.getElementById("external_input_"+i).remove();
               results[i].classList.add('border-transparent');
               results[i].classList.remove('border-blue-500');
               results[i].querySelector('.checkbox').remove();

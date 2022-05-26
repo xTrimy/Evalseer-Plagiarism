@@ -12,11 +12,18 @@ IDE
         <div class="w-2/3 relative ">
             <div class="w-full flex bg-slate-600">
                 <div class="flex overflow-x-auto">
-                    <div data-file-order="1" class="flex items-center relative file_tab py-2 px-4 cursor-pointer bg-slate-800 hover:bg-slate-800 border-b-2 text-white border-b-orange-500">
+                    @php
+                        $i=1;
+                    @endphp
+                    @foreach ($files as $file)
+                    <div class="flex items-center relative file_tab py-2 px-4 cursor-pointer {{ $i==1?"bg-slate-800  border-b-2 border-b-orange-500":"bg-slate-700" }} hover:bg-slate-800 text-white "
+                    data-file-order="{{ $i++ }}" >
                         <div class="icon w-6 h-6 mr-2"></div>
-                        <div class="file_name">Main.php</div>
+                        <div class="file_name">{{ $file }}</div>
                         <input type="text" class="border-0 hidden absolute bg-transparent w-1/2 ml-8 p-0">
                     </div>
+                    @endforeach
+                    
                 </div>
                 
                 <div id="add_file_button" class="current_file_tab flex file_tab py-4 px-4 bg-slate-700 hover:bg-green-800 cursor-pointer  text-white">
@@ -25,7 +32,15 @@ IDE
             </div>
             <div class="w-full h-full">
                 <div onkeydown="editor_keyboard_shortcuts(event,this,0)" onkeyup="editor_keyboard_shortcuts(event,this,1)" id="editor" class="w-full h-5/6">
-                    <div id="editor-1" class="current_editor ace_file_editor w-full h-full">{{ $question->skeleton }}</div>
+                    @php
+                        $i=1;
+                    @endphp
+                    @foreach ($files as $file)
+                        <div id="editor-{{ $i }}" class="{{ $i==1?"current_editor":"hidden"}} ace_file_editor w-full h-full">{{ file_get_contents(public_path('assignment_files/' . $question->name . "-" . $question->id."/".$file)) }}</div>
+                    @php
+                        $i++
+                    @endphp
+                    @endforeach
                 </div>
                 <div id="bottom_bar" class="h-1/6">
                     <div class=" w-full py-2 bg-gray-500 left-0 flex px-4 justify-end items-center">
@@ -99,23 +114,27 @@ IDE
    <script>
         var ace_editor;
        window.onload=function(){
-             ace_editor = ace.edit("editor-1");
-            ace_editor.setTheme("ace/theme/monokai");
-            @if ($question->programming_language->acronym == "HTML")
-                ace_editor.session.setMode("ace/mode/html");
-            @elseif ($question->programming_language->acronym == "c++")
-                ace_editor.session.setMode("ace/mode/c_cpp");
-            @elseif ($question->programming_language->acronym == "java")
-                ace_editor.session.setMode("ace/mode/java");
-            @elseif ($question->programming_language->acronym == "PHP")
-                ace_editor.session.setMode("ace/mode/php");
-            @endif
-            ace_editor.setOptions({
-                
-                enableBasicAutocompletion: true,
-                enableSnippets: true,
-                enableLiveAutocompletion: true
-            });
+            var editors = document.getElementsByClassName('ace_file_editor');
+            for(let i =1; i<=editors.length; i++){
+                ace_editor = ace.edit("editor-"+i);
+                ace_editor.setTheme("ace/theme/monokai");
+                @if ($question->programming_language->acronym == "HTML")
+                    ace_editor.session.setMode("ace/mode/html");
+                @elseif ($question->programming_language->acronym == "c++")
+                    ace_editor.session.setMode("ace/mode/c_cpp");
+                @elseif ($question->programming_language->acronym == "java")
+                    ace_editor.session.setMode("ace/mode/java");
+                @elseif ($question->programming_language->acronym == "PHP")
+                    ace_editor.session.setMode("ace/mode/php");
+                @endif
+                ace_editor.setOptions({
+                    
+                    enableBasicAutocompletion: true,
+                    enableSnippets: true,
+                    enableLiveAutocompletion: true
+                });
+            }
+           
             // ace_editor.getSession().setAnnotations([{
             //     row: 1,
             //     column: 0,
