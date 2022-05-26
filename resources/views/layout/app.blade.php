@@ -12,6 +12,7 @@
     <script src="{{ asset('js/app.js') }}"></script>
 </head>
 <body class="relative">
+  
     @if (Session::has('main-error'))
       <button
       onclick="this.remove()"

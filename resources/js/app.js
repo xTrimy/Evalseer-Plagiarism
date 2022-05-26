@@ -328,3 +328,138 @@ window.editor_keyboard_shortcuts = function(e,element,event_type){
     
     console.log(code, element);
 }
+window.tips_array = [];
+window.current_tip = 0;
+window.tip_cookie = null;
+window.tour = function(element){
+    tip_cookie = element.getAttribute('data-cookie');
+    if(!tip_cookie) tip_cookie = null;    
+    var tips = element.querySelectorAll('li');
+    for(let i = 0; i <tips.length; i++){
+
+        let container = document.getElementById(tips[i].getAttribute('data-id'));
+        if(container == undefined) continue;
+        tips_array.push([tips[i].getAttribute('data-id'),tips[i].innerHTML,tips[i].getAttribute('data-position')]);
+    }
+    for(let i = 0; i <tips_array.length; i++){
+        let data_id = tips_array[i][0];
+        let content = tips_array[i][1];
+        let position = tips_array[i][2];
+        let container = document.getElementById(data_id);
+        let tip = document.createElement('div');
+        tip.classList.add('tip');
+        tip.classList.add('absolute');
+        if(position){
+            tip.classList.add(position);
+        }else{
+            tip.classList.add('top-full');
+        }
+        tip.classList.add('left-0');
+        tip.classList.add('hidden');
+        tip.classList.add('py-4');
+        tip.classList.add('px-8');
+        tip.classList.add('pb-24');
+        tip.setAttribute('style','--tw-bg-opacity:0.8');
+        tip.style.minHeight = "100px";
+        tip.classList.add('bg-white');
+        tip.classList.add('shadow-lg');
+        tip.classList.add('rounded-md');
+        tip.classList.add('border');
+        tip.classList.add('border-orange-500');
+        var tip_arrow = document.createElement('div');
+        tip_arrow.classList.add('w-0');
+        tip_arrow.classList.add('h-0');
+        tip_arrow.classList.add('border-8');
+        
+        tip_arrow.classList.add('absolute');
+        var tip_arrow_position = "bottom";
+        if(position){
+            if(position.split('-')[0] == "bottom"){
+                tip_arrow_position = "top"
+            }
+        }
+        tip_arrow.classList.add(tip_arrow_position+'-full');
+        if(tip_arrow_position == "bottom"){
+            tip_arrow.classList.add('border-t-transparent');
+            tip_arrow.classList.add('border-r-transparent');
+            tip_arrow.classList.add('border-l-transparent');
+            tip_arrow.classList.add('border-b-orange-500');
+            tip_arrow.classList.add('mt-1');
+        }else{
+            tip_arrow.classList.add('border-b-transparent');
+            tip_arrow.classList.add('border-r-transparent');
+            tip_arrow.classList.add('border-l-transparent');
+            tip_arrow.classList.add('border-t-orange-500');
+            tip_arrow.classList.add('mb-1');
+        }
+
+        tip_arrow.classList.add('left-4');
+        var tip_button = document.createElement('div');
+        tip_button.classList.add('px-4');
+        tip_button.classList.add('py-2');
+        tip_button.classList.add('bg-orange-500');
+        tip_button.classList.add('hover:bg-orange-700');
+        tip_button.classList.add('cursor-pointer');
+        tip_button.classList.add('text-white');
+        tip_button.classList.add('absolute');
+        tip_button.classList.add('bottom-4');
+        tip_button.classList.add('left-8');
+        if(tips_array[i+1]){
+            var tip_button_content = "Next";
+        }else{
+            var tip_button_content = "Finish";
+        }
+        tip_button.innerHTML = tip_button_content;
+        tip.innerHTML = content;
+        tip.appendChild(tip_arrow);
+        tip.appendChild(tip_button);
+        tip_button.addEventListener('click',function(){
+            next_tip();
+        });
+        container.append(tip);
+        tips_array[i].push(tip);
+    }
+    console.log(tips_array);
+}
+
+window.start_tour = function(){
+    //Check if tour is in cookies to not run it again if runned before
+    if(tip_cookie != null){
+        var check_cookie = getCookie(tip_cookie);
+        if(check_cookie) return;
+    }
+    current_tip = 0;
+    for(let i = 0; i <tips_array.length; i++){
+        tips_array[i][3].classList.add('hidden');
+    }
+    tips_array[current_tip][3].classList.remove('hidden');
+    if(!isInViewport(tips_array[current_tip][3]))
+        tips_array[current_tip][3].scrollIntoView({ behavior: 'smooth',block: "center" });
+}
+
+window.next_tip = function(){
+    tips_array[current_tip][3].classList.add('hidden');
+    current_tip++;
+    if(tips_array[current_tip]){
+        tips_array[current_tip][3].classList.remove('hidden');
+        if(!isInViewport(tips_array[current_tip][3]))
+            tips_array[current_tip][3].scrollIntoView({ behavior: 'smooth',block: "center" });
+    }else if(tip_cookie != null){
+        //Tour ended, add it to cookies to not display it again
+        document.cookie = tip_cookie+"=true";
+    }
+}
+window.getCookie = function(name) {
+  let matches = document.cookie.match(new RegExp(
+    "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+  ));
+  return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+window.isInViewport = function(element){
+    const rect = element.getBoundingClientRect();
+    const isInViewport = rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth);
+    return isInViewport;
+}

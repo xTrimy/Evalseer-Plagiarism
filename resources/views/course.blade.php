@@ -11,7 +11,7 @@
 @section('content')
     <div class="flex w-full">
         <div class="flex w-full px-32 py-4 bg-white">
-            <div class="mr-10 flex-1">
+            <div class="mr-10 flex-1 relative" id="assignments">
                 <a href="{{ route('course.assignments',$course->id) }}">
                     <div class="flex-1 flex px-12 py-4 bg-green-600 rounded-2xl items-center cursor-pointer">
                         <div>
@@ -33,4 +33,13 @@
             </div>
         </div>
     </div>
+    <ol id="tour" data-cookie="course_tour" class="hidden">
+        <li data-id="assignments" data-position="bottom-full">You can access the course assignments here</li>
+    </ol>
+    <script>
+        window.onload = function(){
+            tour(document.getElementById('tour'));
+            start_tour();
+        };
+    </script>
 @endsection

@@ -60,6 +60,9 @@
         </div>
         
     </div>
+    @php
+        $i=0;
+    @endphp
     @foreach ($assignment->questions as $question)
     @php
         $submission = $question->submissions->last() ?? null;
@@ -83,13 +86,13 @@
                 </div> --}}
             </div>
             @endif
-            <div class=" bg-white w-full shadow rounded-md px-4">
+            <div class=" bg-white w-full shadow rounded-md px-4" >
                 <h1 class="text-gray-800 text-2xl p-2 font-bold">
                    Question: {{ $question->name }}</h1>
                 <p class="text-gray-800 text-lg p-2  ">
                     <i class="las la-align-left"></i> Description: 
                     {{-- {{ $question->description }} --}}
-                    <div class="break-all">
+                    <div class="break-all relative" @if($i++ == 0) id="description" @endif>
                         {!! str_replace('&nbsp;', ' ', $question->description ) !!}
                     </div>
                 </p>
@@ -105,7 +108,8 @@
             
             @if(count($question->submissions)>0)
             <div class="flex mt-5">
-                <div class="flex bg-white flex-row shadow-md border border-gray-100 rounded-lg overflow-hidden md:w-5/12 mx-2">
+                <div class="md:w-5/12 relative" id="test_cases">
+                <div class="flex bg-white flex-row shadow-md border border-gray-100 rounded-lg overflow-hidden h-full  mx-2">
                     <div class="flex w-3 bg-gradient-to-t from-green-500 to-green-400"></div>
                     <div class="flex-1 p-3">
                       <h1 class="md:text-xl text-gray-600">Number of Test Cases Passed</h1>
@@ -122,67 +126,72 @@
                       <p class="text-gray-400 text-xs"><i class="fas fa-check"></i></p>
                     </div>
                 </div>
-                <div class="flex bg-white flex-row shadow-md border border-gray-100 rounded-lg overflow-hidden md:w-5/12 mx-2">
-                    <div class="flex w-3 bg-gradient-to-t 
-                    @if( $question->submissions->last()->total_grade/$question->grade >= 0.5)
-                        @if ($question->submissions->last()->is_blocked == 1)
-                            from-red-500 to-red-400
+                </div>
+                <div class="md:w-5/12 relative" id="total_grade">
+                    <div class="flex bg-white flex-row shadow-md border border-gray-100 rounded-lg h-full overflow-hidden mx-2">
+                        <div class="flex w-3 bg-gradient-to-t 
+                        @if( $question->submissions->last()->total_grade/$question->grade >= 0.5)
+                            @if ($question->submissions->last()->is_blocked == 1)
+                                from-red-500 to-red-400
+                            @else
+                                from-green-500 to-green-400
+                            @endif
+                        
+                        @else
+                        from-red-500 to-red-400
+                        @endif
+                        "></div>
+                        <div class="flex-1 p-3">
+                        <h1 class="md:text-xl text-gray-600">Grade</h1>
+                        <p class="text-gray-400 text-xs md:text-sm font-light">
+                            @if($question->submissions->last()->is_blocked == 0)
+                                {{ $question->submissions->last()->total_grade }}/{{ $question->grade }}
+                                @if($question->submissions->last()->feature_feedback != NULL || $question->submissions->last()->time_execution_feedback != NULL )
+                                <p>
+                                    <div class="hidden modal_contains">
+                                        @if($question->submissions->last()->feature_feedback != NULL)
+                                        {{ $question->submissions->last()->feature_feedback }}
+                                        <br>
+                                        @endif
+                                        @if($question->submissions->last()->time_execution_feedback != NULL)
+                                        {{ $question->submissions->last()->time_execution_feedback }}
+                                        @endif
+                                    </div>
+                                    <div data-modal-title="Failed code features" data-modal-close-button="Got It!" class="modal_open mt-2 bg-orange-500 p-1 rounded-md table text-white cursor-pointer">View feedback</div>
+                                </p>
+                                @endif
+                            @else
+                            Grade Blocked
+                            @endif
+                            </p>
+                        </div>
+                        <div class="border-l border-gray-100 px-8 flex place-items-center">
+                        <p class="text-gray-400 text-xs"><i class="fas fa-percent"></i></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-5/12 relative" id="execution_time">
+                    <div class="flex bg-white flex-row shadow-md border border-gray-100 rounded-lg overflow-hidden h-full mx-2">
+                        <div class="flex w-3 bg-gradient-to-t 
+                        @if ($submission->compile_feedback)
+                            from-red-500 to-red-600
                         @else
                             from-green-500 to-green-400
                         @endif
-                    
-                    @else
-                    from-red-500 to-red-400
-                    @endif
-                    "></div>
-                    <div class="flex-1 p-3">
-                      <h1 class="md:text-xl text-gray-600">Grade</h1>
-                      <p class="text-gray-400 text-xs md:text-sm font-light">
-                          @if($question->submissions->last()->is_blocked == 0)
-                            {{ $question->submissions->last()->total_grade }}/{{ $question->grade }}
-                            @if($question->submissions->last()->feature_feedback != NULL || $question->submissions->last()->time_execution_feedback != NULL )
-                            <p>
-                                <div class="hidden modal_contains">
-                                    @if($question->submissions->last()->feature_feedback != NULL)
-                                    {{ $question->submissions->last()->feature_feedback }}
-                                    <br>
-                                    @endif
-                                    @if($question->submissions->last()->time_execution_feedback != NULL)
-                                    {{ $question->submissions->last()->time_execution_feedback }}
-                                    @endif
-                                </div>
-                                <div data-modal-title="Failed code features" data-modal-close-button="Got It!" class="modal_open mt-2 bg-orange-500 p-1 rounded-md table text-white cursor-pointer">View feedback</div>
+                        "></div>
+                        <div class="flex-1 p-3">
+                        <h1 class="md:text-xl text-gray-600">Execution Time</h1>
+                        <p class="text-gray-400 text-xs md:text-sm font-light">
+                        @if ($submission->compile_feedback)
+                            Error Compiling
+                        @else
+                            {{ round($question->submissions->last()->execution_time,5) }} Sec.
+                        @endif
                             </p>
-                            @endif
-                          @else
-                          Grade Blocked
-                          @endif
-                        </p>
-                    </div>
-                    <div class="border-l border-gray-100 px-8 flex place-items-center">
-                      <p class="text-gray-400 text-xs"><i class="fas fa-percent"></i></p>
-                    </div>
-                </div>
-                <div class="flex bg-white flex-row shadow-md border border-gray-100 rounded-lg overflow-hidden md:w-5/12 mx-2">
-                    <div class="flex w-3 bg-gradient-to-t 
-                    @if ($submission->compile_feedback)
-                        from-red-500 to-red-600
-                    @else
-                        from-green-500 to-green-400
-                    @endif
-                    "></div>
-                    <div class="flex-1 p-3">
-                      <h1 class="md:text-xl text-gray-600">Execution Time</h1>
-                      <p class="text-gray-400 text-xs md:text-sm font-light">
-                    @if ($submission->compile_feedback)
-                          Error Compiling
-                    @else
-                          {{ round($question->submissions->last()->execution_time,5) }} Sec.
-                    @endif
-                        </p>
-                    </div>
-                    <div class="border-l border-gray-100 px-8 flex place-items-center">
-                      <p class="text-gray-400 text-xs"><i class="far fa-clock"></i></p>
+                        </div>
+                        <div class="border-l border-gray-100 px-8 flex place-items-center">
+                        <p class="text-gray-400 text-xs"><i class="far fa-clock"></i></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -280,7 +289,7 @@
                 @endphp
                 @if($data != null)
                 <div class=" bg-white w-full shadow rounded-md px-4 py-4">
-                    <div class="text-center text-2xl font-bold mb-3">
+                    <div class="text-center text-2xl font-bold mb-3 relative" id="compilation_errors">
                         Compilation Errors <i class="fas fa-exclamation-triangle"></i>
                     </div>
                     <h1 class="text-xl font-bold mt-4">Compiler Feedback:</h1>
@@ -339,7 +348,7 @@
                     $block_assignment = $question->submissions->last()->is_blocked ?? 0;
             @endphp
             @if ($submission)
-                <div class=" bg-white w-full shadow rounded-md px-4 py-4">
+                <div class=" bg-white w-full shadow rounded-md px-4 py-4 relative" id="style_feedback">
                     <div class="text-center text-2xl font-bold mb-5">
                         Style Feedback <i class="fas fa-palette"></i>
                     </div>
@@ -436,5 +445,19 @@
         });
 
        
+    </script>
+    <ol id="tour" data-cookie="submissions_tour" class="hidden">
+        <li data-id="description" data-position="bottom-full">This is the question description, read it carefully to understand and solve it.</li>
+        <li data-id="test_cases" data-position="bottom-full">Here you will see how many test cases you passed. <br> The more test casses you pass, the more grade you get.<br>Always try to solve all the test cases.</li>
+        <li data-id="total_grade" data-position="bottom-full">This is the total grade for your answer. <br> You may also see a feedback if you didn't get the full mark to know what you did wrong.</li>
+        <li data-id="execution_time" data-position="bottom-full">This section shows you if your code had any errors and if it fails to run.<br>If your code runs without failing, it will show you the execution time of your code.</li>
+        <li data-id="style_feedback" data-position="bottom-full">This is the style feedback, which you should follow to write a better code which follows the standards.</li>
+    
+    </ol>
+    <script>
+        window.onload = function(){
+            tour(document.getElementById('tour'));
+            start_tour();
+        };
     </script>
 @endsection
