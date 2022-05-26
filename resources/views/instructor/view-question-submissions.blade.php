@@ -92,7 +92,10 @@ users
                         {{ $submission->logic_feedback ?? 'None' }}
                       </td>
                       <td class="px-4 py-3 " >
-                        {{ $submission->execution_time.' Sec' ?? 'Error Compiling' }}
+                        @php
+                          $rounded_time = round($submission->execution_time,6);
+                        @endphp
+                        {{ $rounded_time.' Sec' ?? 'Error Compiling' }}
                       </td>
                       <td class="px-4 py-3" id="plagValue">
                         @if ($submission->plagiarism != null)
@@ -115,7 +118,7 @@ users
                       </td>
                       <td class="px-4 py-3">
                         <div class="flex items-center space-x-4 text-sm justify-center">
-                          {{-- <a href="{{ route('dashboard.users.instructors.edit_submission',['submission_id'=>$submission->id]) }}">
+                          <a href="{{ route('dashboard.users.instructors.edit_submission',['submission_id'=>$submission->id]) }}">
                           <button
                             class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
                             aria-label="Edit"
@@ -131,7 +134,7 @@ users
                               ></path>
                             </svg>
                           </button>
-                        </a> --}}
+                        </a>
                           <button
                           onclick="openModal('modal{{$i}}')"
                             class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
@@ -200,7 +203,7 @@ users
                               </div>
                             </div>
                           </div>
-{{--                           
+                          
                           <a href="{{ route('dashboard.users.instructors.view_submission',['submission_id'=>$submission->id]) }}" style="display: block;">
                             <button
                               class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
@@ -211,7 +214,7 @@ users
                         
 
                             <div type="hidden" id="plagg" class=" hidden">@php echo $_SESSION['plag'] ?? '' @endphp</div>
-                          </a> --}}
+                          </a>
                         </div>
                       </td>
                     </tr>
