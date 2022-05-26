@@ -852,6 +852,14 @@ select {
   margin-left: 1.5rem;
   margin-right: 1.5rem;
 }
+.my-8 {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+.my-20 {
+  margin-top: 5rem;
+  margin-bottom: 5rem;
+}
 .ml-2 {
   margin-left: 0.5rem;
 }
@@ -1145,6 +1153,9 @@ select {
 }
 .w-56 {
   width: 14rem;
+}
+.w-9\/12 {
+  width: 75%;
 }
 .max-w-6xl {
   max-width: 72rem;

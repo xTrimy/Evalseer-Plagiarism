@@ -75,7 +75,15 @@ Route::middleware('auth')->group(function (){
     Route::prefix('/course/{id}')->as('course.')->group(function ($id) {
         Route::get('/', [CourseController::class, 'index'])->name('view');
         Route::get('/assignments', [CourseController::class, 'assignments'])->name('assignments');
+        
     });
+
+    Route::prefix('/course')->as('course.')->group(function ($id) {
+        Route::get('/enroll/{course_id}', [CourseController::class, "student_enroll"])->name('student-enroll');
+
+        Route::post('/enroll/{course_id}', [CourseController::class, "student_enroll_code"]);
+    });
+    
 
     Route::get('/assignment/ide/{id}', [OnlineIDEController::class, "view"])->name('ide');
     Route::post('/assignment/ide/{id}', [OnlineIDEController::class, "run"]);
