@@ -60,7 +60,7 @@ users
                       <td class="px-4 py-3 text-sm font-bold" >
                         {{ $plagiarism_report->name ?? 'All Groups' }}
                       </td>
-                      <td class="px-4 py-3 text-center" >
+                      <td class="px-4 py-3 text-center" > 
                         <a href="{{ route('dashboard.users.instructors.report',['report'=>$plagiarism_report->report]) }}" class=" font-thin text-green-800">View Report</a>
                       </td>
                       <td class="px-4 py-3 " >
