@@ -536,6 +536,7 @@ class UserController extends Controller
             ]);
         }
     }
+    
 
     public function earn_rank($user_id,$rank_id) {
         $hasBadge = false;
@@ -570,7 +571,6 @@ class UserController extends Controller
     }
 
 
-    
     public function store_contact_us(Request $request) {
         $user = Auth::user();
 
@@ -602,6 +602,5 @@ class UserController extends Controller
         ]);
 
         return redirect()->back()->with('success','Message Sent Successfully!');
-        
     }
 }
