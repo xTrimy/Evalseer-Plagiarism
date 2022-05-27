@@ -7,11 +7,11 @@
     <title>@yield('title')</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <link rel="icon" type="image/x-icon" href="{{ asset('png/logo.png') }}">
     <script src="https://kit.fontawesome.com/b1361fb5d5.js" crossorigin="anonymous"></script>
     <script src="{{ asset('js/app.js') }}"></script>
 </head>
 <body class="relative">
-  
     @if (Session::has('main-error'))
       <button
       onclick="this.remove()"
@@ -26,7 +26,7 @@
     <div class="flex w-full px-8 py-5">
         <div class="flex-1  text-center flex justify-center">
             <div class="w-3/4">
-                <img class="ml-8" src="{{ asset('png/logo.png') }}" width="100" alt="">
+                <a href="/"><img class="ml-8" src="{{ asset('png/logo.png') }}" width="100" alt=""></a>
             </div>
             
         </div>
@@ -43,9 +43,12 @@
             <a href="{{ route('home') }}">
                 <p class="text-white font-bold cursor-pointer mr-6">HOME</p>
             </a>
+            @if(Auth::user()->hasRole('admin') || Auth::user()->hasRole('instructor') || Auth::user()->hasRole('teaching-assistant'))
             <a href="/dashboard/">
+                {{-- {{ Auth::user()->getRoleNames() }} --}}
                 <p class="text-white font-bold cursor-pointer mr-6">DASHBOARD</p>
             </a>
+            @endif
             {{-- <p class="text-white font-bold cursor-pointer mr-6">EDUCATION</p>
             <p class="text-white font-bold cursor-pointer mr-6">CATALOG</p>
             <p class="text-white font-bold cursor-pointer mr-6">OPPORTUNITIES</p>
@@ -54,45 +57,47 @@
             <p class="text-white font-bold cursor-pointer mr-6">HOW IT WORKS</p> --}}
         </div>
         <div class="flex w-96 py-8 bg-text text-center justify-center">
-            <a href="{{ route('logout') }}">
-            <p class="text-white font-bold text-center cursor-pointer">LOGOUT</p>
-        </a>
+            <a href="/logout"><p class="text-white font-bold text-center cursor-pointer">LOGOUT</p></a>
         </div>
     </div>
     <div class="w-full bg-text py-1"></div>
     <div class="flex w-full">
         <div class="flex w-full px-32 py-2 bg-gray-900">
-            <p class="text-white font-bold cursor-pointer mr-6">Title</p>
+            <p class="text-white font-bold cursor-pointer mr-6 uppercase">@yield('page_title')</p>
         </div>
     </div>
     <div class="flex w-full">
         <div class="flex w-full px-32 py-4 bg-white">
-            <p class="text-gray-900 font-bold cursor-pointer">Home > My Courses > <p class="text-text font-bold">Title</p></p>
+            <p class="text-gray-900 font-bold cursor-pointer"><a href="{{ route('home') }}"> Home </a> > <a href="{{ route('home') }}"> My Courses</a>  > <p class="text-text font-bold">@yield('course_title')</p></p>
         </div>
     </div>
     <div class="flex w-full mb-8">
         <div class="flex w-full px-32 py-4 bg-gray-200">
-            <div class="bg-red-800 rounded-lg px-8 py-5 text-center mr-5 w-40">
+            {{-- <div class="bg-red-800 rounded-lg px-8 py-5 text-center mr-5 w-40">
                 <i class="fab fa-buromobelexperte text-white text-center text-2xl"></i>
                 <p class="font-bold text-white">Dashboard </p>
             </div>
             <div class="bg-green-600 rounded-lg px-8 py-5 text-center mr-5 w-40">
                 <i class="far fa-calendar text-white text-center text-2xl"></i>
                 <p class="font-bold text-white">Calendar</p>
-            </div>
-            <div class="bg-orange-500 rounded-lg px-8 py-5 text-center mr-5 w-40">
-                <i class="fas fa-certificate text-white text-center text-2xl"></i>
-                <p class="font-bold text-white">Badges</p>
-            </div>
-            <div class="bg-blue-500 rounded-lg px-8 py-5 text-center mr-5 w-40">
-                <i class="fas fa-book text-white text-center text-2xl"></i>
-                <p class="font-bold text-white">All Courses</p>
-            </div>
+            </div> --}}
+            <a href="/badges">
+              <div class="bg-orange-500 rounded-lg px-8 py-5 text-center mr-5 w-40">
+                  <i class="fas fa-certificate text-white text-center text-2xl"></i>
+                  <p class="font-bold text-white">Badges</p>
+              </div>
+            </a>
+            <a href="/all-courses">
+              <div class="bg-blue-500 rounded-lg px-8 py-5 text-center mr-5 w-40">
+                  <i class="fas fa-book text-white text-center text-2xl"></i>
+                  <p class="font-bold text-white">All Courses</p>
+              </div>
+            </a>
+            
         </div>
     </div>
     @yield('content')
-    </body>
-    <footer class="text-center lg:text-left bg-gray-100 text-gray-600">
+     <footer class="text-center lg:text-left bg-gray-100 text-gray-600">
   <div class="flex justify-center items-center lg:justify-between p-6 border-b border-gray-300">
     <div class="mr-12 hidden lg:block">
       <span>Get connected with us on social networks:</span>
@@ -172,21 +177,21 @@
           Evalseer
         </h6>
         <p>
-          Evalseer is an Automatic Assistment tool that provides formative feed back on students programing mistakes .
+          Evalseer is an Automatic Assessment tool that provides formative feed back on students programing mistakes .
         </p>
       </div>
       <div class="">
         <h6 class="uppercase font-semibold mb-4 flex justify-center md:justify-start">
-          Products
+          Profile
         </h6>
         <p class="mb-4">
-          <a href="#!" class="text-gray-600">Angular</a>
+          <a href="#!" class="text-gray-600 uppercase">Courses</a>
         </p>
         <p class="mb-4">
-          <a href="#!" class="text-gray-600">React</a>
+          <a href="#!" class="text-gray-600">Calendar</a>
         </p>
         <p>
-          <a href="#!" class="text-gray-600">Laravel</a>
+          <a href="#!" class="text-gray-600">Badges</a>
         </p>
       </div>
       <div class="">
@@ -194,13 +199,13 @@
           Useful links
         </h6>
         <p class="mb-4">
-          <a href="#!" class="text-gray-600">moodle</a>
+          <a href="#!" class="text-gray-600 uppercase">Moodle</a>
         </p>
         <p class="mb-4">
-          <a href="#!" class="text-gray-600">Settings</a>
+          <a href="#!" class="text-gray-600 uppercase">Contact us</a>
         </p>
         <p>
-          <a href="#!" class="text-gray-600">Help</a>
+          <a href="#!" class="text-gray-600 uppercase">About us</a>
         </p>
       </div>
       <div class="">
@@ -224,7 +229,7 @@
               d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z">
             </path>
           </svg>
-          evalseer@hotmail.com
+          info@evalseer.com
         </p>
         <p class="flex items-center justify-center md:justify-start mb-4">
           <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="phone"
@@ -254,4 +259,6 @@
     <a class="text-gray-600 font-semibold" href="http://www.evalseer.com/">Evalseer: All rights reserved.</a>
   </div>
 </footer>
+    </body>
+   
 </html>
