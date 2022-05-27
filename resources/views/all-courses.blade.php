@@ -69,17 +69,29 @@ My Courses
                                 {{ $course->course_id }}:{{ $course->name }}
                             </div>
                             <div class="w-full text-center">
-                                <a href="{{ route('course.view',$course->id) }}">
-                                    <div  class=" bg-text text-white px-10 py-3 rounded-lg font-medium text-sm cursor-pointer mb-6">
-                                        ENROLL IN COURSE
-                                    </div>
-                                </a>
+                                @php
+                                    $enrolled = false;
+                                    foreach ($user_courses as $user_course) {
+                                        if($user_course->id == $course->id) {
+                                            $enrolled = true;
+                                        }
+                                    }
+                                @endphp
+                                    @if ($enrolled)
+                                        <div  class=" bg-text text-white px-10 py-3 rounded-lg font-medium text-sm  mb-6">
+                                            ENROLLED
+                                        </div>
+                                    @else
+                                    <a href="{{ route('course.student-enroll',$course->id) }}">
+                                        <div  class=" bg-text text-white px-10 py-3 rounded-lg font-medium text-sm cursor-pointer mb-6">
+                                            ENROLL IN COURSE
+                                        </div>
+                                    </a>
+                                    @endif
                             </div>
                         </div>
                     </div>
                 @endforeach
-                
-                
             </div>
         </div>
     </div>
