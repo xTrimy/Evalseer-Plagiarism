@@ -571,7 +571,6 @@ class UserController extends Controller
     }
 
 
-    
     public function store_contact_us(Request $request) {
         $user = Auth::user();
 
@@ -603,6 +602,5 @@ class UserController extends Controller
         ]);
 
         return redirect()->back()->with('success','Message Sent Successfully!');
-        
     }
 }
