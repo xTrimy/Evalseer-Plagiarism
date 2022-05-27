@@ -562,4 +562,46 @@ class UserController extends Controller
             ]);
         }
     }
+
+    public function view_contact_us() {
+        $user = Auth::user();
+
+        return view('contact-us',['user'=>$user]);
+    }
+
+
+    
+    public function store_contact_us(Request $request) {
+        $user = Auth::user();
+
+        $this->validate($request, [
+            'message' => 'required',
+            'name' => 'required',
+            'email' => 'required|email'
+        ]);
+
+        $message = $request->message;
+        $name = $request->name;
+        $email = $request->email;
+
+        $data = array(
+            'message' => $message,
+            'name' => $name,
+            'email' => $email
+        );
+
+
+        DB::table('contact_us')->insert([
+            'id' => null,
+            'user_id' => $user->id,
+            'name' => $name,
+            'email' => $email,
+            'message' => $message,
+            'created_at' => date('Y/m/d h:i:s', time()),
+            'updated_at' => date('Y/m/d h:i:s', time())
+        ]);
+
+        return redirect()->back()->with('success','Message Sent Successfully!');
+        
+    }
 }

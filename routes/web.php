@@ -69,6 +69,9 @@ Route::middleware('auth')->group(function (){
     Route::get('/badges', [BadgeController::class, "view"])->name('view_badges');
 
     Route::get('/all-courses', [UserController::class, "all_courses"])->name('all_courses');
+
+    Route::get('/contact-us', [UserController::class, "view_contact_us"])->name('contact_us');
+    Route::post('/contact-us', [UserController::class, "store_contact_us"]);
     
     Route::get('/logout', [UserController::class, "logout"])->name('logout');
 

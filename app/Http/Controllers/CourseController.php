@@ -89,12 +89,13 @@ class CourseController extends Controller
         return view('admin.courses',['courses'=>$courses]);
     }
 
-    public function enroll_user(){
+    public function enroll_user() {
         $students = User::role('student')->get();
         $courses = Course::all();
         return view('admin.enroll-student',['students'=>$students,'courses'=>$courses]);
     }
-    public function enroll_user_store(Request $request){
+
+    public function enroll_user_store(Request $request) {
         $request->validate(
             [
                 'user_id'=>'required|exists:users,id',
@@ -113,7 +114,7 @@ class CourseController extends Controller
         // ->leftJoin('users', 'course_user.user_id', '=', 'users.id')
         // ->leftJoin('model_has_roles', 'course_user.user_id', '!=', 'model_has_roles.model_id')
         // ->where('role_id','1')
-        // // ->select('course_user.*')
+        // ->select('course_user.*')
         // ->select('users.*')
         // ->get();
 
@@ -220,8 +221,6 @@ class CourseController extends Controller
         $request->validate([
             'access_code' => 'required|string'
         ]);
-
-        // dd($request);
 
         $course = Course::where('access_code',$request->access_code)->first();
 
