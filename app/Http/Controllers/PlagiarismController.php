@@ -221,7 +221,8 @@ class PlagiarismController extends Controller
                             // ->where('id',$question_id)
                             ->leftJoin('questions', 'plagiarism_reports.question_id', '=', 'questions.id')
                             ->select('plagiarism_reports.*','questions.name')
-                            ->get();
+                            ->paginate(15)
+                            ;
         // dd($plagiarism_reports);
         return view('instructor.view-plagiarism-reports',['plagiarism_reports'=>$plagiarism_reports]);
     }

@@ -95,6 +95,7 @@ users
                 class="mt-4"
               >
                 <!-- Pagination -->
+                  {{ $plagiarism_reports->links() }}
               </div>
             </div>
           </div>

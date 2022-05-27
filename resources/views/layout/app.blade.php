@@ -34,7 +34,7 @@
         <div class="flex-1 w-full flex items-center justify-center text-center font-bold">
             <div class="flex">
                 <div class="text-right mr-4 cursor-pointer text-lg">ABOUT US</div>
-                <div class="text-right cursor-pointer text-lg">CONTACT US</div>
+                <a href="/contact-us"><div class="text-right cursor-pointer text-lg">CONTACT US</div></a>
             </div>
         </div>
     </div>
