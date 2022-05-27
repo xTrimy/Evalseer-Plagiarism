@@ -536,6 +536,7 @@ class UserController extends Controller
             ]);
         }
     }
+    
 
     public function earn_rank($user_id,$rank_id) {
         $hasBadge = false;
