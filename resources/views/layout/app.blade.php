@@ -70,24 +70,29 @@
             <p class="text-gray-900 font-bold cursor-pointer">Home > My Courses > <p class="text-text font-bold">Title</p></p>
         </div>
     </div>
-    <div class="flex w-full mb-8">
+   <div class="flex w-full mb-8">
         <div class="flex w-full px-32 py-4 bg-gray-200">
-            <div class="bg-red-800 rounded-lg px-8 py-5 text-center mr-5 w-40">
+            {{-- <div class="bg-red-800 rounded-lg px-8 py-5 text-center mr-5 w-40">
                 <i class="fab fa-buromobelexperte text-white text-center text-2xl"></i>
                 <p class="font-bold text-white">Dashboard </p>
             </div>
             <div class="bg-green-600 rounded-lg px-8 py-5 text-center mr-5 w-40">
                 <i class="far fa-calendar text-white text-center text-2xl"></i>
                 <p class="font-bold text-white">Calendar</p>
-            </div>
-            <div class="bg-orange-500 rounded-lg px-8 py-5 text-center mr-5 w-40">
-                <i class="fas fa-certificate text-white text-center text-2xl"></i>
-                <p class="font-bold text-white">Badges</p>
-            </div>
-            <div class="bg-blue-500 rounded-lg px-8 py-5 text-center mr-5 w-40">
-                <i class="fas fa-book text-white text-center text-2xl"></i>
-                <p class="font-bold text-white">All Courses</p>
-            </div>
+            </div> --}}
+            <a href="/badges">
+              <div class="bg-orange-500 rounded-lg px-8 py-5 text-center mr-5 w-40">
+                  <i class="fas fa-certificate text-white text-center text-2xl"></i>
+                  <p class="font-bold text-white">Badges</p>
+              </div>
+            </a>
+            <a href="/all-courses">
+              <div class="bg-blue-500 rounded-lg px-8 py-5 text-center mr-5 w-40">
+                  <i class="fas fa-book text-white text-center text-2xl"></i>
+                  <p class="font-bold text-white">All Courses</p>
+              </div>
+            </a>
+            
         </div>
     </div>
     @yield('content')
