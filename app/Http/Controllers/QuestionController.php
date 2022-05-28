@@ -731,6 +731,16 @@ class QuestionController extends Controller
 
             if($lang == "c++"){
                 $evalseer_feedback = shell_exec(env('SYNTAX_CORRECTION_PY')." \"". public_path($submission->submitted_code) . "\" 2>&1");
+                //split {"status" from $evalseer_feedback
+                $evalseer_feedback = explode("{\"status", $evalseer_feedback);
+                //check index exists in array
+                if(isset($evalseer_feedback[1])){
+                    $evalseer_feedback = "{\"status".$evalseer_feedback[1];
+                }else if( isset($evalseer_feedback[0])){
+                    $evalseer_feedback = "{\"status" . $evalseer_feedback[0];
+                }else{
+                    $evalseer_feedback = "{\"status\":\"error\"}";
+                }
                 $evalseer_feedback = json_decode($evalseer_feedback,true);
                 foreach ($evalseer_feedback as $key => $value){
                     $compiler_feedback[$key] =$value;
