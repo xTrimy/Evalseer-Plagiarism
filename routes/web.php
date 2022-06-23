@@ -106,35 +106,6 @@ Route::middleware('auth')->group(function (){
         return view('submission');
     });
 
-    // Route::middleware('dashboard-access')->prefix('/dashboardx')->as('dashboard.')->group(function () {
-
-        
-    //     // Instructor routes
-    //     // Route::get('/', function () {
-    //     //     return view('instructor.index');
-            
-    //     // });
-
-    
-        
-    //     // Admin routes
-        
-
-    //     Route::prefix('/users')->as('users.')->group(function () {
-    //         Route:: get('/', [UserController::class, "dashboard_users"])->name('view');
-
-    //         Route::prefix('/instructors')->as('instructors.')->group(function () {
-                
-    //         });
-
-    //         Route::prefix('/instructors')->as('instructors.')->group(function ($user_id) {
-                
-    //         });
-
-            
-    //     });
-    // });
-
     Route::middleware('dashboard-access')->prefix('/dashboard')->as('dashboard.')->group(function () {
         Route::get('/', [UserController::class, "home_instructor"])->name('home_instructor');
         Route::get('/form-zip', [PlagiarismController::class, "formZip"]);
@@ -159,6 +130,8 @@ Route::middleware('auth')->group(function (){
                 Route::get('/edit-submission/{submission_id}', [UserController::class, "edit_submission"])->name('edit_submission');
                 Route::post('/edit-submission/{submission_id}', [UserController::class, "edit_sub"]);
                 Route::get('/view-submission/{submission_id}', [UserController::class, "view_submission"])->name('view_submission');
+
+                Route::get('/view-all-assignments', [UserController::class, "dashboard_view_all_assignments"])->name('view_all_assignments');
             });
             Route::prefix('/students')->as('students.')->group(function () {
                 Route:: get('/', [UserController::class, "dashboard_view_students"])->name('view');
