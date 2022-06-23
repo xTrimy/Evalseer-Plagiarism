@@ -112,7 +112,7 @@ Route::middleware('auth')->group(function (){
 
         Route::prefix('/users')->as('users.')->group(function ($user_id) {
             Route::prefix('/instructors')->as('instructors.')->group(function ($user_id) {
-                Route::get('/view-assignments', [UserController::class, "dashboard_view_assignments"])->name('view_assignments');
+                Route::get('/view-assignments/{course_id}', [UserController::class, "dashboard_view_assignments"])->name('view_assignments');
                 Route::post('/delete', [AssignmentController::class, "delete"]);
                 Route::get('/delete-assignments/{assignment_id}', [AssignmentController::class, "delete_assignment"])->name('delete_assignment');
                 Route::get('/view-assignments-questions/{assignment_id}', [UserController::class, "view_assignment_questions"])->name('view_assignment_questions');

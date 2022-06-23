@@ -22,8 +22,8 @@ users
                 </a>
             </div>
             
-            <div class="w-full rounded-lg shadow-xs">
-              <div class="w-full flex flex-wrap">
+            <div class="w-full rounded-lg shadow-xs ">
+              <div class="w-full flex flex-wrap justify-center">
                 @foreach ($courses as $course)
                   <div class="w-30 text-center mx-3 my-3 rounded-xl shadow bg-white relative overflow-hidden">
                     <span
@@ -41,10 +41,12 @@ users
                       </div>
                       <hr class="my-2">
                         <dl class="flex mt-6 justify-center mb-3">
+                          <a href="{{ route('dashboard.users.instructors.view_assignments', ['course_id'=>$course->id]) }}">
                           <div class="flex flex-col-reverse">
                             <dt class="text-sm font-medium text-gray-600">{{$assignment_count[$course->id]}}</dt>
                             <dd class="text-xs text-gray-500">Assignments</dd>
                           </div>
+                          </a>
 
                           <div class="flex flex-col-reverse ml-3 sm:ml-6">
                             <dt class="text-sm font-medium text-gray-600">{{$submission_count[$course->id]}}</dt>

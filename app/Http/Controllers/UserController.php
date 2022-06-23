@@ -131,13 +131,34 @@ class UserController extends Controller
         return view('instructor.view-all-assignments',['users'=>$users,'assignments'=>$assignments, 'courses'=>$courses, 'assignment_count'=>$assignment_count, 'submission_count'=>$submission_count, 'student_count'=>$student_count]);
     }
 
-    public function dashboard_view_assignments(){
+    public function dashboard_view_assignments($course_id){
         $users = User::role('instructor')->paginate(15);
         $assignments = DB::table('assignments')
                         ->leftJoin('courses', 'assignments.course_id', '=', 'courses.id')
                         ->select('assignments.*', 'courses.course_id')
+                        ->where('assignments.course_id', '=' ,$course_id)
                         ->get();
-        return view('instructor.view-assignments',['users'=>$users,'assignments'=>$assignments]);
+
+        $course = Course::find($course_id);
+
+        $course_assig = Assignments::where('course_id', $course->id)->get();
+        
+        // $submissionss = Submission::get();
+
+        foreach ($assignments as $assignment) {
+            $submission_countt = 0;
+            $questions = Questions::where('assignment_id', $assignment->id)->get();
+            foreach ($questions as $question) {
+                $submissions = Submission::where('question_id', $question->id)->get();
+                // if($question->assignment_id == $assignmentt->id) {
+                    $submission_countt += count($submissions);
+                // }
+            }
+            $submission_count[$assignment->id] = $submission_countt;
+        }
+
+        $submission_count[$course->id] = $submission_countt;
+        return view('instructor.view-assignments',['users'=>$users,'assignments'=>$assignments, 'course'=>$course, 'submission_count'=>$submission_count]);
     }
 
     public function view_assignment_questions($assignment_id) {
