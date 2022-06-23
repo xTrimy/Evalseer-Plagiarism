@@ -144,7 +144,7 @@ class UserController extends Controller
         $course_assig = Assignments::where('course_id', $course->id)->get();
         
         // $submissionss = Submission::get();
-
+        $submission_countt = 0;
         foreach ($assignments as $assignment) {
             $submission_countt = 0;
             $questions = Questions::where('assignment_id', $assignment->id)->get();
