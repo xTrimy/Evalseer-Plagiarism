@@ -28,7 +28,7 @@ $user = Auth::user();
           </div>
         </div>
         <!-- Card -->
-        <div class="flex items-center p-4 bg-white rounded-lg dark:bg-gray-800 w-1/4 mx-7 shadow-sm cursor-pointer" onclick="window.location='{{ route('dashboard.users.instructors.view_assignments') }}'">
+        <div class="flex items-center p-4 bg-white rounded-lg dark:bg-gray-800 w-1/4 mx-7 shadow-sm cursor-pointer" onclick="window.location='{{ route('dashboard.users.instructors.view_all_assignments') }}'">
             <div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
               <i class="w-5 h-5 text-center fas fa-align-center"></i>
             </div>

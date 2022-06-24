@@ -22,7 +22,7 @@ users
                 <h2
                 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
                 >
-                  Assignments
+                  {{$course->name}} Assignments
                 </h2>
                 <a href="{{ route('dashboard.assignments.add_assignment') }}">
                     <button class="py-2 px-8 text-white rounded-lg bg-orange-600 hover:bg-orange-500 active:bg-orange-400 text-lg ring-0 transition-all active:ring-4 ring-orange-200 dark:ring-orange-800">
@@ -33,7 +33,13 @@ users
             
             <div class="w-full overflow-hidden rounded-lg shadow-xs">
               <div class="w-full overflow-x-auto">
+                @php
+                  $i = 0;
+                  $isEmpty = false;
+                  count($assignments) == 0 ? $isEmpty = true : $isEmpty = false;
+                @endphp
                 <table class="w-full whitespace-no-wrap">
+                  @if (!$isEmpty)
                   <thead>
                     <tr
                       class="text-xs text-center font-semibold tracking-wide text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
@@ -48,29 +54,37 @@ users
                       <th class="px-4 py-3">Actions</th>
                     </tr>
                   </thead>
+                  @endif
                   <tbody
                     class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800"
                   >
-                  @php
-                   $i = 0;   
-                  @endphp
-                  @foreach ($assignments as $assignment)
-                  
+
+                  @if ($isEmpty)
+                  <div class="text-center w-full font-bold text-2xl mt-6 px-5 py-12 bg-red-100 rounded">
+                        No Assignments For Course: {{$course->name}}
+                    </div>
+                  @else
+                    @foreach ($assignments as $assignment)
+                      
                       <tr class="text-gray-700 dark:text-gray-400 text-center">
+                        
                       <td class="px-4 py-3">
                         <div class="flex items-center text-sm">
                           <!-- Avatar with inset shadow -->
                           </div>
+                          <a href="{{ route('dashboard.users.instructors.view_assignment_questions',['assignment_id'=>$assignment->id]) }}" style="display: block;">
                           <div>
                             <p class="font-semibold">{{ $assignment->name }}</p>
                           </div>
+                          </a>
                         </div>
                       </td>
+                    
                       <td class="px-4 py-3 text-sm font-bold" >
                         {{ $assignment->group_id ?? 'All Groups' }}
                       </td>
                       <td class="px-4 py-3 text-center" >
-                        {{ $assignment->submissions ?? 'None' }}
+                        {{ $submission_count[$assignment->id] ?? 'None' }}
                       </td>
                       <td class="px-4 py-3 " >
                         {{ $assignment->start_time }}
@@ -176,6 +190,7 @@ users
                    $i++;   
                   @endphp
                   @endforeach
+                  @endif
                   </tbody>
                 </table>
               </div>

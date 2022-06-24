@@ -83,7 +83,7 @@ $user = Auth::user();
               @endif
               <a
                 class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
-                href="{{ route('dashboard.users.instructors.view_assignments') }}"
+                href="{{ route('dashboard.users.instructors.view_all_assignments') }}"
               >
                 <i class="las la-align-left text-xl"></i>
                 <span class="ml-4">Assignments</span>
