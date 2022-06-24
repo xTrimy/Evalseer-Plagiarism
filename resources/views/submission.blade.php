@@ -294,7 +294,20 @@
                     </div>
                     <h1 class="text-xl font-bold mt-4">Compiler Feedback:</h1>
                     <pre class=" bg-gray-200 my-5 px-3 py-4 rounded shadow">{!! nl2br(e($data->compiler_feedback)) !!}</pre>
-                    @if(isset($data->basic_checking) || (isset($data->status) && $data->status == "success"))
+                    @if(isset($data->basic_checking))
+                        @foreach($data->basic_checking as $feedback)
+                            @php
+                                $feedback_type = $feedback->status
+                            @endphp
+                            <p class="{{ $feedback_type=="warning"?"text-yellow-500":"text-red-500" }} font-bold">
+                            {{ ucfirst($feedback_type) }}: 
+                            @if($feedback->checker == "return in main")
+                                Please consider adding a default "return" method in the main function as no "return" method may cause some problems while running your code
+                            @endif
+                            </p>
+                        @endforeach
+                    @endif
+                    @if((isset($data->status) && $data->status == "success"))
                             <h1 class="text-xl font-bold mt-4 text-green-600">Evalseer Feedback:</h1>
                         @if(isset($data->status))
                             @if(isset($data->original_token))
@@ -304,6 +317,9 @@
                             @else
                                 <pre class=" bg-gray-200 my-5 px-3 py-4 rounded shadow">Missing `{{ $data->token }}` at line {{ $data->line }}</pre>
                             @endif
+                            <p class="text-sm text-gray-500">
+                                Please note that evalseer may suggest an invalid code that works but is not the correct answer.
+                            </p>
                             @php
                                 $solution = htmlspecialchars($data->solution);
                                 
@@ -319,22 +335,36 @@
                             @endphp
                             <pre class="fixed_output bg-gray-200 my-5 rounded shadow ">{!! $solution !!}</pre>
                         @endif
-                        @if(isset($data->basic_checking))
-                        @foreach($data->basic_checking as $feedback)
-                            @php
-                                $feedback_type = $feedback->status
-                            @endphp
-                            <p class="{{ $feedback_type=="warning"?"text-yellow-500":"text-red-500" }} font-bold">
-                            {{ ucfirst($feedback_type) }}: 
-                            @if($feedback->checker == "return in main")
-                                Please consider adding a default "return" method in the main function as no "return" method may cause some problems while running your code
-                            @endif
-                            </p>
-                        @endforeach
-                        @endif
+                    
+                    @elseif(isset($data->last_update) && strtotime($data->last_update) - strtotime(date('Y-m-d H:i:s')) > 60*10 )
+                    <div class="bg-gray-200 my-5 px-3 py-4 rounded shadow">
+                        <h1 class="text-xl font-bold mt-4 text-red-600">
+                            There has been a problem with the evaluation of your code. Please try again later.
+                        </h1>
+                    </div>
+                    @elseif((isset($data->condition) && $data->condition == "waiting"))
+                    <div class="bg-gray-200 my-5 px-3 py-4 rounded shadow">
+                        <h1 class="text-xl font-bold mt-4 text-orange-600">
+                            <div class="lds-ring small"><div></div><div></div><div></div><div></div></div> Evalseer is still waiting to generate a solution for your code. Please try again later.
+                        </h1>
+                    </div>
+                    @elseif((isset($data->condition) && $data->condition == "processing"))
+                    <div class="bg-gray-200 my-5 px-3 py-4 rounded shadow">
+                        <h1 class="text-xl font-bold mt-4 text-orange-600">
+                            <div class="lds-ring small"><div></div><div></div><div></div><div></div></div> Evalseer is currently processing your code, please wait for a while and try again.
+                        </h1>
+                    </div>
+                    @elseif((isset($data->condition) && $data->condition == "done"))
+                    <div class="bg-gray-200 my-5 px-3 py-4 rounded shadow">
+                        <h1 class="text-xl font-bold mt-4 text-red-600">
+                            Evalseer has finished processing your code, please wait for a while and try again.
+                        </h1>
+                    </div>
                     @else
                     <div class="bg-gray-200 my-5 px-3 py-4 rounded shadow">
-                        <h1 class="text-xl font-bold mt-4 text-red-600">Evalseer Couldn't find any possible solutions:</h1>
+                        <h1 class="text-xl font-bold mt-4 text-red-600">
+                            Evalseer couldn't find a solution. 
+                        </h1>
                     </div>
                     @endif
                 </div>
