@@ -118,6 +118,9 @@ class UserController extends Controller
 
             foreach ($submissionss as $submission) {
                 $question = Questions::find($submission->question_id);
+                if(!$question){
+                    continue;
+                }
                 foreach ($course_assig as $assignment) {
                     if($question->assignment_id == $assignment->id) {
                         $submission_countt++;
@@ -200,6 +203,7 @@ class UserController extends Controller
     
         $submissions = Submission::where('question_id',$question_id)->with(['user','plagiarism_report'])->get();
                         // dd($submissions);
+        $submissions = $submissions->groupBy('user_id');
         return view('instructor.view-question-submissions',['users'=>$users,'submissions'=>$submissions,'question_id'=>$question_id,'data'=>$data]);
     }
 
@@ -401,6 +405,9 @@ class UserController extends Controller
 
         foreach ($submissionss as $submission) {
             $question = Questions::find($submission->question_id);
+            if(!$question){
+                continue;
+            }
             foreach ($swe211_assignment as $assignment) {
                 if($question->assignment_id == $assignment->id) {
                     $swe211++;
