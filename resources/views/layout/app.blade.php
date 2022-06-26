@@ -34,12 +34,14 @@
             <div class="flex">
                 <div class="text-right mr-4 cursor-pointer text-lg">ABOUT US</div>
                 <a href="/contact-us"><div class="text-right cursor-pointer text-lg">CONTACT US</div></a>
+               
             </div>
         </div>
     </div>
 
     <div class="flex w-full">
-        <div class="flex w-full px-32 py-8 bg-gray-900">
+        <div class="flex justify-between w-full pl-32 pr-12 py-8 bg-gray-900">
+          <div class="flex">
             <a href="{{ route('home') }}">
                 <p class="text-white font-bold cursor-pointer mr-6">HOME</p>
             </a>
@@ -49,12 +51,115 @@
                 <p class="text-white font-bold cursor-pointer mr-6">DASHBOARD</p>
             </a>
             @endif
+          
             {{-- <p class="text-white font-bold cursor-pointer mr-6">EDUCATION</p>
             <p class="text-white font-bold cursor-pointer mr-6">CATALOG</p>
             <p class="text-white font-bold cursor-pointer mr-6">OPPORTUNITIES</p>
             <p class="text-white font-bold cursor-pointer mr-6">COURSES</p>
             <p class="text-white font-bold cursor-pointer mr-6">ACHIEVMENTS</p>
             <p class="text-white font-bold cursor-pointer mr-6">HOW IT WORKS</p> --}}
+          </div>
+          @auth
+          @php
+            $user = Auth::user();
+            $notifications = $user->notifications->sortByDesc('created_at')->take(5);
+            $unread_notifications_count = $user->unreadNotifications->count();
+          @endphp
+          <div class="flex">
+             <button class="ml-4 group text-white relative flex justify-center items-center">
+                  <i class="las la-bell text-2xl"></i>
+                 
+                  <span class="absolute
+                   @if ($unread_notifications_count == 0)
+                   hidden
+                  @endif
+                  select-none -top-2 -right-2 w-4 h-4 flex items-center justify-center bg-orange-500 rounded-full text-white text-sm">{{ $unread_notifications_count }}</span>
+                  <div class="absolute hidden group-focus:block hover:block shadow-lg top-full rounded-md right-0 translate-y-4 w-64 sm:max-w-sm xs:max-w-xs bg-white py-2 ">
+                      <div class="w-0 h-0 border-8 absolute border-b-white border-t-transparent border-r-transparent border-l-transparent  bottom-full right-1"></div>
+                      
+                      @forelse  ($notifications as $notification)
+                          @php
+                            $notification_data = $notification->data;
+                            $notification_type = $notification->type;
+                            $from_id = $notification_data['from'] ?? null;
+                            $from_user = null;
+                            if($from_id)
+                              $from_user = App\User::find($from_id);
+                            $from_image = $from_user->image??"png/logo.png";
+                            $from_name = $from_user->name??"Evalseer";
+                            $message = $notification_data['message']??"";
+                            $url = route("notification", $notification->id);
+                          @endphp
+                      <a href="{{ $url }}" data-id="{{ $notification->id }}" class="notification">
+                       <div class="w-full flex
+                       @if ($notification->read_at == null)
+                        bg-gray-100
+                       @endif
+                       hover:bg-gray-300 py-2 px-4">
+                          <div class="w-1/4 flex justify-center items-center rounded-full overflow-hidden">
+                              <div class="w-8 h-8">
+                                <img src="{{ asset($from_image) }}" class="w-full h-full rounded-full object-cover">
+                              </div>
+                            </div>
+                            <div class="text-black text-left w-3/4 break-all">
+                              <p class="text-sm ">{{ $from_name }}</p>
+                              <p class="text-xs">
+                                {{  $message }}
+                              </p>
+                            </div>
+                          </div>
+                        </a>
+                        @empty
+                        <div class="w-full flex justify-center items-center">
+                          <p class="text-sm text-black">No notifications</p>
+                        </div>
+                        
+                        @endforelse
+                        <a href="" data-id="" class="notification notification-original hidden">
+                          <div class="w-full flex bg-gray-100 hover:bg-gray-300 py-2 px-4">
+                            <div class="w-1/4 flex justify-center items-center rounded-full overflow-hidden">
+                              <div class="w-8 h-8">
+                                <img src="" class="w-full h-full rounded-full object-cover">
+                              </div>
+                            </div>
+                            <div class="text-black text-left w-3/4 break-all">
+                                <p class="text-sm"></p>
+                                <p class="text-xs"></p>
+                            </div>
+                          </div>
+                        </a>
+                  
+                  </div>
+              </button>
+          </div>
+          <script>
+            var notifications_ids = [];
+            setInterval(() => {
+
+              fetch('/user/notifications', {
+                method: 'GET',
+              }).then(response =>{
+                return response.json();
+              }).then(data =>{
+                var notifications = document.querySelectorAll('.notification');
+                var notification_original = document.querySelector('.notification-original');
+                var new_notification = false;
+                if(notifications[0].getAttribute('data-id') != data[0].id && !notifications_ids.includes(data[0].id)){
+                  new_notification = true;
+                  notifications_ids.push(data[0].id);
+                }
+                if(new_notification){
+                  var new_notification_div = document.getElementById('new_notification_div');
+                  new_notification_div.classList.remove('hidden');
+                  let src = '{{ asset('sounds/notification.mp3') }}';
+                  let audio = new Audio(src);
+                  audio.play();
+                }
+              });
+            }, 5000);
+
+          </script>
+          @endauth
         </div>
         <div class="flex w-96 py-8 bg-text text-center justify-center">
             <a href="/logout"><p class="text-white font-bold text-center cursor-pointer">LOGOUT</p></a>
@@ -95,6 +200,14 @@
             </a>
             
         </div>
+    </div>
+    <div 
+    id="new_notification_div"
+    onclick="location.reload();"
+    class="fixed top-4 left-1/2 hover:opacity-100 transition-all rounded-md cursor-pointer hidden transform -translate-x-1/2 py-2 px-4 bg-orange-500 opacity-70 text-white">
+      <p>
+        You've a new notification. Please refresh the page to see it.
+      </p>
     </div>
     @yield('content')
      <footer class="text-center lg:text-left bg-gray-100 text-gray-600">

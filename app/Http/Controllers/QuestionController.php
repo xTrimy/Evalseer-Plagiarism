@@ -705,6 +705,8 @@ class QuestionController extends Controller
         ]);
         $question = Questions::with(['programming_language','assignment','submissions', 'test_cases','features', 'grading_criteria'])->find($request->question_id);
         $submission = new Submission();
+        $submission->user_id = Auth::user()->id;
+       
         $assignment_submission_path = $this->save_submission_file($request, $question, $submission);
         if($question->programming_language == null){
             return redirect()->back()->with('error', "This question has not been configured correctly, please refer to your instructor");
@@ -754,7 +756,6 @@ class QuestionController extends Controller
         $submission->logic_feedback = "Number of Test Cases Passed: $number_of_test_cases_passed/$number_of_test_cases";
        
 
-        $submission->user_id = Auth::user()->id;
         $submission->is_blocked = false;
         $submission->save();
         

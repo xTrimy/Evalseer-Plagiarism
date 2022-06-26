@@ -678,4 +678,33 @@ class UserController extends Controller
 
         return redirect()->back()->with('success','Message Sent Successfully!');
     }
+
+    public function notifications()
+    {
+        $user = Auth::user();
+        $notifications = $user->notifications->sortByDesc('created_at')->take(10);
+        return $notifications;
+    }
+
+    public function notification($id){
+        $user = Auth::user();
+        $notification = $user->notifications->find($id);
+        $notification->markAsRead();
+        $notification_types = [
+            "App\Notifications\SyntaxErrorFix"=> "syntax_error_fix",
+        ];
+        $notification_type = $notification_types[$notification->type];
+        $notification_data = $notification->data;
+        $id = $notification_data["id"]??null;
+        if(!$id){
+            return redirect()->back();
+        }
+        if($notification_type == "syntax_error_fix"){
+            $submission = Submission::find($id);
+            $question = Questions::with('assignment')->find($submission->question_id);
+            return redirect()->route('assignment',$question->assignment->id);
+        }
+        return $notification;
+    }
 }
+

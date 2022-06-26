@@ -54,7 +54,8 @@ Route::middleware('auth')->group(function (){
     Route::get('/jplag', function () {
         return view('home');
     })->name('jplag');
-
+    Route::get('/user/notifications', [UserController::class, 'notifications']);
+    Route::get('/user/notification/{id}', [UserController::class, 'notification'])->name('notification');
     Route::post('/submit', [SubmitController::class,'submit']);
 
     // Student routes
@@ -248,4 +249,6 @@ Route::get('/make_all_users_student', function () {
         $user->assignRole('student');
     }
 });
+
+
 

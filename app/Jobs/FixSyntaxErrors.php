@@ -4,12 +4,16 @@ namespace App\Jobs;
 
 use App\Http\Controllers\QuestionController;
 use App\Models\Submission;
+use App\Models\User;
+use App\Notifications\SyntaxErrorFix;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class FixSyntaxErrors implements ShouldQueue
 {
@@ -85,5 +89,9 @@ class FixSyntaxErrors implements ShouldQueue
         $submission->logic_feedback = "Number of Test Cases Passed: $number_of_test_cases_passed/$number_of_test_cases";
 
         $submission->save();
+
+        $user = User::find($submission->user_id);
+        Notification::sendNow($user, new SyntaxErrorFix($submission));
+
     }
 }
