@@ -5,7 +5,6 @@ from tensorflow.keras.models import load_model
 from keras import backend as K
 import pathlib
 import os
-from cv2 import threshold
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 silence_tensorflow()
 # Load the model and tokenizer
