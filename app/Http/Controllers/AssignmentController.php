@@ -116,7 +116,7 @@ class AssignmentController extends Controller
             $assignment->pdf = $fileNameToStore;
         }
         $assignment->save();
-        return redirect()->route('dashboard.users.instructors.view_assignments');
+        return redirect()->route('dashboard.users.instructors.view_assignments', $assignment->course_id);
     }
 
     public function view($id){
