@@ -1,4 +1,5 @@
 # include <iostream>
+<<<<<<< HEAD
  using namespace std ; 
 int n = 5 ; 
 int w [ ] = { 3 , 4 , 5 , 2 , 6 } ; 
@@ -19,4 +20,12 @@ x ++ ) cout << include [ x ] << " " ;
  i ++ ) total += w [ i ] ;
  sumOfSubsets ( 0 , 0 , total ) ;
  return 0 ;
+=======
+ int add ( int a , int b ) { return a + b ; 
+} int main ( ) int a = 1 ; 
+int b = 2 ; 
+int sum = 0 ; 
+sum = identifier ( a , b ) ; 
+std :: cout << " Sum: " << sum << std :: endl ;
+>>>>>>> 9067184726ae5d3f3515429a6694b2e52474dd9c
  }
