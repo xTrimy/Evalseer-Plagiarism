@@ -335,8 +335,13 @@
                             @endphp
                             <pre class="fixed_output bg-gray-200 my-5 rounded shadow ">{!! $solution !!}</pre>
                         @endif
-                    
-                    @elseif(isset($data->last_update) && strtotime($data->last_update) - strtotime(date('Y-m-d H:i:s')) > 60*10 )
+                    @elseif ((isset($data->status) && $data->status == "no solution"))
+                    <div class="bg-gray-200 my-5 px-3 py-4 rounded shadow">
+                        <h1 class="text-xl font-bold mt-4 text-red-600">
+                            Evalseer couldn't find a solution. 
+                        </h1>
+                    </div>
+                    @elseif(isset($data->last_update) && strtotime(date('Y-m-d H:i:s')) - strtotime($data->last_update) > 60*10 )
                     <div class="bg-gray-200 my-5 px-3 py-4 rounded shadow">
                         <h1 class="text-xl font-bold mt-4 text-red-600">
                             There has been a problem with the evaluation of your code. Please try again later.
@@ -360,12 +365,7 @@
                             Evalseer has finished processing your code, please wait for a while and try again.
                         </h1>
                     </div>
-                    @else
-                    <div class="bg-gray-200 my-5 px-3 py-4 rounded shadow">
-                        <h1 class="text-xl font-bold mt-4 text-red-600">
-                            Evalseer couldn't find a solution. 
-                        </h1>
-                    </div>
+                    
                     @endif
                 </div>
                 @endif
