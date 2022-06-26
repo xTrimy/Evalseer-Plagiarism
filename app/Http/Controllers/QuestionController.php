@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 session_start();
+
+use App\Jobs\FixSyntaxErrors;
 use App\Models\Assignments;
 use App\Models\GradingCriteria;
 use App\Models\ProgrammingLanguage;
@@ -703,6 +705,8 @@ class QuestionController extends Controller
         ]);
         $question = Questions::with(['programming_language','assignment','submissions', 'test_cases','features', 'grading_criteria'])->find($request->question_id);
         $submission = new Submission();
+        $submission->user_id = Auth::user()->id;
+       
         $assignment_submission_path = $this->save_submission_file($request, $question, $submission);
         if($question->programming_language == null){
             return redirect()->back()->with('error', "This question has not been configured correctly, please refer to your instructor");
@@ -726,35 +730,16 @@ class QuestionController extends Controller
             $output_1 = str_replace(public_path($submission->submitted_code),'',$output_1);
             $compiler_feedback = [];
             $compiler_feedback["compiler_feedback"] = $output_1;
-            
-            $basic_syntax_checking = $this->run_basic_compiling_error_checker($compiler_feedback,$submission, $lang);
+            $compiler_feedback["condition"] = "waiting";
+            $compiler_feedback["last_update"] = date("Y-m-d H:i:s");
 
-            if($lang == "c++"){
-                $evalseer_feedback = shell_exec(env('SYNTAX_CORRECTION_PY')." \"". public_path($submission->submitted_code) . "\" 2>&1");
-                //split {"status" from $evalseer_feedback
-                $evalseer_feedback = explode("{\"status", $evalseer_feedback);
-                //check index exists in array
-                if(isset($evalseer_feedback[1])){
-                    $evalseer_feedback = "{\"status".$evalseer_feedback[1];
-                }else if( isset($evalseer_feedback[0])){
-                    $evalseer_feedback = "{\"status" . $evalseer_feedback[0];
-                }else{
-                    $evalseer_feedback = "{\"status\":\"error\"}";
-                }
-                $evalseer_feedback = json_decode($evalseer_feedback,true);
-                foreach ($evalseer_feedback as $key => $value){
-                    $compiler_feedback[$key] =$value;
-                }
-                if($compiler_feedback["status"] == "success"){
-                    $corrected_code_path = public_path($assignment_submission_path)."/fixed.cpp";
-                    $file = fopen($corrected_code_path,'w');
-                    fwrite($file,$compiler_feedback["solution"]);
-                    fclose($file);
-                    $cpp_executable = env('CPP_EXE_PATH');
-                    $output_1 = shell_exec("$cpp_executable \"" . $corrected_code_path . "\" -o \"" . public_path($assignment_submission_path) . "/output\" 2>&1");
-                }
-            }
+            $basic_syntax_checking = $this->run_basic_compiling_error_checker($compiler_feedback,$submission, $lang);
             $submission->compile_feedback = json_encode($compiler_feedback);
+            $submission->save();
+            if($lang == "c++"){
+                $fixSyntaxError = new FixSyntaxErrors($submission, $assignment_submission_path, $lang, $question);
+                $this->dispatch($fixSyntaxError);
+            }
         }
         
         //style_feedback
@@ -771,7 +756,6 @@ class QuestionController extends Controller
         $submission->logic_feedback = "Number of Test Cases Passed: $number_of_test_cases_passed/$number_of_test_cases";
        
 
-        $submission->user_id = Auth::user()->id;
         $submission->is_blocked = false;
         $submission->save();
         
