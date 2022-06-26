@@ -1,1 +1,63 @@
-sh: 1: 11/Sum-of-Subsets/Ayatullah: not found
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:4:42: error: expected ‘,’ or ‘;’ before ‘constexpr’
+    4 | bool include [ ] = { 0 , 0 , 0 , 0 , 0 } constexpr int W = 13 ;
+      |                                          ^~~~~~~~~
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp: In function ‘bool promising(int, int, int)’:
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:5:82: error: ‘W’ was not declared in this scope
+    5 | bool promising ( int i , int weight , int total ) { return ( ( weight + total >= W ) && ( ( weight == W ) || ( weight + w [ i ] <= W ) ) ) ;
+      |                                                                                  ^
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:5:121: error: ‘w’ was not declared in this scope
+    5 | bool promising ( int i , int weight , int total ) { return ( ( weight + total >= W ) && ( ( weight == W ) || ( weight + w [ i ] <= W ) ) ) ;
+      |                                                                                                                         ^
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp: In function ‘void sumOfSubsets(int, int, int)’:
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:6:113: error: ‘W’ was not declared in this scope
+    6 | } void sumOfSubsets ( int i , int weight , int total ) { if ( promising ( i , weight , total ) ) if ( weight == W ) { for ( int x = 0 ;
+      |                                                                                                                 ^
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:3:14: error: expected ‘;’ before ‘int’
+    3 | # define n 5 int w [ ] = { 3 , 4 , 5 , 2 , 6 } ;
+      |              ^~~
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:7:5: note: in expansion of macro ‘n’
+    7 | x < n ;
+      |     ^
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:3:14: error: expected primary-expression before ‘int’
+    3 | # define n 5 int w [ ] = { 3 , 4 , 5 , 2 , 6 } ;
+      |              ^~~
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:7:5: note: in expansion of macro ‘n’
+    7 | x < n ;
+      |     ^
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:3:14: error: expected ‘)’ before ‘int’
+    3 | # define n 5 int w [ ] = { 3 , 4 , 5 , 2 , 6 } ;
+      |              ^~~
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:7:5: note: in expansion of macro ‘n’
+    7 | x < n ;
+      |     ^
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:6:123: note: to match this ‘(’
+    6 | } void sumOfSubsets ( int i , int weight , int total ) { if ( promising ( i , weight , total ) ) if ( weight == W ) { for ( int x = 0 ;
+      |                                                                                                                           ^
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:8:1: error: ‘x’ was not declared in this scope
+    8 | x ++ ) cout << include [ x ] << " " ;
+      | ^
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:11:34: error: ‘w’ was not declared in this scope
+   11 |  sumOfSubsets ( i + 1 , weight + w [ i ] , total - w [ i ] ) ;
+      |                                  ^
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp: At global scope:
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:16:15: error: expected initializer before ‘int’
+   16 |  int main ( ) int total = 0 ;
+      |               ^~~
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:17:2: error: expected unqualified-id before ‘for’
+   17 |  for ( int i = 0 ;
+      |  ^~~
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:18:2: error: ‘i’ does not name a type
+   18 |  i < n ;
+      |  ^
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:19:2: error: ‘i’ does not name a type
+   19 |  i ++ ) total += w [ i ] ;
+      |  ^
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:20:15: error: expected constructor, destructor, or type conversion before ‘(’ token
+   20 |  sumOfSubsets ( 0 , 0 , total ) ;
+      |               ^
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:21:2: error: expected unqualified-id before ‘return’
+   21 |  return 0 ;
+      |  ^~~~~~
+/var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:22:2: error: expected declaration before ‘}’ token
+   22 |  }
+      |  ^
