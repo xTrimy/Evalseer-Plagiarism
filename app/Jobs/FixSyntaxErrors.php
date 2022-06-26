@@ -78,6 +78,7 @@ class FixSyntaxErrors implements ShouldQueue
         foreach ($evalseer_feedback as $key => $value) {
             $compiler_feedback[$key] = $value;
         }
+        $submission->compile_feedback = json_encode($compiler_feedback);
         if ($compiler_feedback["status"] == "success") {
             $corrected_code_path = public_path($assignment_submission_path) . "/fixed.cpp";
             $file = fopen($corrected_code_path, 'w');
@@ -85,12 +86,11 @@ class FixSyntaxErrors implements ShouldQueue
             fclose($file);
             $cpp_executable = env('CPP_EXE_PATH');
             $output_1 = shell_exec("$cpp_executable \"" . $corrected_code_path . "\" -o \"" . public_path($assignment_submission_path) . "/output\" 2>&1");
+            $question_controller = new QuestionController();
+            $number_of_test_cases_passed = $question_controller->run_test_cases_on_submission($this->question, $this->question->test_cases, $assignment_submission_path, $submission, $this->lang);
+            $number_of_test_cases = count($this->question->test_cases);
+            $submission->logic_feedback = "Number of Test Cases Passed: $number_of_test_cases_passed/$number_of_test_cases";
         }
-        $submission->compile_feedback = json_encode($compiler_feedback);
-        $question_controller = new QuestionController();
-        $number_of_test_cases_passed = $question_controller->run_test_cases_on_submission($this->question, $this->question->test_cases, $assignment_submission_path, $submission, $this->lang);
-        $number_of_test_cases = count($this->question->test_cases);
-        $submission->logic_feedback = "Number of Test Cases Passed: $number_of_test_cases_passed/$number_of_test_cases";
 
         $submission->save();
 
