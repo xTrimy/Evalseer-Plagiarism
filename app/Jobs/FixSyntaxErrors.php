@@ -70,7 +70,9 @@ class FixSyntaxErrors implements ShouldQueue
         } else {
             $evalseer_feedback = "{\"status\":\"error\"}";
         }
-        $evalseer_feedback = json_decode($evalseer_feedback, true);
+		dd($evalseer_feedback);
+		$evalseer_feedback = json_decode($evalseer_feedback, true);
+
         foreach ($evalseer_feedback as $key => $value) {
             $compiler_feedback[$key] = $value;
         }
