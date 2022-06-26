@@ -28,7 +28,7 @@ class FixSyntaxErrors implements ShouldQueue
     public $assignment_submission_path;
     public $lang;
     public $question;
-
+    
     public function __construct(Submission &$submission, $assignment_submission_path, $lang, $question)
     {
         $this->submission = $submission;
