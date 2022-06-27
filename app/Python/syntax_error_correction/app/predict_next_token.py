@@ -5,6 +5,7 @@ from tensorflow.keras.models import load_model
 from keras import backend as K
 import pathlib
 import os
+from datetime import datetime
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 silence_tensorflow()
 # Load the model and tokenizer
@@ -64,6 +65,10 @@ def __main__(text):
     # print("Predictions: ", preds)
     preds.sort(key=lambda x: np.max(x[0][1]), reverse=True)
     all_predictions = preds
+    # f = open(str(main_directory)+"/log/pred.log", "a")
+    # f.write("["+str(datetime.now())+"]"+"\n")
+    # f.write("Found solution: "+str(all_predictions)+"\n\n")
+    # f.close()
     for i in all_predictions:
         # print("========================= START ===============================")
         # print(i)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:5:42: error: expected ‘,’ or ‘;’ before ‘constexpr’
     5 | bool include [ ] = { 0 , 0 , 0 , 0 , 0 } constexpr int W = 13 ;
       |                                          ^~~~~~~~~
@@ -17,3 +18,5 @@
    13 |  include [ i ] = false sumOfSubsets ( i + 1 , weight , total - w [ i ] ) ;
       |                       ^~~~~~~~~~~~~
       |                       ;
+=======
+>>>>>>> 32ecefdb5a2b284354c2a34cc6cf4816d12a90b9
