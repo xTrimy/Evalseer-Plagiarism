@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /var/www/evalseer.com/app/Python/syntax_error_correction/tests/test.cpp:5:42: error: expected ‘,’ or ‘;’ before ‘constexpr’
     5 | bool include [ ] = { 0 , 0 , 0 , 0 , 0 } constexpr int W = 13 ;
       |                                          ^~~~~~~~~
@@ -18,17 +17,3 @@
    13 |  include [ i ] = false sumOfSubsets ( i + 1 , weight , total - w [ i ] ) ;
       |                       ^~~~~~~~~~~~~
       |                       ;
-=======
-C:\xampp\htdocs\Evalseer-Plagiarism\app\Python\syntax_error_correction/tests/test.cpp:3:16: error: expected initializer before 'int'
- } int main ( ) int a = 1 ; 
-                ^
-C:\xampp\htdocs\Evalseer-Plagiarism\app\Python\syntax_error_correction/tests/test.cpp:6:1: error: 'sum' does not name a type
- sum = identifier ( a , b ) ; 
- ^
-C:\xampp\htdocs\Evalseer-Plagiarism\app\Python\syntax_error_correction/tests/test.cpp:7:8: error: 'cout' in namespace 'std' does not name a type
- std :: cout << " Sum: " << sum << std :: endl ;
-        ^
-C:\xampp\htdocs\Evalseer-Plagiarism\app\Python\syntax_error_correction/tests/test.cpp:8:2: error: expected declaration before '}' token
-  }
-  ^
->>>>>>> 9067184726ae5d3f3515429a6694b2e52474dd9c
