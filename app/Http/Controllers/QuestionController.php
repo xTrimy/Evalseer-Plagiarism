@@ -764,8 +764,15 @@ class QuestionController extends Controller
         $submission->user_id = Auth::user()->id;
         $submission->is_blocked = false;
         $submission->save();
+
+        // * Gamification Section
+        if($this->check_for_first_submission_badge($request->question_id) != null) {
+            return redirect()->back()->with('question_'.$request->question_id,"Answer Submitted for {$question->name}")->with('new_badge',$this->check_for_first_submission_badge($request->question_id));
+        } else {
+            return redirect()->back()->with('question_'.$request->question_id,"Answer Submitted for {$question->name}");
+        }
         
-        return redirect()->back()->with('question_'.$request->question_id,"Answer Submitted for {$question->name}");
+        
     }
 
     public function delete_question($question_id){
@@ -784,5 +791,18 @@ class QuestionController extends Controller
             return json_decode($files);
         }
         return ["error"=>"Something went wrong"];
+    }
+
+    // * Gamification Section
+    // ? To check whether the student is the first one who made a submission with above average grade
+    public function check_for_first_submission_badge($question_id) {
+        $question_submissions = Submission::where('question_id','=',$question_id)->get();
+        $question_submission_count = count($question_submissions);
+
+        if($question_submission_count == 1) {
+            return "Top Achiver";
+        } else {
+            return null;
+        }
     }
 }
