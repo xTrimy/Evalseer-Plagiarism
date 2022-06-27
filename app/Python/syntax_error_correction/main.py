@@ -39,10 +39,10 @@ def test_solution(test_array, index, token, method, original_token=False):
   
     astyle_output = os.system(
         str(main_directory)+"/"+ASTYLE_EXE + " --style=kr \"" + str(main_directory)+"/tests/test.cpp\" 2>&1")
-    # f = open(str(main_directory)+"/log/pred.log", "a")
-    # f.write("["+str(datetime.now())+"]"+"\n")
-    # f.write("AStyle: "+str(astyle_output)+"\n\n")
-    # f.close()
+    f = open(str(main_directory)+"/log/pred.log", "a")
+    f.write("["+str(datetime.now())+"]"+"\n")
+    f.write("AStyle: "+str(astyle_output)+"\n\n")
+    f.close()
     os.system(MINGW_EXE + " " + str(main_directory)+"/tests/test.cpp -o " +
               str(main_directory)+"/tests/test > " + str(main_directory)+"/log.txt 2>&1")
     if(
