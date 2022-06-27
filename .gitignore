@@ -32,3 +32,7 @@ test.java
 /public/assignment_files
 public/.google-cookie
 *.pyc
+app/Python/syntax_error_correction/log/pred.log
+app/Python/syntax_error_correction/tests/test.cpp
+app/Python/syntax_error_correction/tests/test.cpp.orig
+app/Python/syntax_error_correction/log.txt
