@@ -1,0 +1,7 @@
+/var/www/evalseer.com/app/Python/syntax_error_correction/AStyle/astyle-linux/as-gcc-exe/CMakeFiles/install/strip.dir
+/var/www/evalseer.com/app/Python/syntax_error_correction/AStyle/astyle-linux/as-gcc-exe/CMakeFiles/install/local.dir
+/var/www/evalseer.com/app/Python/syntax_error_correction/AStyle/astyle-linux/as-gcc-exe/CMakeFiles/install.dir
+/var/www/evalseer.com/app/Python/syntax_error_correction/AStyle/astyle-linux/as-gcc-exe/CMakeFiles/list_install_components.dir
+/var/www/evalseer.com/app/Python/syntax_error_correction/AStyle/astyle-linux/as-gcc-exe/CMakeFiles/rebuild_cache.dir
+/var/www/evalseer.com/app/Python/syntax_error_correction/AStyle/astyle-linux/as-gcc-exe/CMakeFiles/edit_cache.dir
+/var/www/evalseer.com/app/Python/syntax_error_correction/AStyle/astyle-linux/as-gcc-exe/CMakeFiles/astyle.dir
